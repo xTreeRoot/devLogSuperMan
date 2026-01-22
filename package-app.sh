@@ -36,21 +36,30 @@ DIST_DIR="$PROJECT_ROOT/composeApp/build/compose/binaries"
 if [ -d "$DIST_DIR" ]; then
     echo "发现构建输出目录: $DIST_DIR"
     
-    # 列出所有生成的包
-    find "$DIST_DIR" -type f \( -name "*.dmg" -o -name "*.msi" -o -name "*.deb" -o -name "*.tar.gz" -o -name "*.zip" \) 2>/dev/null
+    # 查找所有生成的包
+    ALL_PACKAGES=$(find "$DIST_DIR" -type f \( -name "*.dmg" -o -name "*.msi" -o -name "*.deb" -o -name "*.rpm" -o -name "*.pkg" -o -name "*.tar.gz" -o -name "*.zip" -o -name "*.exe" \) 2>/dev/null || true)
     
-    PACKAGES_FOUND=$(find "$DIST_DIR" -type f \( -name "*.dmg" -o -name "*.msi" -o -name "*.deb" -o -name "*.tar.gz" -o -name "*.zip" \) | wc -l)
-    
-    if [ "$PACKAGES_FOUND" -gt 0 ]; then
+    if [ -n "$ALL_PACKAGES" ]; then
         echo "==================================="
         echo "✅ 打包成功!"
-        echo "找到 $PACKAGES_FOUND 个安装包:"
-        find "$DIST_DIR" -type f \( -name "*.dmg" -o -name "*.msi" -o -name "*.deb" -o -name "*.tar.gz" -o -name "*.zip" \)
+        PACKAGE_COUNT=$(echo "$ALL_PACKAGES" | wc -l | tr -d ' ')
+        echo "找到 $PACKAGE_COUNT 个安装包:"
+        echo "$ALL_PACKAGES"
         echo "==================================="
     else
-        echo "⚠️  未找到预期的安装包文件，但构建过程已完成。"
-        echo "检查 $DIST_DIR 目录以查看构建输出。"
-        echo "可能需要检查 build.gradle.kts 中的 nativeDistributions 配置。"
+        echo "⚠️  未找到标准格式的安装包文件。"
+        
+        # 查找应用程序目录
+        APP_DIRS=$(find "$DIST_DIR" -type d -name "*.app" -o -name "*exe" -o -name "*AppRun" 2>/dev/null || true)
+        if [ -n "$APP_DIRS" ]; then
+            echo "但发现了应用程序目录:"
+            echo "$APP_DIRS"
+        fi
+        
+        # 列出整个输出目录的内容
+        echo ""
+        echo "构建输出目录内容:"
+        find "$DIST_DIR" -type f -not -path "*/\.*" | sort
     fi
 else
     echo "⚠️  构建输出目录不存在: $DIST_DIR"
