@@ -1,0 +1,90 @@
+*.iml
+*.iws
+*.ipr
+.kotlin
+.gradle
+**/build/
+xcuserdata
+!src/**/build/
+local.properties
+.idea
+*.iws
+*.iml
+*.ipr
+.DS_Store
+captures
+.externalNativeBuild
+.cxx
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
+node_modules/
+.qoder
+gradle.properties
+# Gradle
+cache/
+.gradle/
+build/
+
+# IntelliJ IDEA
+
+.idea/
+
+# Kotlin
+*.kotlin_metadata
+*.kotlincache
+
+# macOS
+.AppleDouble
+.LSBStoreData
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+desktop.ini
+
+# Logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+cov/
+coverage/
+
+# Temporary folders
+tmp/
+temp/
+
+
+# Ktor
+ktor_http_trace.log
+
+# Compose Multiplatform Desktop
+*.exe
+*.dll
+*.dylib
+*.so
+*.deb
+*.msi
+*.dmg
+*.pkg
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# System junk files
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
