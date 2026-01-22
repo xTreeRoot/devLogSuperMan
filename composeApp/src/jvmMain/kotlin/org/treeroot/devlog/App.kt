@@ -57,7 +57,7 @@ fun App() {
 @Composable
 fun MainApp() {
     var selectedTab by remember { mutableStateOf(0) }
-    
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -72,7 +72,7 @@ fun MainApp() {
             Tab(
                 selected = selectedTab == 0,
                 onClick = { selectedTab = 0 },
-                text = { 
+                text = {
                     Text(
                         "MyBatis SQL",
                         style = MaterialTheme.typography.titleMedium,
@@ -84,7 +84,7 @@ fun MainApp() {
             Tab(
                 selected = selectedTab == 1,
                 onClick = { selectedTab = 1 },
-                text = { 
+                text = {
                     Text(
                         "Elasticsearch DSL",
                         style = MaterialTheme.typography.titleMedium,
@@ -96,7 +96,7 @@ fun MainApp() {
             Tab(
                 selected = selectedTab == 2,
                 onClick = { selectedTab = 2 },
-                text = { 
+                text = {
                     Text(
                         "设置",
                         style = MaterialTheme.typography.titleMedium,
@@ -106,7 +106,7 @@ fun MainApp() {
                 modifier = Modifier.padding(vertical = 12.dp)
             )
         }
-        
+
         // 根据选择显示对应页面
         Box(
             modifier = Modifier.weight(1f)
@@ -123,7 +123,7 @@ fun MainApp() {
 @Composable
 fun SqlFormatterPage() {
     val viewModel = remember { org.treeroot.devlog.logic.SqlFormatterViewModel() }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -136,7 +136,7 @@ fun SqlFormatterPage() {
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         // 按钮区域
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -164,7 +164,7 @@ fun SqlFormatterPage() {
                     Text("粘贴并解析")
                 }
             }
-            
+
             OutlinedButton(
                 onClick = { viewModel.copyFormattedSqlToClipboard() },
                 enabled = viewModel.formattedSql.value.isNotEmpty(),
@@ -174,14 +174,14 @@ fun SqlFormatterPage() {
                 Text("复制")
             }
         }
-        
+
         // 格式化后SQL显示区域
         Text(
             text = "格式化后SQL:",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
-        
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -379,7 +379,7 @@ fun EsDslPage() {
                 }
             }
         }
-        
+
         // 底部信息栏
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -400,7 +400,7 @@ fun SettingsPage() {
     val clipboardMonitorService = remember { org.treeroot.devlog.service.ClipboardMonitorService() }
     var enableSilentMode by remember { mutableStateOf(clipboardMonitorService.isMonitoring()) }
     var backgroundOpacity by remember { mutableStateOf(1f) }
-    
+
     LaunchedEffect(enableSilentMode) {
         if (enableSilentMode) {
             clipboardMonitorService.startMonitoring()
@@ -408,7 +408,7 @@ fun SettingsPage() {
             clipboardMonitorService.stopMonitoring()
         }
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -421,7 +421,7 @@ fun SettingsPage() {
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         // 静默模式设置
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -439,15 +439,17 @@ fun SettingsPage() {
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("启用自动剪贴板监控",
+                    Text(
+                        "启用自动剪贴板监控",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Switch(
                         checked = enableSilentMode,
                         onCheckedChange = { enableSilentMode = it },
@@ -459,7 +461,7 @@ fun SettingsPage() {
                 }
             }
         }
-        
+
         // 透明度设置
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -477,10 +479,12 @@ fun SettingsPage() {
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                
-                Text("背景透明度: ${(backgroundOpacity * 100).toInt()}%",
+
+                Text(
+                    "背景透明度: ${(backgroundOpacity * 100).toInt()}%",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 Slider(
                     value = backgroundOpacity,
                     onValueChange = { backgroundOpacity = it },
@@ -493,7 +497,7 @@ fun SettingsPage() {
                 )
             }
         }
-        
+
         // 背景图片设置
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -511,7 +515,7 @@ fun SettingsPage() {
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                
+
                 Button(
                     onClick = {
                         val fileChooser = javax.swing.JFileChooser()
