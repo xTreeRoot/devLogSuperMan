@@ -1,5 +1,6 @@
 package org.treeroot.devlog
 
+import EditableJSONTextView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
@@ -40,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import org.treeroot.devlog.logic.EsDslViewModel
 import org.treeroot.devlog.theme.DevLogTheme
 
 @Composable
@@ -205,7 +205,7 @@ fun SqlFormatterPage() {
                 )
             }
         }
-        
+
         // 底部信息栏
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -217,7 +217,7 @@ fun SqlFormatterPage() {
                 color = if (viewModel.isValid.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyLarge
             )
-            
+
             Text(
                 text = "字符数: ${viewModel.originalSql.value.length}",
                 style = MaterialTheme.typography.bodyLarge,
@@ -229,8 +229,8 @@ fun SqlFormatterPage() {
 
 @Composable
 fun EsDslPage() {
-    val esViewModel = remember { org.treeroot.devlog.logic.EsDslViewModel() }
-    
+    val esViewModel = remember { EsDslViewModel() }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -243,7 +243,7 @@ fun EsDslPage() {
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         // 按钮区域
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -271,7 +271,7 @@ fun EsDslPage() {
                     Text("粘贴并解析")
                 }
             }
-            
+
             OutlinedButton(
                 onClick = { esViewModel.copyFormattedDslToClipboard() },
                 enabled = esViewModel.formattedDsl.value.isNotEmpty(),
@@ -281,7 +281,7 @@ fun EsDslPage() {
                 Text("复制")
             }
         }
-        
+
         // DSL查询和解析结果的左右布局容器
         Row(
             modifier = Modifier
@@ -300,7 +300,7 @@ fun EsDslPage() {
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -322,16 +322,18 @@ fun EsDslPage() {
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            BasicTextField(
-                                value = esViewModel.formattedDsl.value,
-                                onValueChange = { esViewModel.formattedDsl.value  },
+                            EditableJSONTextView(
+                                text = esViewModel.formattedDsl.value,
+                                onValueChange = { newText ->
+                                    esViewModel.updateFormattedDsl(newText)
+                                },
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
                     }
                 }
             }
-            
+
             // 解析后结果显示区域
             Column(
                 modifier = Modifier
@@ -343,7 +345,7 @@ fun EsDslPage() {
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -365,9 +367,11 @@ fun EsDslPage() {
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            BasicTextField(
-                                value = esViewModel.formattedResponse.value,
-                                onValueChange = { esViewModel.formattedResponse.value  },
+                            EditableJSONTextView(
+                                text = esViewModel.formattedResponse.value,
+                                onValueChange = { newText ->
+                                    esViewModel.updateFormattedResponse(newText)
+                                },
                                 modifier = Modifier.fillMaxSize()
                             )
                         }

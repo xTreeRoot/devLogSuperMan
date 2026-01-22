@@ -1,0 +1,88 @@
+{  "from": 0,
+  "query": {
+    "function_score": {
+      "boost_mode": "multiply",
+      "functions": [
+        {
+          "filter": {
+            "term": {
+              "status": {
+                "value": 1
+              }
+            }
+          },
+          "weight": 5.0
+        }
+      ],
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match": {
+                "name": {
+                  "boost": 1.0,
+                  "query": "??? "
+                }
+              }
+            },
+            {
+              "term": {
+                "docType.keyword": {
+                  "boost": 1.0,
+                  "value": "GOODS"
+                }
+              }
+            },
+            {
+              "range": {
+                "startDate": {
+                  "boost": 1.0,
+                  "gt": "2025-01-09"
+                }
+              }
+            },
+            {
+              "range": {
+                "endDate": {
+                  "boost": 1.0,
+                  "lt": "2026-01-26"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "score_mode": "multiply"
+    }
+  },
+  "size": 30,
+  "sort": [
+    {
+      "_score": {
+        "order": "desc"
+      }
+    },
+    {
+      "_geo_distance": {
+        "location": [
+          {
+            "lat": 39.904179,
+            "lon": 116.407387
+          }
+        ],
+        "order": "asc"
+      }
+    },
+    {
+      "status": {
+        "order": "asc"
+      }
+    },
+    {
+      "startDate": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+

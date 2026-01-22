@@ -1,6 +1,7 @@
 package org.treeroot.devlog.logic
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,6 +62,24 @@ class EsDslViewModel {
             }
         }
     }
+
+    /**
+     * 更新格式化后的响应内容
+     */
+    fun updateFormattedResponse(newText: String) {
+        _formattedResponse.value = newText
+    }
+
+    /**
+     * 更新格式化后的 DSL 内容
+     * 用户在 EditableJSONTextView 编辑 DSL 时调用
+     */
+    fun updateFormattedDsl(newText: String) {
+        _formattedDsl.value = newText
+        // 同步更新 originalDsl，以便后续点击“格式化”时使用最新内容
+        _originalDsl.value = newText
+    }
+
     
     /**
      * 清空所有内容

@@ -1,6 +1,7 @@
 package org.treeroot.devlog.logic
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import com.google.gson.stream.JsonWriter
@@ -8,18 +9,13 @@ import java.io.StringWriter
 
 class EsDslFormatterService {
 
-    private val gson = Gson()
-
+    private val gsonPretty = GsonBuilder().setPrettyPrinting().create()
     /** 格式化JSON */
     fun formatJson(jsonString: String): String {
         if (jsonString.isBlank()) return jsonString
         return try {
             val jsonElement = JsonParser.parseString(jsonString)
-            val writer = StringWriter()
-            val jsonWriter = JsonWriter(writer)
-            jsonWriter.setIndent("  ")
-            gson.toJson(jsonElement, jsonWriter)
-            writer.toString()
+            gsonPretty.toJson(jsonElement) //
         } catch (e: Exception) {
             jsonString
         }
@@ -119,11 +115,13 @@ class EsDslFormatterService {
             if (line.startsWith("# HTTP/")) { inResponse = true; continue }
             if (!inResponse) continue
             if (line.startsWith("#")) continue
-            sb.append(line.trim())
+            sb.append(line)
+            sb.append("\n")
         }
         val responseText = sb.toString()
         return if (isValidJson(responseText)) responseText else extractJsonFromText(responseText)
     }
+
 
     /** 是否是ES查询 */
     private fun isEsQuery(jsonString: String): Boolean {
