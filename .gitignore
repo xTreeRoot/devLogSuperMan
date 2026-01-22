@@ -8,9 +8,6 @@ xcuserdata
 !src/**/build/
 local.properties
 .idea
-*.iws
-*.iml
-*.ipr
 .DS_Store
 captures
 .externalNativeBuild
@@ -22,6 +19,7 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+latest-build
 .qoder
 gradle.properties
 # Gradle

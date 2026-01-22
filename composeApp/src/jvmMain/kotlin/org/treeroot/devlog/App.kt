@@ -137,34 +137,13 @@ fun SqlFormatterPage() {
             color = MaterialTheme.colorScheme.primary
         )
         
-        // 原始SQL输入区域
-        Text(
-            text = "原始SQL:",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        
-        OutlinedTextField(
-            value = viewModel.originalSql.value,
-            onValueChange = { viewModel.updateOriginalSql(it) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
-            placeholder = {
-                Text("请输入SQL语句或MyBatis日志...")
-            },
-            maxLines = 10,
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
-        )
-        
-        // 控制按钮
+        // 按钮区域
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(
-                onClick = { viewModel.formatSql() },
+                onClick = { viewModel.pasteFromClipboard(); viewModel.formatSql() },
                 enabled = !viewModel.isLoading.value,
                 modifier = Modifier.height(48.dp),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
@@ -180,26 +159,10 @@ fun SqlFormatterPage() {
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("格式化中...")
+                    Text("解析中...")
                 } else {
-                    Text("格式化SQL")
+                    Text("粘贴并解析")
                 }
-            }
-            
-            OutlinedButton(
-                onClick = { viewModel.clearAll() },
-                modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
-            ) {
-                Text("清空")
-            }
-            
-            OutlinedButton(
-                onClick = { viewModel.pasteFromClipboard() },
-                modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
-            ) {
-                Text("粘贴")
             }
             
             OutlinedButton(
@@ -209,15 +172,6 @@ fun SqlFormatterPage() {
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             ) {
                 Text("复制")
-            }
-            
-            // 显示验证状态
-            if (viewModel.errorMessage.value.isNotEmpty()) {
-                Text(
-                    text = viewModel.errorMessage.value,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
             }
         }
         
@@ -231,7 +185,7 @@ fun SqlFormatterPage() {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.4f)
+                .weight(1f)
                 .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
@@ -290,41 +244,73 @@ fun EsDslPage() {
             color = MaterialTheme.colorScheme.primary
         )
         
-        // DSL和结果分栏布局
+        // 按钮区域
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(
+                onClick = { esViewModel.pasteFromClipboard(); esViewModel.formatDsl() },
+                enabled = !esViewModel.isLoading.value,
+                modifier = Modifier.height(48.dp),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                if (esViewModel.isLoading.value) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("解析中...")
+                } else {
+                    Text("粘贴并解析")
+                }
+            }
+            
+            OutlinedButton(
+                onClick = { esViewModel.copyFormattedDslToClipboard() },
+                enabled = esViewModel.formattedDsl.value.isNotEmpty(),
+                modifier = Modifier.height(48.dp),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+            ) {
+                Text("复制")
+            }
+        }
+        
+        // DSL查询和解析结果的左右布局容器
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // DSL区域
+            // DSL查询显示区域
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "DSL 查询:",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                Text(
+                    text = "DSL 查询:",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight()
+                        .weight(1f)
                         .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    // 显示格式化文本或树形视图
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -346,34 +332,28 @@ fun EsDslPage() {
                 }
             }
             
-            // 结果区域
+            // 解析后结果显示区域
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "解析结果:",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                Text(
+                    text = "解析后结果:",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight()
+                        .weight(1f)
                         .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    // 显示格式化文本或树形视图
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -393,81 +373,6 @@ fun EsDslPage() {
                         }
                     }
                 }
-            }
-        }
-        
-        // 原始ES DSL输入区域
-        Text(
-            text = "原始ES DSL:",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        
-        OutlinedTextField(
-            value = esViewModel.originalDsl.value,
-            onValueChange = { esViewModel.updateOriginalDsl(it) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
-            placeholder = {
-                Text("请输入ES DSL JSON或curl命令...")
-            },
-            maxLines = 10,
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
-        )
-        
-        // 控制按钮
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Button(
-                onClick = { esViewModel.formatDsl() },
-                enabled = !esViewModel.isLoading.value,
-                modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                if (esViewModel.isLoading.value) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("格式化中...")
-                } else {
-                    Text("格式化ES DSL")
-                }
-            }
-            
-            OutlinedButton(
-                onClick = { esViewModel.clearAll() },
-                modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
-            ) {
-                Text("清空")
-            }
-            
-            OutlinedButton(
-                onClick = { esViewModel.pasteFromClipboard() },
-                modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
-            ) {
-                Text("粘贴")
-            }
-            
-            OutlinedButton(
-                onClick = { esViewModel.copyFormattedDslToClipboard() },
-                enabled = esViewModel.formattedDsl.value.isNotEmpty(),
-                modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
-            ) {
-                Text("复制")
             }
         }
         
