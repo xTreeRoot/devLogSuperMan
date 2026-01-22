@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Surface
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -85,7 +86,7 @@ fun MainApp() {
                 onClick = { selectedTab = 1 },
                 text = { 
                     Text(
-                        "ES DSL",
+                        "Elasticsearch DSL",
                         style = MaterialTheme.typography.titleMedium,
                         color = if (selectedTab == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -335,8 +336,9 @@ fun EsDslPage() {
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            Text(
-                                text = esViewModel.formattedDsl.value,
+                            BasicTextField(
+                                value = esViewModel.formattedDsl.value,
+                                onValueChange = { esViewModel.formattedDsl.value  },
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
@@ -383,8 +385,9 @@ fun EsDslPage() {
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            Text(
-                                text = esViewModel.formattedResponse.value,
+                            BasicTextField(
+                                value = esViewModel.formattedResponse.value,
+                                onValueChange = { esViewModel.formattedResponse.value  },
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
