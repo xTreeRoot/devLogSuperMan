@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.SqlEditor
 import org.treeroot.devlog.logic.SqlFormatterViewModel
@@ -105,7 +106,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: org.treeroot.devl
                 .weight(1f)
                 .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = Color.Transparent
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -120,7 +121,6 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: org.treeroot.devl
                     config = config,
                     modifier = Modifier.fillMaxSize()
                 )
-
             }
         }
 

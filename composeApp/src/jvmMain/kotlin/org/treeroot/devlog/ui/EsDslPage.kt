@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.EditableJSONTextView
 import org.treeroot.devlog.model.UiConfig
@@ -95,13 +96,14 @@ fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
                         .weight(1f)
                         .clip(RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = Color.Transparent
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+
                             .padding(12.dp)
                     ) {
                         EditableJSONTextView(
@@ -134,7 +136,7 @@ fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
                         .weight(1f)
                         .clip(RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = Color.Transparent
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
