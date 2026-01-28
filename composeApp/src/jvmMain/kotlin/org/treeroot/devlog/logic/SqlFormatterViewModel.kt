@@ -65,7 +65,7 @@ class SqlFormatterViewModel {
                     _errorMessage.value = "SQL语法可能存在问题，请检查括号匹配等"
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "格式化过程中出现错误: ${'$'}{e.message}"
+                _errorMessage.value = $$"格式化过程中出现错误: ${e.message}"
                 _isValid.value = false
             } finally {
                 _isLoading.value = false

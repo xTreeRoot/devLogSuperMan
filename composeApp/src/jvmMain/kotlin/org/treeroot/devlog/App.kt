@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Surface
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -39,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import org.treeroot.devlog.components.SqlEditor
 import org.treeroot.devlog.logic.EsDslViewModel
 import org.treeroot.devlog.theme.DevLogTheme
 
@@ -57,6 +57,8 @@ fun App() {
 @Composable
 fun MainApp() {
     var selectedTab by remember { mutableStateOf(0) }
+    val sqlFormatterViewModel = remember { org.treeroot.devlog.logic.SqlFormatterViewModel() }
+    val esDslViewModel = remember { org.treeroot.devlog.logic.EsDslViewModel() }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -112,8 +114,8 @@ fun MainApp() {
             modifier = Modifier.weight(1f)
         ) {
             when (selectedTab) {
-                0 -> SqlFormatterPage()
-                1 -> EsDslPage()
+                0 -> SqlFormatterPage(viewModel = sqlFormatterViewModel)
+                1 -> EsDslPage(esViewModel = esDslViewModel)
                 2 -> SettingsPage()
             }
         }
@@ -121,8 +123,7 @@ fun MainApp() {
 }
 
 @Composable
-fun SqlFormatterPage() {
-    val viewModel = remember { org.treeroot.devlog.logic.SqlFormatterViewModel() }
+fun SqlFormatterPage(viewModel: org.treeroot.devlog.logic.SqlFormatterViewModel) {
 
     Column(
         modifier = Modifier
@@ -197,12 +198,12 @@ fun SqlFormatterPage() {
                     .fillMaxSize()
                     .padding(12.dp)
             ) {
-                org.treeroot.devlog.components.SqlHighlighter(
+                SqlEditor(
                     value = viewModel.formattedSql.value,
-                    onValueChange = {},
-                    readOnly = true,
+                    onValueChange = { /* 不允许直接编辑格式化后的SQL */ },
                     modifier = Modifier.fillMaxSize()
                 )
+
             }
         }
 
@@ -228,8 +229,7 @@ fun SqlFormatterPage() {
 }
 
 @Composable
-fun EsDslPage() {
-    val esViewModel = remember { EsDslViewModel() }
+fun EsDslPage(esViewModel: org.treeroot.devlog.logic.EsDslViewModel) {
 
     Column(
         modifier = Modifier

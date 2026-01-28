@@ -10,10 +10,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontFamily
-import org.slf4j.LoggerFactory
 import org.treeroot.devlog.logic.EsDslFormatterService
 
-val logger = LoggerFactory.getLogger("MyApp")
 @Composable
 fun EditableJSONTextView(
     text: String,
@@ -50,7 +48,7 @@ fun EditableJSONTextView(
             value = textFieldValue,
             onValueChange = { newValue ->
                 textFieldValue = newValue
-                onValueChange(newValue.text) // 用户编辑时也同步外部
+                onValueChange(newValue.text)
             },
             textStyle = TextStyle(
                 fontFamily = FontFamily.Monospace,

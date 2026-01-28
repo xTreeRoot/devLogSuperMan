@@ -60,7 +60,7 @@ class AdvancedSqlFormatterService {
                 }
                 
                 // 格式化SQL
-                val formattedSql = formatSql(sql, uppercaseKeywords = true, newlineAfterComma = true)
+                val formattedSql = formatSql(sql, uppercaseKeywords = false, newlineAfterComma = true)
                 results.add(formattedSql)
             }
             
@@ -235,7 +235,7 @@ class AdvancedSqlFormatterService {
      * 使用MySQL风格格式化SQL
      */
     private fun formatWithMySqlStyle(sql: String): String {
-        var result = sql.uppercase()
+        var result = sql
         
         // 定义主要关键字，这些关键字前应该换行
         val majorKeywords = listOf(
@@ -364,15 +364,49 @@ class AdvancedSqlFormatterService {
      */
     private fun formatWithKeywords(sql: String, indentSize: Int): String {
         val keywords = listOf(
-            "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
-            "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "OUTER JOIN",
-            "UNION", "UNION ALL", "INSERT", "UPDATE", "DELETE", "CREATE",
-            "ALTER", "DROP", "AS", "ON", "AND", "OR", "NOT", "IN", "EXISTS",
-            "BETWEEN", "LIKE", "CASE", "WHEN", "THEN", "ELSE", "END",
-            "LIMIT", "OFFSET", "VALUES", "SET", "INTO", "TABLE", "DATABASE"
+            "SELECT", "select", "Select",
+            "FROM", "from", "From",
+            "WHERE", "where", "Where",
+            "GROUP BY", "group by", "Group By",
+            "ORDER BY", "order by", "Order By",
+            "HAVING", "having", "Having",
+            "JOIN", "join", "Join",
+            "INNER JOIN", "inner join", "Inner Join",
+            "LEFT JOIN", "left join", "Left Join",
+            "RIGHT JOIN", "right join", "Right Join",
+            "OUTER JOIN", "outer join", "Outer Join",
+            "UNION", "union", "Union",
+            "UNION ALL", "union all", "Union All",
+            "INSERT", "insert", "Insert",
+            "UPDATE", "update", "Update",
+            "DELETE", "delete", "Delete",
+            "CREATE", "create", "Create",
+            "ALTER", "alter", "Alter",
+            "DROP", "drop", "Drop",
+            "AS", "as", "As",
+            "ON", "on", "On",
+            "AND", "and", "And",
+            "OR", "or", "Or",
+            "NOT", "not", "Not",
+            "IN", "in", "In",
+            "EXISTS", "exists", "Exists",
+            "BETWEEN", "between", "Between",
+            "LIKE", "like", "Like",
+            "CASE", "case", "Case",
+            "WHEN", "when", "When",
+            "THEN", "then", "Then",
+            "ELSE", "else", "Else",
+            "END", "end", "End",
+            "LIMIT", "limit", "Limit",
+            "OFFSET", "offset", "Offset",
+            "VALUES", "values", "Values",
+            "SET", "set", "Set",
+            "INTO", "into", "Into",
+            "TABLE", "table", "Table",
+            "DATABASE", "database", "Database"
         )
             
-        var result = sql.uppercase()
+        var result = sql
             
         // 为关键字添加换行和缩进
         keywords.forEach { keyword ->
