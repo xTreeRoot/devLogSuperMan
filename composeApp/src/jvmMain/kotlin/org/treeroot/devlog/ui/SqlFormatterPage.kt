@@ -108,7 +108,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: org.treeroot.devl
             colors = CardDefaults.cardColors(
                 containerColor = ColorUtils.getContainerBackgroundColor(config)
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = if (config?.backgroundImagePath?.isNotEmpty() == true) 0.dp else 4.dp)
         ) {
             Box(
                 modifier = Modifier
