@@ -35,6 +35,10 @@ kotlin {
             implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
             implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
             implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
+            // MySQL数据库驱动
+            implementation("mysql:mysql-connector-java:8.0.33")
+            // HikariCP连接池
+            implementation("com.zaxxer:HikariCP:5.0.1")
         }
     }
 }

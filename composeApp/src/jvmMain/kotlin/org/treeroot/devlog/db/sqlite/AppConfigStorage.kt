@@ -1,4 +1,4 @@
-package org.treeroot.devlog.db
+package org.treeroot.devlog.db.sqlite
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -44,10 +44,10 @@ class AppConfigStorage {
         try {
             // 创建临时文件
             val tempFile = File(configFile.absolutePath + ".tmp")
-            
+
             // 写入临时文件
             tempFile.writeText(gson.toJson(config))
-            
+
             // 原子性地移动临时文件到目标文件
             Files.move(tempFile.toPath(), configFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
         } catch (e: Exception) {
@@ -64,7 +64,7 @@ class AppConfigStorage {
             if (configFile.exists() && configFile.length() > 0) {
                 val jsonContent = configFile.readText()
                 val config = gson.fromJson(jsonContent, UiConfig::class.java)
-                
+
                 // 如果解析失败，返回默认配置
                 config ?: UiConfig()
             } else {

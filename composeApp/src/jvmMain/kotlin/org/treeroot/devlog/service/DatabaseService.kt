@@ -3,7 +3,7 @@ package org.treeroot.devlog.service
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.treeroot.devlog.db.AppConfigStorage
+import org.treeroot.devlog.db.sqlite.AppConfigStorage
 import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.state.AppStateManager
 
