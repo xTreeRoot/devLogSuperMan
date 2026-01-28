@@ -12,6 +12,7 @@ import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.DatabaseService
 import org.treeroot.devlog.state.AppStateManager
+import org.treeroot.devlog.util.ColorUtils
 import java.io.File
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -31,7 +32,7 @@ fun SettingsPage(config: UiConfig? = null) {
     val currentConfig = config ?: initialConfig
 
     // 获取动态颜色
-    val dynamicColors = org.treeroot.devlog.util.ColorUtils.getDynamicColors(currentConfig)
+    val dynamicColors = ColorUtils.getDynamicColors(currentConfig)
 
     // 更新数据库和状态管理器
     LaunchedEffect(enableSilentMode, backgroundOpacity, backgroundImagePath) {

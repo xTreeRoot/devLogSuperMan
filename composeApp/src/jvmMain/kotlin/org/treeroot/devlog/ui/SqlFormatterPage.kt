@@ -10,13 +10,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.SqlEditor
 import org.treeroot.devlog.logic.SqlFormatterViewModel
+import org.treeroot.devlog.util.ColorUtils
 
 @Composable
 fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: org.treeroot.devlog.model.UiConfig? = null) {
-    
+
     // 获取动态颜色
-    val dynamicColors = org.treeroot.devlog.util.ColorUtils.getDynamicColors(config)
-    
+    val dynamicColors = ColorUtils.getDynamicColors(config)
+
     Column(
         modifier = Modifier
             .fillMaxSize()

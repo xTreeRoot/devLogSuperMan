@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.treeroot.devlog.util.ColorUtils
 
 @Composable
 fun SqlEditor(
@@ -29,7 +30,7 @@ fun SqlEditor(
     }
 
     // 获取动态颜色
-    val dynamicColors = org.treeroot.devlog.util.ColorUtils.getDynamicColors(config)
+    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Box(
         modifier = modifier

@@ -7,7 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.treeroot.devlog.db.AppConfigDao
 import org.treeroot.devlog.db.AppConfigRepository
 import org.treeroot.devlog.db.DatabaseManager
-import org.treeroot.devlog.model.AppConfig
+import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.state.AppStateManager
 
 class DatabaseService {
@@ -17,22 +17,22 @@ class DatabaseService {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    fun loadConfig(): AppConfig {
-        var config: AppConfig? = null
+    fun loadConfig(): UiConfig {
+        var config: UiConfig? = null
 
         // 在同步代码中调用挂起函数，使用 runBlocking
         runBlocking {
             config = repository.getAppConfig()
         }
 
-        return config ?: AppConfig()
+        return config ?: UiConfig()
     }
 
-    suspend fun saveConfig(config: AppConfig) {
+    suspend fun saveConfig(config: UiConfig) {
         repository.saveAppConfig(config)
     }
 
-    fun saveConfigAsync(config: AppConfig, onComplete: (() -> Unit)? = null) {
+    fun saveConfigAsync(config: UiConfig, onComplete: (() -> Unit)? = null) {
         ioScope.launch {
             repository.saveAppConfig(config)
             AppStateManager.updateConfig(config)

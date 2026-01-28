@@ -2,14 +2,14 @@ package org.treeroot.devlog.db
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.treeroot.devlog.model.AppConfig
+import org.treeroot.devlog.model.UiConfig
 
 class AppConfigRepository(private val dao: AppConfigDao) {
 
     /**
      * 获取应用配置，如果不存在则返回默认值
      */
-    suspend fun getAppConfig(): AppConfig = withContext(Dispatchers.IO) {
+    suspend fun getAppConfig(): UiConfig = withContext(Dispatchers.IO) {
         val configQuery = dao.getConfig()
 
         configQuery
@@ -18,7 +18,7 @@ class AppConfigRepository(private val dao: AppConfigDao) {
     /**
      * 保存应用配置
      */
-    suspend fun saveAppConfig(config: AppConfig) = withContext(Dispatchers.IO) {
+    suspend fun saveAppConfig(config: UiConfig) = withContext(Dispatchers.IO) {
         dao.saveConfig(config)
     }
 
