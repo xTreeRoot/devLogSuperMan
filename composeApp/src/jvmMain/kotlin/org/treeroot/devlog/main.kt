@@ -18,7 +18,7 @@ fun main() = application {
         title = "DevLog_SuperMan",
         state = WindowState(
             // 初始宽高
-            size = DpSize(width = 1000.dp, height = 800.dp),
+            size = DpSize(width = 1400.dp, height = 800.dp),
             // 居中
             position = WindowPosition.Aligned(Alignment.Center)
         )
