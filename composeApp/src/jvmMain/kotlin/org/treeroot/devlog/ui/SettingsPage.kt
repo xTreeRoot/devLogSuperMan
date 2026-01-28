@@ -21,7 +21,7 @@ fun SettingsPage(config: UiConfig? = null) {
     val jsonStoreService = remember { JsonStoreService() }
 
     // 从数据库中加载初始值
-    val initialConfig = remember { jsonStoreService.loadConfig() }
+    val initialConfig = remember { jsonStoreService.loadUiConfig() }
 
     var enableSilentMode by remember { mutableStateOf(initialConfig.enableClipboardMonitor) }
     var backgroundOpacity by remember { mutableStateOf(initialConfig.backgroundOpacity) }

@@ -3,33 +3,75 @@ package org.treeroot.devlog.service
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.treeroot.devlog.json.AppConfigStorage
+import org.treeroot.devlog.json.MySqlConfigStorage
+import org.treeroot.devlog.json.UiConfigStorage
 import org.treeroot.devlog.model.UiConfig
+import org.treeroot.devlog.mysql.MySqlConfigInfo
 import org.treeroot.devlog.state.AppStateManager
 
 class JsonStoreService {
-    private val configStorage = AppConfigStorage()
+    private val uiConfigStorage = UiConfigStorage()
+    private val mySqlConfigStorage = MySqlConfigStorage()
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    fun loadConfig(): UiConfig {
-        return configStorage.loadConfig()
+    /**
+     * 加载UI配置
+     */
+    fun loadUiConfig(): UiConfig {
+        return uiConfigStorage.loadUiConfig()
     }
 
-    suspend fun saveConfig(config: UiConfig) {
-        configStorage.saveConfig(config)
-    }
-
+    /**
+     * 异步保存UI配置
+     */
     fun saveConfigAsync(config: UiConfig, onComplete: (() -> Unit)? = null) {
         ioScope.launch {
-            configStorage.saveConfig(config)
+            uiConfigStorage.saveUiConfig(config)
             AppStateManager.updateConfig(config)
             onComplete?.invoke()
         }
     }
 
-    suspend fun configExists(): Boolean {
-        // 对于文件存储，我们认为配置总是存在的（即使为空）
-        return true
+    /**
+     * 获取所有MySQL配置
+     */
+    fun getAllMySqlConfigs(): List<MySqlConfigInfo> {
+        return mySqlConfigStorage.loadMySqlConfigs()
+    }
+
+    /**
+     * 获取特定MySQL配置详情
+     */
+    fun getMySqlConfigById(id: String): MySqlConfigInfo? {
+        return mySqlConfigStorage.getMySqlConfigById(id)
+    }
+
+    /**
+     * 更新MySQL配置
+     */
+    fun updateMySqlConfig(config: MySqlConfigInfo) {
+        mySqlConfigStorage.updateMySqlConfig(config)
+    }
+
+    /**
+     * 添加新的MySQL配置
+     */
+    fun addMySqlConfig(config: MySqlConfigInfo) {
+        mySqlConfigStorage.addMySqlConfig(config)
+    }
+
+    /**
+     * 删除MySQL配置
+     */
+    fun deleteMySqlConfig(id: String) {
+        mySqlConfigStorage.deleteMySqlConfig(id)
+    }
+
+    /**
+     * 设置默认MySQL配置
+     */
+    fun setDefaultMySqlConfig(id: String) {
+        mySqlConfigStorage.setDefaultMySqlConfig(id)
     }
 }
 

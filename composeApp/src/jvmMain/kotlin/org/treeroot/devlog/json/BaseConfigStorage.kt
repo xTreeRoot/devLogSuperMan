@@ -2,45 +2,45 @@ package org.treeroot.devlog.json
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.treeroot.devlog.model.UiConfig
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 /**
- * 使用纯 Kotlin 方式存储应用配置，避免 JDBC 依赖
+ * 通用配置存储基类
+ * 提供基础的JSON文件读写功能
  */
-class AppConfigStorage {
-    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private val configFile: File
+abstract class BaseConfigStorage<T>(private val configFileName: String) {
+    protected open val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
-    init {
+    protected val configFile: File by lazy {
         val osName = System.getProperty("os.name").lowercase()
         val configPath = if (osName.contains("win")) {
             // Windows: 使用 AppData 目录
             val appData = System.getenv("APPDATA") ?: System.getProperty("user.home")
-            "$appData\\DevLog_SuperMan\\config.json"
+            "$appData\\DevLog_SuperMan\\$configFileName"
         } else if (osName.contains("mac")) {
             // macOS: 使用 ~/Library/Application Support/
-            "${System.getProperty("user.home")}/Library/Application Support/DevLog_SuperMan/config.json"
+            "${System.getProperty("user.home")}/Library/Application Support/DevLog_SuperMan/$configFileName"
         } else {
             // Linux 和其他 Unix 系统: 使用 ~/.local/share/
             val localShare = System.getProperty("user.home") + "/.local/share"
-            "$localShare/DevLog_SuperMan/config.json"
+            "$localShare/DevLog_SuperMan/$configFileName"
         }
 
-        configFile = File(configPath)
-        configFile.parentFile?.let { parentDir ->
+        val file = File(configPath)
+        file.parentFile?.let { parentDir ->
             if (!parentDir.exists()) {
                 parentDir.mkdirs()
             }
         }
+        file
     }
 
     /**
      * 保存配置到文件
      */
-    fun saveConfig(config: UiConfig) {
+    fun saveConfig(config: T) {
         try {
             // 创建临时文件
             val tempFile = File(configFile.absolutePath + ".tmp")
@@ -56,26 +56,39 @@ class AppConfigStorage {
         }
     }
 
+
     /**
      * 从文件加载配置
      */
-    fun loadConfig(): UiConfig {
+    fun loadConfig(defaultConfig: T): T {
         return try {
             if (configFile.exists() && configFile.length() > 0) {
                 val jsonContent = configFile.readText()
-                val config = gson.fromJson(jsonContent, UiConfig::class.java)
+                val config = gson.fromJson(jsonContent, getConfigClass())
 
                 // 如果解析失败，返回默认配置
-                config ?: UiConfig()
+                config ?: defaultConfig
             } else {
                 // 如果文件不存在，返回默认配置
-                UiConfig()
+                defaultConfig
             }
         } catch (e: Exception) {
             e.printStackTrace()
             System.err.println("Failed to load config: ${e.message}")
             // 返回默认配置
-            UiConfig()
+            defaultConfig
         }
+    }
+
+    /**
+     * 获取配置类的Class对象
+     */
+    protected abstract fun getConfigClass(): Class<T>
+
+    /**
+     * 获取配置文件是否存在
+     */
+    fun configFileExists(): Boolean {
+        return configFile.exists()
     }
 }

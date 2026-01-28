@@ -28,7 +28,7 @@ fun MainApp() {
     // 从状态管理器获取配置，或者从数据库加载初始配置
     val stateConfig = AppStateManager.currentConfig
     val initialConfig = if (stateConfig != null) stateConfig else {
-        val loadedConfig = jsonStoreService.loadConfig()
+        val loadedConfig = jsonStoreService.loadUiConfig()
         AppStateManager.updateConfig(loadedConfig)
         loadedConfig
     }
