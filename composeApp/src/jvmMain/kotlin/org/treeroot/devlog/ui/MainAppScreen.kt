@@ -16,12 +16,31 @@ import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.logic.EsDslViewModel
 import org.treeroot.devlog.logic.SqlFormatterViewModel
 import org.treeroot.devlog.service.DatabaseService
+import org.treeroot.devlog.state.AppStateManager
 import org.treeroot.devlog.util.ImageUtils
+
 
 @Composable
 fun MainApp() {
     val databaseService = remember { DatabaseService() }
-    val config = remember { databaseService.loadConfig() }
+
+    // 从状态管理器获取配置，或者从数据库加载初始配置
+    val stateConfig = AppStateManager.currentConfig
+    val initialConfig = if (stateConfig != null) stateConfig else {
+        val loadedConfig = databaseService.loadConfig()
+        AppStateManager.updateConfig(loadedConfig)
+        loadedConfig
+    }
+
+    var config by remember { mutableStateOf(initialConfig) }
+
+    // 监听来自状态管理器的配置更新
+    LaunchedEffect(Unit) {
+        AppStateManager.configUpdates.collect { newConfig ->
+            config = newConfig
+        }
+    }
+
     // 选中的标签页
     var selectedTab by remember { mutableStateOf(0) }
     // Sql ViewModel实例
@@ -45,23 +64,24 @@ fun MainApp() {
                 }
             }
         } else {
-            // 如果没有背景图片，使用半透明黑色覆盖层
+            // 如果没有背景图片，使用半透明白色覆盖层
             Spacer(
                 modifier = Modifier.fillMaxSize()
-                    .background(Color.Black.copy(alpha = (1f - config.backgroundOpacity).coerceIn(0f, 0.5f)))
+                    .background(Color.White.copy(alpha = (1f - config.backgroundOpacity).coerceIn(0f, 0.5f)))
             )
         }
 
         // 半透明覆盖层确保内容可读性
         Spacer(
             modifier = Modifier.fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.1f))
+                .background(Color.White.copy(alpha = 0.1f))
         )
 
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-        // 标签页选择器
+
+                // 标签页选择器
         SecondaryTabRow(
             selectedTabIndex = selectedTab,
             modifier = Modifier.padding(horizontal = 20.dp),

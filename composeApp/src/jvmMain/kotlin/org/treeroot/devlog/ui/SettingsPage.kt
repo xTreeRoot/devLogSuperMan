@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.DatabaseService
 import org.treeroot.devlog.model.AppConfig
+import org.treeroot.devlog.state.AppStateManager
 import java.io.File
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -26,15 +27,15 @@ fun SettingsPage() {
     var backgroundOpacity by remember { mutableStateOf(initialConfig.backgroundOpacity) }
     var backgroundImagePath by remember { mutableStateOf(initialConfig.backgroundImagePath) }
     
-    // 更新数据库
+    // 更新数据库和状态管理器
     LaunchedEffect(enableSilentMode, backgroundOpacity, backgroundImagePath) {
-        databaseService.saveConfigAsync(
-            AppConfig(
-                backgroundImagePath = backgroundImagePath,
-                backgroundOpacity = backgroundOpacity,
-                enableClipboardMonitor = enableSilentMode
-            )
+        val newConfig = AppConfig(
+            backgroundImagePath = backgroundImagePath,
+            backgroundOpacity = backgroundOpacity,
+            enableClipboardMonitor = enableSilentMode
         )
+        databaseService.saveConfigAsync(newConfig)
+        AppStateManager.updateConfig(newConfig)
     }
 
     LaunchedEffect(enableSilentMode) {
@@ -152,36 +153,60 @@ fun SettingsPage() {
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                Button(
-                    onClick = {
-                        val fileChooser = javax.swing.JFileChooser()
-                        fileChooser.fileFilter = FileNameExtensionFilter(
-                            "图片文件", "jpg", "jpeg", "png", "gif", "bmp"
-                        )
-                        val result = fileChooser.showOpenDialog(null)
-                        if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
-                            val selectedFilePath = fileChooser.selectedFile.absolutePath
-                            backgroundImagePath = selectedFilePath
-                            
-                            // 保存到数据库
-                            databaseService.saveConfigAsync(
-                                AppConfig(
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            val fileChooser = javax.swing.JFileChooser()
+                            fileChooser.fileFilter = FileNameExtensionFilter(
+                                "图片文件", "jpg", "jpeg", "png", "gif", "bmp"
+                            )
+                            val result = fileChooser.showOpenDialog(null)
+                            if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+                                val selectedFilePath = fileChooser.selectedFile.absolutePath
+                                backgroundImagePath = selectedFilePath
+                                
+                                val newConfig = AppConfig(
                                     backgroundImagePath = selectedFilePath,
                                     backgroundOpacity = backgroundOpacity,
                                     enableClipboardMonitor = enableSilentMode
                                 )
+                                databaseService.saveConfigAsync(newConfig)
+                                AppStateManager.updateConfig(newConfig)
+                            }
+                        },
+                        modifier = Modifier.weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Text(if (backgroundImagePath.isEmpty()) "选择背景图片" else "更改背景图片")
+                    }
+                    
+                    OutlinedButton(
+                        onClick = {
+                            // 恢复默认 - 清除背景图片
+                            backgroundImagePath = ""
+                            
+                            val newConfig = AppConfig(
+                                backgroundImagePath = "",
+                                backgroundOpacity = backgroundOpacity,
+                                enableClipboardMonitor = enableSilentMode
                             )
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text(if (backgroundImagePath.isEmpty()) "选择背景图片" else "更改背景图片")
+                            databaseService.saveConfigAsync(newConfig)
+                            AppStateManager.updateConfig(newConfig)
+                        },
+                        modifier = Modifier.width(120.dp)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("恢复默认")
+                    }
                 }
                 
                 // 显示当前选择的图片路径

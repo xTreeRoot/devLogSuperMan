@@ -8,6 +8,7 @@ import org.treeroot.devlog.db.AppConfigDao
 import org.treeroot.devlog.db.AppConfigRepository
 import org.treeroot.devlog.db.DatabaseManager
 import org.treeroot.devlog.model.AppConfig
+import org.treeroot.devlog.state.AppStateManager
 
 class DatabaseService {
     private val databaseManager = DatabaseManager()
@@ -34,6 +35,7 @@ class DatabaseService {
     fun saveConfigAsync(config: AppConfig, onComplete: (() -> Unit)? = null) {
         ioScope.launch {
             repository.saveAppConfig(config)
+            AppStateManager.updateConfig(config)
             onComplete?.invoke()
         }
     }
