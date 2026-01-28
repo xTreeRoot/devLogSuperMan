@@ -1,15 +1,27 @@
 package org.treeroot.devlog.ui
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.logic.EsDslViewModel
 import org.treeroot.devlog.logic.SqlFormatterViewModel
+import org.treeroot.devlog.service.DatabaseService
+import org.treeroot.devlog.util.ImageUtils
 
 @Composable
 fun MainApp() {
+    val databaseService = remember { DatabaseService() }
+    val config = remember { databaseService.loadConfig() }
     // 选中的标签页
     var selectedTab by remember { mutableStateOf(0) }
     // Sql ViewModel实例
@@ -17,9 +29,38 @@ fun MainApp() {
     // ES DSL ViewModel实例
     val esDslViewModel = remember { EsDslViewModel() }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        // 如果设置了背景图片，则显示背景图片
+        if (config.backgroundImagePath.isNotEmpty()) {
+            if (ImageUtils.isValidImageFile(config.backgroundImagePath)) {
+                val imageBitmap = ImageUtils.loadImageBitmap(config.backgroundImagePath)
+                if (imageBitmap != null) {
+                    Image(
+                        bitmap = imageBitmap,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.fillMaxSize()
+                            .graphicsLayer(alpha = config.backgroundOpacity)
+                    )
+                }
+            }
+        } else {
+            // 如果没有背景图片，使用半透明黑色覆盖层
+            Spacer(
+                modifier = Modifier.fillMaxSize()
+                    .background(Color.Black.copy(alpha = (1f - config.backgroundOpacity).coerceIn(0f, 0.5f)))
+            )
+        }
+
+        // 半透明覆盖层确保内容可读性
+        Spacer(
+            modifier = Modifier.fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.1f))
+        )
+
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
         // 标签页选择器
         SecondaryTabRow(
             selectedTabIndex = selectedTab,
@@ -77,4 +118,5 @@ fun MainApp() {
             }
         }
     }
+}
 }

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -34,10 +35,12 @@ kotlin {
             implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
             implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
             implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
+            //sqlLite
+            implementation("org.xerial:sqlite-jdbc:3.42.0.0")
+            implementation("com.zaxxer:HikariCP:5.0.1")
         }
     }
 }
-
 
 compose.desktop {
     application {

@@ -9,13 +9,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.service.ClipboardMonitorService
+import org.treeroot.devlog.service.DatabaseService
+import org.treeroot.devlog.model.AppConfig
+import java.io.File
 import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable
 fun SettingsPage() {
     val clipboardMonitorService = remember { ClipboardMonitorService() }
-    var enableSilentMode by remember { mutableStateOf(clipboardMonitorService.isMonitoring()) }
-    var backgroundOpacity by remember { mutableStateOf(1f) }
+    val databaseService = remember { DatabaseService() }
+    
+    // 从数据库中加载初始值
+    val initialConfig = remember { databaseService.loadConfig() }
+    
+    var enableSilentMode by remember { mutableStateOf(initialConfig.enableClipboardMonitor) }
+    var backgroundOpacity by remember { mutableStateOf(initialConfig.backgroundOpacity) }
+    var backgroundImagePath by remember { mutableStateOf(initialConfig.backgroundImagePath) }
+    
+    // 更新数据库
+    LaunchedEffect(enableSilentMode, backgroundOpacity, backgroundImagePath) {
+        databaseService.saveConfigAsync(
+            AppConfig(
+                backgroundImagePath = backgroundImagePath,
+                backgroundOpacity = backgroundOpacity,
+                enableClipboardMonitor = enableSilentMode
+            )
+        )
+    }
 
     LaunchedEffect(enableSilentMode) {
         if (enableSilentMode) {
@@ -140,8 +160,17 @@ fun SettingsPage() {
                         )
                         val result = fileChooser.showOpenDialog(null)
                         if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
-                            // 在这里可以保存选择的图片路径到状态变量
-                            println("选择了背景图片: ${fileChooser.selectedFile.absolutePath}")
+                            val selectedFilePath = fileChooser.selectedFile.absolutePath
+                            backgroundImagePath = selectedFilePath
+                            
+                            // 保存到数据库
+                            databaseService.saveConfigAsync(
+                                AppConfig(
+                                    backgroundImagePath = selectedFilePath,
+                                    backgroundOpacity = backgroundOpacity,
+                                    enableClipboardMonitor = enableSilentMode
+                                )
+                            )
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -152,7 +181,29 @@ fun SettingsPage() {
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text("选择背景图片")
+                    Text(if (backgroundImagePath.isEmpty()) "选择背景图片" else "更改背景图片")
+                }
+                
+                // 显示当前选择的图片路径
+                if (backgroundImagePath.isNotEmpty()) {
+                    val file = File(backgroundImagePath)
+                    if (file.exists()) {
+                        Text(
+                            text = "已选择: ${file.name}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "图片文件不存在，请重新选择",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                        // 重置路径
+                        backgroundImagePath = ""
+                    }
                 }
             }
         }

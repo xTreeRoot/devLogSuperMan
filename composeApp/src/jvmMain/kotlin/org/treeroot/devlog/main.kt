@@ -7,14 +7,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import org.treeroot.devlog.util.DatabaseInitializer
 
 fun main() = application {
+    // 初始化数据库
+    DatabaseInitializer.initializeDatabase()
+
     Window(
         onCloseRequest = ::exitApplication,
         title = "DevLog_SuperMan",
         state = WindowState(
-            size = DpSize(width = 1000.dp, height = 800.dp), // 初始宽高
-            position = WindowPosition.Aligned(Alignment.Center) // 居中
+            // 初始宽高
+            size = DpSize(width = 1000.dp, height = 800.dp),
+            // 居中
+            position = WindowPosition.Aligned(Alignment.Center)
         )
     ) {
         App()
