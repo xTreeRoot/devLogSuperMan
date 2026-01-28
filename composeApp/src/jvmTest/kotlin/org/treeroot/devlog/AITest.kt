@@ -2,8 +2,6 @@ package org.treeroot.devlog
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.treeroot.devlog.ai.AiProvider
-import org.treeroot.devlog.config.ConfigManager
 import org.treeroot.devlog.util.AiHelper
 
 
