@@ -15,7 +15,7 @@ fun main() = application {
 
     Window(
         onCloseRequest = ::exitApplication,
-        title = "DevLog_SuperMan",
+        title = "devLogSuperMan",
         state = WindowState(
             // 初始宽高
             size = DpSize(width = 1400.dp, height = 800.dp),
