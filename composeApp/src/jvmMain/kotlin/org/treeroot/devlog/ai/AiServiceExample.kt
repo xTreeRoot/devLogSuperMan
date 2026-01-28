@@ -5,7 +5,7 @@ package org.treeroot.devlog.ai
  * 展示如何使用AI适配器模式
  */
 class AiServiceExample {
-    
+
     /**
      * 初始化AI服务
      */
@@ -14,7 +14,7 @@ class AiServiceExample {
         val zhipuAdapter = AiAdapterManager.createZhipuAiAdapter(apiKey)
         AiAdapterManager.setCurrentAdapter(zhipuAdapter)
     }
-    
+
     /**
      * 使用AI服务进行对话
      */
@@ -22,7 +22,7 @@ class AiServiceExample {
         val aiService = AiAdapterManager.getCurrentAdapter()
         return aiService.chat(message, model)
     }
-    
+
     /**
      * 批量处理AI对话
      */
@@ -30,7 +30,7 @@ class AiServiceExample {
         val aiService = AiAdapterManager.getCurrentAdapter()
         return aiService.batchChat(messages, model)
     }
-    
+
     /**
      * 切换到不同的AI提供商
      */
@@ -39,29 +39,3 @@ class AiServiceExample {
         AiAdapterManager.setCurrentAdapter(newAdapter)
     }
 }
-
-// 示例用法：
-/*
-suspend fun example() {
-    val example = AiServiceExample()
-    
-    // 初始化AI服务
-    example.initializeAiService("your-api-key")
-    
-    // 单次对话
-    val response = example.chatWithAi("你好，请问你能做什么？")
-    println(response)
-    
-    // 批量对话
-    val messages = listOf("第一个问题", "第二个问题", "第三个问题")
-    val responses = example.batchChatWithAi(messages)
-    responses.forEachIndexed { index, response ->
-        println("问题${index + 1}: ${messages[index]}")
-        println("回答${index + 1}: $response")
-    }
-    
-    // 切换AI提供商
-    val newConfig = AiConfig(AiProvider.OPENAI, "new-api-key", "gpt-4")
-    example.switchAiProvider(newConfig)
-}
-*/

@@ -5,32 +5,32 @@ package org.treeroot.devlog.ai
  * 提供工厂模式来创建和管理不同的AI适配器
  */
 class AiAdapterManager {
-    
+
     companion object {
         // 默认AI适配器
         private var currentAiAdapter: AiService? = null
-        
+
         /**
          * 设置当前AI适配器
          */
         fun setCurrentAdapter(adapter: AiService) {
             currentAiAdapter = adapter
         }
-        
+
         /**
          * 获取当前AI适配器
          */
         fun getCurrentAdapter(): AiService {
             return currentAiAdapter ?: throw IllegalStateException("AI适配器未初始化")
         }
-        
+
         /**
          * 创建智谱AI适配器
          */
         fun createZhipuAiAdapter(apiKey: String): AiService {
             return ZhipuAiAdapter(apiKey)
         }
-        
+
         /**
          * 创建默认适配器（可根据配置动态选择）
          */
@@ -57,8 +57,12 @@ data class AiConfig(
  * AI提供商枚举
  */
 enum class AiProvider {
-    ZHIPU,  // 智谱AI
-    OPENAI, // OpenAI
-    QWEN,   // 通义千问
-    OTHER   // 其他AI服务
+    // 智谱AI
+    ZHIPU,
+    // OpenAI
+    OPENAI,
+    // 通义千问
+    QWEN,
+    // 其他AI服务
+    OTHER
 }

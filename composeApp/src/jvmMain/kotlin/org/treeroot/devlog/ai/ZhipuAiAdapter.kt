@@ -31,7 +31,6 @@ class ZhipuAiAdapter(private val apiKey: String) : AiService {
                 .maxTokens(65536)
                 .temperature(1.0f)
                 .build()
-
             val response = client.chat().createChatCompletion(request)
 
             if (response.isSuccess) {
