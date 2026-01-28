@@ -19,7 +19,6 @@ import org.treeroot.devlog.service.DatabaseService
 import org.treeroot.devlog.state.AppStateManager
 import org.treeroot.devlog.util.ImageUtils
 
-
 @Composable
 fun MainApp() {
     val databaseService = remember { DatabaseService() }
@@ -49,94 +48,104 @@ fun MainApp() {
     val esDslViewModel = remember { EsDslViewModel() }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // 如果设置了背景图片，则显示背景图片
-        if (config.backgroundImagePath.isNotEmpty()) {
-            if (ImageUtils.isValidImageFile(config.backgroundImagePath)) {
-                val imageBitmap = ImageUtils.loadImageBitmap(config.backgroundImagePath)
-                if (imageBitmap != null) {
-                    Image(
-                        bitmap = imageBitmap,
-                        contentDescription = null,
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.fillMaxSize()
-                            .graphicsLayer(alpha = config.backgroundOpacity)
-                    )
-                }
-            }
-        } else {
-            // 如果没有背景图片，使用半透明白色覆盖层
-            Spacer(
-                modifier = Modifier.fillMaxSize()
-                    .background(Color.White.copy(alpha = (1f - config.backgroundOpacity).coerceIn(0f, 0.5f)))
-            )
-        }
-
-        // 半透明覆盖层确保内容可读性
-        Spacer(
-            modifier = Modifier.fillMaxSize()
-                .background(Color.White.copy(alpha = 0.1f))
-        )
+        // 背景内容 - 使用独立的可组合函数避免标签页切换时的重组
+        BackgroundLayer(config = config)
 
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+            // 标签页选择器
+            SecondaryTabRow(
+                selectedTabIndex = selectedTab,
+                modifier = Modifier.padding(horizontal = 20.dp),
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                divider = {}
+            ) {
+                Tab(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    text = {
+                        Text(
+                            "MyBatis SQL解析",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = if (selectedTab == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+                Tab(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    text = {
+                        Text(
+                            "Elasticsearch DSL",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = if (selectedTab == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+                Tab(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    text = {
+                        Text(
+                            "设置",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = if (selectedTab == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+            }
 
-                // 标签页选择器
-        SecondaryTabRow(
-            selectedTabIndex = selectedTab,
-            modifier = Modifier.padding(horizontal = 20.dp),
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            divider = {}
-        ) {
-            Tab(
-                selected = selectedTab == 0,
-                onClick = { selectedTab = 0 },
-                text = {
-                    Text(
-                        "MyBatis SQL解析",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (selectedTab == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                modifier = Modifier.padding(vertical = 12.dp)
-            )
-            Tab(
-                selected = selectedTab == 1,
-                onClick = { selectedTab = 1 },
-                text = {
-                    Text(
-                        "Elasticsearch DSL",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (selectedTab == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                modifier = Modifier.padding(vertical = 12.dp)
-            )
-            Tab(
-                selected = selectedTab == 2,
-                onClick = { selectedTab = 2 },
-                text = {
-                    Text(
-                        "设置",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (selectedTab == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                modifier = Modifier.padding(vertical = 12.dp)
-            )
-        }
-
-        // 根据选择显示对应页面
-        Box(
-            modifier = Modifier.weight(1f)
-        ) {
-            when (selectedTab) {
-                0 -> SqlFormatterPage(viewModel = sqlFormatterViewModel)
-                1 -> EsDslPage(esViewModel = esDslViewModel)
-                2 -> SettingsPage()
+            // 根据选择显示对应页面
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                when (selectedTab) {
+                    0 -> SqlFormatterPage(viewModel = sqlFormatterViewModel)
+                    1 -> EsDslPage(esViewModel = esDslViewModel)
+                    2 -> SettingsPage()
+                }
             }
         }
     }
 }
+
+/**
+ * 背景层 - 独立的可组合函数，避免标签页切换时重组
+ */
+@Composable
+private fun BackgroundLayer(config: org.treeroot.devlog.model.AppConfig) {
+    // 如果设置了背景图片，则显示背景图片
+    if (config.backgroundImagePath.isNotEmpty()) {
+        if (ImageUtils.isValidImageFile(config.backgroundImagePath)) {
+            val imageBitmap = remember(config.backgroundImagePath) { 
+                ImageUtils.loadImageBitmap(config.backgroundImagePath) 
+            }
+            if (imageBitmap != null) {
+                Image(
+                    bitmap = imageBitmap,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.fillMaxSize()
+                        .graphicsLayer(alpha = config.backgroundOpacity)
+                )
+            }
+        }
+    } else {
+        // 如果没有背景图片，使用半透明黑色覆盖层
+        Spacer(
+            modifier = Modifier.fillMaxSize()
+                .background(Color.Black.copy(alpha = (1f - config.backgroundOpacity).coerceIn(0f, 0.5f)))
+        )
+    }
+
+    // 半透明覆盖层确保内容可读性
+    Spacer(
+        modifier = Modifier.fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.1f))
+    )
 }
