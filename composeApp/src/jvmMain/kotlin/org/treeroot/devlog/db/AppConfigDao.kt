@@ -8,13 +8,23 @@ import java.sql.SQLException
 class AppConfigDao(private val databasePath: String) {
 
     init {
-        // 加载数据库驱动
-        Class.forName("org.sqlite.JDBC")
-        initializeDatabase()
+        try {
+            // 加载数据库驱动
+            Class.forName("org.sqlite.JDBC")
+            initializeDatabase()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw RuntimeException("Failed to initialize database", e)
+        }
     }
 
     private fun getConnection(): Connection {
-        return DriverManager.getConnection("jdbc:sqlite:$databasePath")
+        try {
+            return DriverManager.getConnection("jdbc:sqlite:$databasePath")
+        } catch (e: SQLException) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
     private fun initializeDatabase() {

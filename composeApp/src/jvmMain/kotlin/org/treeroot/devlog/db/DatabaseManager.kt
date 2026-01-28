@@ -15,6 +15,13 @@ class DatabaseManager {
         }
     }
     
+    private fun ensureDirectoryExists(path: String) {
+        val dir = File(path).parentFile
+        if (dir != null && !dir.exists()) {
+            dir.mkdirs()
+        }
+    }
+    
     fun getDatabasePath(): String {
         val osName = System.getProperty("os.name").lowercase()
         
@@ -23,7 +30,8 @@ class DatabaseManager {
             val appData = System.getenv("APPDATA") ?: System.getProperty("user.home")
             "$appData\\DevLog_SuperMan\\app_database.db"
         } else if (osName.contains("mac")) {
-            // macOS: 使用 ~/Library/Application Support/
+            // macOS: 首先尝试使用用户目录，这是最安全的选项
+            ensureDirectoryExists("${System.getProperty("user.home")}/Library/Application Support/DevLog_SuperMan")
             "${System.getProperty("user.home")}/Library/Application Support/DevLog_SuperMan/app_database.db"
         } else {
             // Linux 和其他 Unix 系统: 使用 ~/.local/share/

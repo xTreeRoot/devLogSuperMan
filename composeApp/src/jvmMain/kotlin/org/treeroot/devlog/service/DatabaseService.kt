@@ -12,9 +12,21 @@ import org.treeroot.devlog.state.AppStateManager
 
 class DatabaseService {
     private val databaseManager = DatabaseManager()
-    private val dao = AppConfigDao(databaseManager.getDatabasePathString())
-    private val repository = AppConfigRepository(dao)
+    private var dao: AppConfigDao
+    private var repository: AppConfigRepository
 
+    init {
+        try {
+            this.dao = AppConfigDao(databaseManager.getDatabasePathString())
+            this.repository = AppConfigRepository(dao)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // 如果数据库初始化失败，尝试使用临时路径
+            val tempDbPath = System.getProperty("java.io.tmpdir") + "/devlog_temp.db"
+            this.dao = AppConfigDao(tempDbPath)
+            this.repository = AppConfigRepository(dao)
+        }
+    }
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     fun loadConfig(): UiConfig {
