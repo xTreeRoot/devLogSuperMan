@@ -61,7 +61,7 @@ fun MainApp() {
             SecondaryTabRow(
                 selectedTabIndex = selectedTab,
                 modifier = Modifier.padding(horizontal = 20.dp),
-                containerColor = ColorUtils.getComponentBackgroundColor(config),
+                containerColor = ColorUtils.getContainerBackgroundColor(config),
                 contentColor =  Color.White,
                 divider = {}
             ) {
