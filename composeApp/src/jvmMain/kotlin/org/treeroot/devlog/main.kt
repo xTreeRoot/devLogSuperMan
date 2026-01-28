@@ -7,11 +7,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import org.treeroot.devlog.util.DatabaseInitializer
 
 fun main() = application {
     // 初始化数据库
-    DatabaseInitializer.initializeDatabase()
 
     Window(
         onCloseRequest = ::exitApplication,

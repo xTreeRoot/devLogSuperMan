@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.treeroot.devlog.data.MySqlQueryResult
-import org.treeroot.devlog.db.mysql.MySqlConfig
-import org.treeroot.devlog.db.mysql.MySqlDatabaseService
+import org.treeroot.devlog.mysql.MySqlConfig
+import org.treeroot.devlog.mysql.MySqlDatabaseService
 
 /**
  * MySQL数据库操作的视图模型

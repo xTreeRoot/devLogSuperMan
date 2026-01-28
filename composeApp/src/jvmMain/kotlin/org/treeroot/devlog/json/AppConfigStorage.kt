@@ -1,4 +1,4 @@
-package org.treeroot.devlog.db.sqlite
+package org.treeroot.devlog.json
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

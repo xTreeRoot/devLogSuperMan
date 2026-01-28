@@ -1,4 +1,4 @@
-package org.treeroot.devlog.db.mysql
+package org.treeroot.devlog.mysql
 
 import org.treeroot.devlog.data.MySqlQueryResult
 

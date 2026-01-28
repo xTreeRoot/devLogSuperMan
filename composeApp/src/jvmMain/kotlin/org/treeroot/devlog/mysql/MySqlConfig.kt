@@ -1,4 +1,4 @@
-package org.treeroot.devlog.db.mysql
+package org.treeroot.devlog.mysql
 
 /**
  * MySQL数据库配置数据类

@@ -17,18 +17,18 @@ import org.treeroot.devlog.DevLog
 import org.treeroot.devlog.logic.EsDslViewModel
 import org.treeroot.devlog.logic.SqlFormatterViewModel
 import org.treeroot.devlog.model.UiConfig
-import org.treeroot.devlog.service.DatabaseService
+import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.state.AppStateManager
 import org.treeroot.devlog.util.ImageUtils
 
 @Composable
 fun MainApp() {
-    val databaseService = remember { DatabaseService() }
+    val jsonStoreService = remember { JsonStoreService() }
 
     // 从状态管理器获取配置，或者从数据库加载初始配置
     val stateConfig = AppStateManager.currentConfig
     val initialConfig = if (stateConfig != null) stateConfig else {
-        val loadedConfig = databaseService.loadConfig()
+        val loadedConfig = jsonStoreService.loadConfig()
         AppStateManager.updateConfig(loadedConfig)
         loadedConfig
     }

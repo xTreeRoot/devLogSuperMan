@@ -11,17 +11,17 @@ import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.ImagePicker
 import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.service.ClipboardMonitorService
-import org.treeroot.devlog.service.DatabaseService
+import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.state.AppStateManager
 import org.treeroot.devlog.util.ColorUtils
 
 @Composable
 fun SettingsPage(config: UiConfig? = null) {
     val clipboardMonitorService = remember { ClipboardMonitorService() }
-    val databaseService = remember { DatabaseService() }
+    val jsonStoreService = remember { JsonStoreService() }
 
     // 从数据库中加载初始值
-    val initialConfig = remember { databaseService.loadConfig() }
+    val initialConfig = remember { jsonStoreService.loadConfig() }
 
     var enableSilentMode by remember { mutableStateOf(initialConfig.enableClipboardMonitor) }
     var backgroundOpacity by remember { mutableStateOf(initialConfig.backgroundOpacity) }
@@ -40,7 +40,7 @@ fun SettingsPage(config: UiConfig? = null) {
             backgroundOpacity = backgroundOpacity,
             enableClipboardMonitor = enableSilentMode
         )
-        databaseService.saveConfigAsync(newConfig)
+        jsonStoreService.saveConfigAsync(newConfig)
         AppStateManager.updateConfig(newConfig)
     }
 
@@ -168,7 +168,7 @@ fun SettingsPage(config: UiConfig? = null) {
                             backgroundOpacity = backgroundOpacity,
                             enableClipboardMonitor = enableSilentMode
                         )
-                        databaseService.saveConfigAsync(newConfig)
+                        jsonStoreService.saveConfigAsync(newConfig)
                         AppStateManager.updateConfig(newConfig)
                     },
                     buttonText = if (backgroundImagePath.isEmpty()) "选择背景图片" else "更改背景图片",
