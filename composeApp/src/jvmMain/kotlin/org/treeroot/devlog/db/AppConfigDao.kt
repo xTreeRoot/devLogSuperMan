@@ -14,7 +14,15 @@ class AppConfigDao(private val databasePath: String) {
             initializeDatabase()
         } catch (e: Exception) {
             e.printStackTrace()
-            throw RuntimeException("Failed to initialize database", e)
+            // 尝试使用不同的驱动类名，以防打包后类路径变化
+            try {
+                Class.forName("org.sqlite.JDBC")
+                initializeDatabase()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                System.err.println("Failed to initialize SQLite driver: ${ex.message}")
+                throw RuntimeException("Failed to initialize database", ex)
+            }
         }
     }
 
@@ -28,8 +36,9 @@ class AppConfigDao(private val databasePath: String) {
     }
 
     private fun initializeDatabase() {
-        val connection = getConnection()
+        var connection: Connection? = null
         try {
+            connection = getConnection()
             val statement = connection.createStatement()
             statement.executeUpdate(
                 """CREATE TABLE IF NOT EXISTS app_config (
@@ -42,8 +51,10 @@ class AppConfigDao(private val databasePath: String) {
             statement.close()
         } catch (e: SQLException) {
             e.printStackTrace()
+            // 创建表失败时抛出异常，让上层处理
+            throw e
         } finally {
-            connection.close()
+            connection?.close()
         }
     }
 

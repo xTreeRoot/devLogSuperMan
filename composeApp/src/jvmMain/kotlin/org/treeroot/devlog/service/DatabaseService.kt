@@ -16,15 +16,31 @@ class DatabaseService {
     private var repository: AppConfigRepository
 
     init {
-        try {
-            this.dao = AppConfigDao(databaseManager.getDatabasePathString())
-            this.repository = AppConfigRepository(dao)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            // 如果数据库初始化失败，尝试使用临时路径
-            val tempDbPath = System.getProperty("java.io.tmpdir") + "/devlog_temp.db"
-            this.dao = AppConfigDao(tempDbPath)
-            this.repository = AppConfigRepository(dao)
+        var dbPath = databaseManager.getDatabasePathString()
+        var attempts = 0
+        val maxAttempts = 3
+        
+        while (attempts < maxAttempts) {
+            try {
+                this.dao = AppConfigDao(dbPath)
+                this.repository = AppConfigRepository(dao)
+                break // 成功初始化，退出循环
+            } catch (e: Exception) {
+                attempts++
+                e.printStackTrace()
+                if (attempts >= maxAttempts) {
+                    // 如果多次尝试都失败，使用临时路径
+                    System.err.println("All attempts to initialize database failed, using temporary path")
+                    val tempDbPath = System.getProperty("java.io.tmpdir") + "/devlog_temp.db"
+                    this.dao = AppConfigDao(tempDbPath)
+                    this.repository = AppConfigRepository(dao)
+                } else {
+                    // 递增延迟重试
+                    Thread.sleep((100 * attempts).toLong())
+                    // 尝试重新获取数据库路径（可能已切换到临时路径）
+                    dbPath = databaseManager.getDatabasePathString()
+                }
+            }
         }
     }
     private val ioScope = CoroutineScope(Dispatchers.IO)
