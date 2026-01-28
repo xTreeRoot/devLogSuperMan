@@ -16,24 +16,24 @@ class ClipboardMonitorService {
     private val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var isMonitoring = false
     private var lastClipboardContent: String? = null
-    
+
     private val sqlFormatterService = AdvancedSqlFormatterService()
     private val esDslFormatterService = EsDslFormatterService()
-    
+
     /**
      * 开始监控剪贴板
      */
     fun startMonitoring() {
         if (isMonitoring) return
-        
+
         isMonitoring = true
         lastClipboardContent = ClipboardHelper.getTextFromClipboard()
-        
+
         scheduler.scheduleAtFixedRate({
             monitorClipboard()
         }, 0, 1, TimeUnit.SECONDS)
     }
-    
+
     /**
      * 停止监控剪贴板
      */
@@ -44,7 +44,7 @@ class ClipboardMonitorService {
             if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
                 scheduler.shutdownNow()
             }
-        } catch (e: InterruptedException) {
+        } catch (_: InterruptedException) {
             scheduler.shutdownNow()
             Thread.currentThread().interrupt()
         }
@@ -85,7 +85,7 @@ class ClipboardMonitorService {
      */
     private fun monitorClipboard() {
         val currentContent = ClipboardHelper.getTextFromClipboard()
-        
+
         if (currentContent != null && currentContent != lastClipboardContent) {
             // 检查是否为MyBatis SQL格式
             if (sqlFormatterService.detectMybatisFormat(currentContent)) {
@@ -96,7 +96,7 @@ class ClipboardMonitorService {
                 lastClipboardContent = currentContent
                 return
             }
-            
+
             // 检查是否为ES DSL格式
             if (detectEsFormat(currentContent)) {
                 SwingUtilities.invokeLater {
@@ -106,13 +106,13 @@ class ClipboardMonitorService {
                 lastClipboardContent = currentContent
                 return
             }
-            
+
             lastClipboardContent = currentContent
         }
     }
 
 
-    
+
     /**
      * 检查监控状态
      */

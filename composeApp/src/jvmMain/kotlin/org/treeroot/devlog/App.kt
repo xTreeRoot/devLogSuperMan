@@ -1,6 +1,6 @@
 package org.treeroot.devlog
 
-import EditableJSONTextView
+import org.treeroot.devlog.components.EditableJSONTextView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,7 +41,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.SqlEditor
 import org.treeroot.devlog.logic.EsDslViewModel
+import org.treeroot.devlog.logic.SqlFormatterViewModel
+import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.theme.DevLogTheme
+import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable
 fun App() {
@@ -57,8 +61,8 @@ fun App() {
 @Composable
 fun MainApp() {
     var selectedTab by remember { mutableStateOf(0) }
-    val sqlFormatterViewModel = remember { org.treeroot.devlog.logic.SqlFormatterViewModel() }
-    val esDslViewModel = remember { org.treeroot.devlog.logic.EsDslViewModel() }
+    val sqlFormatterViewModel = remember { SqlFormatterViewModel() }
+    val esDslViewModel = remember { EsDslViewModel() }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -123,7 +127,7 @@ fun MainApp() {
 }
 
 @Composable
-fun SqlFormatterPage(viewModel: org.treeroot.devlog.logic.SqlFormatterViewModel) {
+fun SqlFormatterPage(viewModel: SqlFormatterViewModel) {
 
     Column(
         modifier = Modifier
@@ -144,10 +148,10 @@ fun SqlFormatterPage(viewModel: org.treeroot.devlog.logic.SqlFormatterViewModel)
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(
-                onClick = { viewModel.pasteFromClipboard(); viewModel.formatSql() },
+                onClick = { viewModel.pasteFromClipboard(); viewModel.formatSqlWithPrettyStyle() },
                 enabled = !viewModel.isLoading.value,
                 modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -160,9 +164,32 @@ fun SqlFormatterPage(viewModel: org.treeroot.devlog.logic.SqlFormatterViewModel)
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("解析中...")
+                    Text("格式化中...")
                 } else {
                     Text("粘贴并解析")
+                }
+            }
+
+            Button(
+                onClick = { viewModel.pasteFromClipboard(); viewModel.formatSql() },
+                enabled = !viewModel.isLoading.value,
+                modifier = Modifier.height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                )
+            ) {
+                if (viewModel.isLoading.value) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onSecondary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("解析中...")
+                } else {
+                    Text("普通格式化")
                 }
             }
 
@@ -170,7 +197,7 @@ fun SqlFormatterPage(viewModel: org.treeroot.devlog.logic.SqlFormatterViewModel)
                 onClick = { viewModel.copyFormattedSqlToClipboard() },
                 enabled = viewModel.formattedSql.value.isNotEmpty(),
                 modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text("复制")
             }
@@ -187,7 +214,7 @@ fun SqlFormatterPage(viewModel: org.treeroot.devlog.logic.SqlFormatterViewModel)
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
@@ -218,7 +245,6 @@ fun SqlFormatterPage(viewModel: org.treeroot.devlog.logic.SqlFormatterViewModel)
                 color = if (viewModel.isValid.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyLarge
             )
-
             Text(
                 text = "字符数: ${viewModel.originalSql.value.length}",
                 style = MaterialTheme.typography.bodyLarge,
@@ -229,8 +255,7 @@ fun SqlFormatterPage(viewModel: org.treeroot.devlog.logic.SqlFormatterViewModel)
 }
 
 @Composable
-fun EsDslPage(esViewModel: org.treeroot.devlog.logic.EsDslViewModel) {
-
+fun EsDslPage(esViewModel: EsDslViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -253,7 +278,7 @@ fun EsDslPage(esViewModel: org.treeroot.devlog.logic.EsDslViewModel) {
                 onClick = { esViewModel.pasteFromClipboard(); esViewModel.formatDsl() },
                 enabled = !esViewModel.isLoading.value,
                 modifier = Modifier.height(48.dp),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -305,7 +330,7 @@ fun EsDslPage(esViewModel: org.treeroot.devlog.logic.EsDslViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                        .clip(RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
@@ -316,20 +341,13 @@ fun EsDslPage(esViewModel: org.treeroot.devlog.logic.EsDslViewModel) {
                             .fillMaxSize()
                             .padding(12.dp)
                     ) {
-                        if (esViewModel.showDslTree.value) {
-                            org.treeroot.devlog.components.JsonTreeView(
-                                jsonString = esViewModel.formattedDsl.value,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        } else {
-                            EditableJSONTextView(
-                                text = esViewModel.formattedDsl.value,
-                                onValueChange = { newText ->
-                                    esViewModel.updateFormattedDsl(newText)
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
+                        EditableJSONTextView(
+                            text = esViewModel.formattedDsl.value,
+                            onValueChange = { newText ->
+                                esViewModel.updateFormattedDsl(newText)
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
                 }
             }
@@ -350,7 +368,7 @@ fun EsDslPage(esViewModel: org.treeroot.devlog.logic.EsDslViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                        .clip(RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
@@ -361,20 +379,13 @@ fun EsDslPage(esViewModel: org.treeroot.devlog.logic.EsDslViewModel) {
                             .fillMaxSize()
                             .padding(12.dp)
                     ) {
-                        if (esViewModel.showResultTree.value) {
-                            org.treeroot.devlog.components.JsonTreeView(
-                                jsonString = esViewModel.formattedResponse.value,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        } else {
-                            EditableJSONTextView(
-                                text = esViewModel.formattedResponse.value,
-                                onValueChange = { newText ->
-                                    esViewModel.updateFormattedResponse(newText)
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
+                        EditableJSONTextView(
+                            text = esViewModel.formattedResponse.value,
+                            onValueChange = { newText ->
+                                esViewModel.updateFormattedResponse(newText)
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
                 }
             }
@@ -397,7 +408,7 @@ fun EsDslPage(esViewModel: org.treeroot.devlog.logic.EsDslViewModel) {
 
 @Composable
 fun SettingsPage() {
-    val clipboardMonitorService = remember { org.treeroot.devlog.service.ClipboardMonitorService() }
+    val clipboardMonitorService = remember { ClipboardMonitorService() }
     var enableSilentMode by remember { mutableStateOf(clipboardMonitorService.isMonitoring()) }
     var backgroundOpacity by remember { mutableStateOf(1f) }
 
@@ -425,7 +436,7 @@ fun SettingsPage() {
         // 静默模式设置
         Card(
             modifier = Modifier.fillMaxWidth()
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
@@ -465,7 +476,7 @@ fun SettingsPage() {
         // 透明度设置
         Card(
             modifier = Modifier.fillMaxWidth()
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
@@ -501,7 +512,7 @@ fun SettingsPage() {
         // 背景图片设置
         Card(
             modifier = Modifier.fillMaxWidth()
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
@@ -519,7 +530,7 @@ fun SettingsPage() {
                 Button(
                     onClick = {
                         val fileChooser = javax.swing.JFileChooser()
-                        fileChooser.fileFilter = javax.swing.filechooser.FileNameExtensionFilter(
+                        fileChooser.fileFilter = FileNameExtensionFilter(
                             "图片文件", "jpg", "jpeg", "png", "gif", "bmp"
                         )
                         val result = fileChooser.showOpenDialog(null)
@@ -530,7 +541,7 @@ fun SettingsPage() {
                     },
                     modifier = Modifier.fillMaxWidth()
                         .height(48.dp),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary

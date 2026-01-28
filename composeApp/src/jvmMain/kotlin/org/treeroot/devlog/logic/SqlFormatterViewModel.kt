@@ -74,6 +74,36 @@ class SqlFormatterViewModel {
     }
     
     /**
+     * 使用MySQL Pretty格式化SQL
+     */
+    fun formatSqlWithPrettyStyle() {
+        if (_isLoading.value) return // 防止重复点击
+            
+        CoroutineScope(Dispatchers.Default).launch {
+            _isLoading.value = true
+            _errorMessage.value = ""
+                
+            try {
+                val result = formatterService.formatSqlWithPrettyStyle(_originalSql.value)
+                    
+                val isValid = formatterService.validateSql(result)
+                    
+                _formattedSql.value = result
+                _isValid.value = isValid
+                    
+                if (!isValid && result != _originalSql.value) {
+                    _errorMessage.value = "SQL语法可能存在问题，请检查括号匹配等"
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = $$"格式化过程中出现错误: ${e.message}"
+                _isValid.value = false
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+    
+    /**
      * 清空所有内容
      */
     fun clearAll() {

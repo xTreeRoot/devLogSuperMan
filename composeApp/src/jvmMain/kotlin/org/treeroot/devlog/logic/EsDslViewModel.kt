@@ -12,44 +12,44 @@ import org.treeroot.devlog.util.ClipboardHelper
  * 管理ES DSL相关的UI状态和业务逻辑
  */
 class EsDslViewModel {
-    
+
     private val esDslService = EsDslFormatterService()
-    
+
     // UI状态
     private val _originalDsl = mutableStateOf("")
     val originalDsl: State<String> = _originalDsl
-    
+
     private val _formattedDsl = mutableStateOf("")
     val formattedDsl: State<String> = _formattedDsl
-    
+
     private val _formattedResponse = mutableStateOf("")
     val formattedResponse: State<String> = _formattedResponse
-    
+
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
-    
+
     private val _showDslTree = mutableStateOf(false)
     val showDslTree: State<Boolean> = _showDslTree
-    
+
     private val _showResultTree = mutableStateOf(false)
     val showResultTree: State<Boolean> = _showResultTree
-    
+
     /**
      * 更新原始ES DSL
      */
     fun updateOriginalDsl(dsl: String) {
         _originalDsl.value = dsl
     }
-    
+
     /**
      * 格式化ES DSL
      */
     fun formatDsl() {
         if (_isLoading.value) return // 防止重复点击
-        
+
         CoroutineScope(Dispatchers.Default).launch {
             _isLoading.value = true
-            
+
             try {
                 val (dsl, response) = esDslService.separateDslAndResponse(_originalDsl.value)
                 _formattedDsl.value = dsl
@@ -72,7 +72,7 @@ class EsDslViewModel {
 
     /**
      * 更新格式化后的 DSL 内容
-     * 用户在 EditableJSONTextView 编辑 DSL 时调用
+     * 用户在 org.treeroot.devlog.components.EditableJSONTextView 编辑 DSL 时调用
      */
     fun updateFormattedDsl(newText: String) {
         _formattedDsl.value = newText
@@ -80,7 +80,7 @@ class EsDslViewModel {
         _originalDsl.value = newText
     }
 
-    
+
     /**
      * 清空所有内容
      */
@@ -88,7 +88,7 @@ class EsDslViewModel {
         _originalDsl.value = ""
         _formattedDsl.value = ""
     }
-    
+
     /**
      * 复制格式化后的ES DSL到剪贴板
      */
@@ -97,7 +97,7 @@ class EsDslViewModel {
             ClipboardHelper.copyToClipboard(_formattedDsl.value)
         }
     }
-    
+
     /**
      * 从剪贴板粘贴ES DSL到原始输入框
      */
@@ -107,11 +107,11 @@ class EsDslViewModel {
             _originalDsl.value = clipboardText
         }
     }
-    
+
     fun toggleDslTree() {
         _showDslTree.value = !_showDslTree.value
     }
-    
+
     fun toggleResultTree() {
         _showResultTree.value = !_showResultTree.value
     }

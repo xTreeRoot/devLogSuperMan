@@ -1,11 +1,7 @@
 package org.treeroot.devlog.logic
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
-import com.google.gson.JsonSyntaxException
-import com.google.gson.stream.JsonWriter
-import java.io.StringWriter
 
 class EsDslFormatterService {
 
@@ -16,7 +12,7 @@ class EsDslFormatterService {
         return try {
             val jsonElement = JsonParser.parseString(jsonString)
             gsonPretty.toJson(jsonElement) //
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             jsonString
         }
     }
@@ -27,12 +23,6 @@ class EsDslFormatterService {
         return if (extracted.isNotBlank()) formatJson(extracted) else formatJson(text)
     }
 
-    /** 格式化日志，返回Pair<DSL, Response> */
-    fun formatEsLog(logText: String): Pair<String, String> {
-        if (logText.isBlank()) return Pair("", "")
-        val (query, response) = separateDslAndResponse(logText)
-        return Pair(formatJson(query), formatJson(response))
-    }
 
     /** 从文本中提取JSON（首个JSON对象） */
     fun extractJsonFromText(text: String): String {
@@ -69,7 +59,7 @@ class EsDslFormatterService {
     /** 检查字符串是否有效JSON */
     private fun isValidJson(jsonString: String): Boolean {
         if (jsonString.isBlank()) return false
-        return try { JsonParser.parseString(jsonString); true } catch (e: Exception) { false }
+        return try { JsonParser.parseString(jsonString); true } catch (_: Exception) { false }
     }
 
     /** 分离DSL和响应 */
@@ -84,7 +74,7 @@ class EsDslFormatterService {
                     Pair(queryJson, responseJson)
                 }
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             val formatted = formatJson(text)
             if (isEsQuery(formatted)) Pair(formatted, "") else Pair("", formatted)
         }
