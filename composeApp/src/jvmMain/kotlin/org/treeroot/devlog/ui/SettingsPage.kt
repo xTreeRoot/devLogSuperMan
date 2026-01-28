@@ -14,9 +14,6 @@ import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.DatabaseService
 import org.treeroot.devlog.state.AppStateManager
 import org.treeroot.devlog.util.ColorUtils
-import java.awt.FileDialog
-import java.io.File
-import java.util.Locale.getDefault
 
 @Composable
 fun SettingsPage(config: UiConfig? = null) {

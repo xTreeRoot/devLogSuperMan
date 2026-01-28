@@ -3,15 +3,14 @@ package org.treeroot.devlog.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.EditableJSONTextView
-import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.logic.EsDslViewModel
+import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.util.ColorUtils
 
 @Composable
