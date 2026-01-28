@@ -18,6 +18,7 @@ kotlin {
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
             implementation("ch.qos.logback:logback-classic:1.4.11")
+            implementation("ai.z.openapi:zai-sdk:0.3.0")
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -29,6 +30,10 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation("com.google.code.gson:gson:2.10.1")
+            // 添加Jackson YAML处理依赖
+            implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+            implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
+            implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
         }
     }
 }

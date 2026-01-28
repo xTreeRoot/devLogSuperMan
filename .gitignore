@@ -82,7 +82,11 @@ ktor_http_trace.log
 
 # System junk files
 .DS_Store?
-._*
+.*_
 .Spotlight-V100
 .Trashes
 ehthumbs.db
+
+# Personal configuration files
+config.yaml
+config.yml

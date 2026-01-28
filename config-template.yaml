@@ -1,0 +1,33 @@
+# AI配置
+ai:
+  # 智谱AI配置
+  zhipu:
+    api_key: ""  # 请在此处填入您的智谱AI API密钥
+    default_model: "glm-4.7-flash"
+    max_tokens: 65536
+    temperature: 1.0
+  
+  # 其他AI提供商配置（预留）
+  openai:
+    api_key: ""  # 请在此处填入您的OpenAI API密钥
+    default_model: "gpt-4"
+  
+  qwen:
+    api_key: ""  # 请在此处填入您的通义千问API密钥
+    default_model: "qwen-max"
+
+# 应用配置
+app:
+  name: "DevLog SuperMan"
+  version: "1.0.0"
+  debug: true
+
+# 数据库配置（如果需要）
+database:
+  url: ""
+  username: ""
+  password: ""
+
+# 日志配置
+logging:
+  level: "INFO"
