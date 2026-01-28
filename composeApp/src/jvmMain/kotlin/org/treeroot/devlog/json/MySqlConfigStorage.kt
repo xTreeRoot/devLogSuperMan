@@ -1,5 +1,6 @@
 package org.treeroot.devlog.json
 
+import com.google.gson.reflect.TypeToken
 import org.treeroot.devlog.mysql.MySqlConfigInfo
 
 /**
@@ -7,14 +8,30 @@ import org.treeroot.devlog.mysql.MySqlConfigInfo
  * 专门用于存储MySQL连接配置列表
  */
 class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.json") {
-    
+
+    /**
+     * 获取泛型列表类型，用于Gson反序列化
+     */
+    override fun getListType(): java.lang.reflect.Type {
+        return object : TypeToken<List<MySqlConfigInfo>>() {}.type
+    }
+
+
+
     /**
      * 加载MySQL配置列表
      */
     fun loadMySqlConfigs(): List<MySqlConfigInfo> {
         return loadConfig()
     }
-    
+
+    /**
+     * 删除所有MySQL配置
+     */
+    fun deleteAllMysqlConfigs(){
+        loadMySqlConfigs().forEach { config -> deleteMySqlConfig(config.id) }
+    }
+
     /**
      * 添加单个MySQL配置
      */
@@ -28,7 +45,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
         saveConfig(configs)
         return configs
     }
-    
+
     /**
      * 更新单个MySQL配置
      */
@@ -40,16 +57,16 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
                 existingConfig
             }
         }.toMutableList()
-        
+
         // 如果配置不存在，则添加新配置
         if (!configs.any { it.id == config.id }) {
             configs.add(config)
         }
-        
+
         saveConfig(configs)
         return configs
     }
-    
+
     /**
      * 删除MySQL配置
      */
@@ -58,7 +75,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
         saveConfig(configs)
         return configs
     }
-    
+
     /**
      * 根据ID获取MySQL配置
      */
@@ -66,7 +83,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
         val configs = loadMySqlConfigs()
         return configs.find { it.id == id }
     }
-    
+
     /**
      * 设置默认MySQL配置
      */
@@ -81,7 +98,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
         saveConfig(configs)
         return configs
     }
-    
+
     /**
      * 检查MySQL配置文件是否存在
      */

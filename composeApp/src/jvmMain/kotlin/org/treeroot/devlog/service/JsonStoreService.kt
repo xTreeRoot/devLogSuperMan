@@ -66,6 +66,9 @@ class JsonStoreService {
     fun deleteMySqlConfig(id: String) {
         mySqlConfigStorage.deleteMySqlConfig(id)
     }
+    fun deleteAllMysqlConfigs() {
+        mySqlConfigStorage.deleteAllMysqlConfigs()
+    }
 
     /**
      * 设置默认MySQL配置

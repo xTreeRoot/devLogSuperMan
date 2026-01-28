@@ -15,7 +15,7 @@ abstract class ListConfigStorage<T>(configFileName: String) : BaseConfigStorage<
         return try {
             if (configFile.exists() && configFile.length() > 0) {
                 val jsonContent = configFile.readText()
-                val listType = object : TypeToken<List<T>>() {}.type
+                val listType = getListType()
                 val configs = gson.fromJson<List<T>>(jsonContent, listType)
 
                 // 如果解析失败，返回空列表
@@ -32,8 +32,15 @@ abstract class ListConfigStorage<T>(configFileName: String) : BaseConfigStorage<
         }
     }
 
+    /**
+     * 获取泛型列表类型，用于Gson反序列化
+     */
+    protected abstract fun getListType(): java.lang.reflect.Type
+
     override fun getConfigClass(): Class<List<T>> {
         @Suppress("UNCHECKED_CAST")
         return List::class.java as Class<List<T>>
     }
+
+
 }
