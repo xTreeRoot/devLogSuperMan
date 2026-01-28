@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.DevLog
-import org.treeroot.devlog.util.ColorUtils
 import org.treeroot.devlog.logic.EsDslViewModel
 import org.treeroot.devlog.logic.SqlFormatterViewModel
 import org.treeroot.devlog.model.UiConfig
@@ -60,9 +59,9 @@ fun MainApp() {
             // 标签页选择器
             SecondaryTabRow(
                 selectedTabIndex = selectedTab,
-                modifier = Modifier.padding(horizontal = 20.dp),
-                containerColor = ColorUtils.getContainerBackgroundColor(config),
-                contentColor =  Color.White,
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = if (config.backgroundImagePath.isNotEmpty()) Color.Transparent else MaterialTheme.colorScheme.surface,
+                contentColor = if (config.backgroundImagePath.isNotEmpty()) Color.White else MaterialTheme.colorScheme.onSurface,
                 divider = {}
             ) {
                 Tab(
@@ -138,14 +137,12 @@ private fun BackgroundLayer(config: UiConfig) {
                 )
             }
         }
-    }
-    else {
+    } else {
         DevLog.info("没有背景图片")
-        // 如果没有背景图片，使用半透明黑色覆盖层
+        // 如果没有背景图片，使用 surface 颜色作为背景
         Spacer(
             modifier = Modifier.fillMaxSize()
-                .background( Color.White)
+                .background(Color(0xFFF5F5F5))
         )
-
     }
 }

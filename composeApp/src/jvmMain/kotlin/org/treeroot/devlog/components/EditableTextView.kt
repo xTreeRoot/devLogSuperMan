@@ -50,7 +50,7 @@ fun EditableJSONTextView(
 
     Box(
         modifier = modifier
-            .background(ColorUtils.getComponentBackgroundColor(config))
+            .background(ColorUtils.getContainerBackgroundColor(config))
             .padding(8.dp)
     ) {
         BasicTextField(
@@ -65,7 +65,7 @@ fun EditableJSONTextView(
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .background(ColorUtils.getComponentBackgroundColor(config))
+                .background(ColorUtils.getContainerBackgroundColor(config))
                 .verticalScroll(scrollState),
             singleLine = false
         )

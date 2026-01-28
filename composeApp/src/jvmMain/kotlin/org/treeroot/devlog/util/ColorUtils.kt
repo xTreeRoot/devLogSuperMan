@@ -50,27 +50,14 @@ object ColorUtils {
 
     /**
      * 根据配置决定容器背景色
-     * 如果有背景图片则透明，否则使用 surface 颜色
+     * 如果有背景图片则透明，否则使用 onSurface 颜色
      */
     @Composable
     fun getContainerBackgroundColor(config: UiConfig?): Color {
         return if (config?.backgroundImagePath?.isNotEmpty() == true) {
             Color.Transparent
         } else {
-            MaterialTheme.colorScheme.surface
-        }
-    }
-
-    /**
-     * 根据配置决定组件背景色
-     * 如果有背景图片则透明，否则使用 surface 颜色以保证可读性
-     */
-    @Composable
-    fun getComponentBackgroundColor(config: UiConfig?): Color {
-        return if (config?.backgroundImagePath?.isNotEmpty() == true) {
-            Color.Transparent
-        } else {
-            MaterialTheme.colorScheme.surface
+            Color.White
         }
     }
 }

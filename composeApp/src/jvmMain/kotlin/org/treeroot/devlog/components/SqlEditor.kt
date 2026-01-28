@@ -36,7 +36,7 @@ fun SqlEditor(
 
     Box(
         modifier = modifier
-            .background(ColorUtils.getComponentBackgroundColor(config))
+            .background(ColorUtils.getContainerBackgroundColor(config))
             .padding(8.dp)
     ) {
         BasicTextField(
@@ -52,7 +52,7 @@ fun SqlEditor(
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .background(ColorUtils.getComponentBackgroundColor(config))
+                .background(ColorUtils.getContainerBackgroundColor(config))
                 .verticalScroll(rememberScrollState()),
             singleLine = false
         )
