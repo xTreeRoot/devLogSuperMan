@@ -5,20 +5,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontFamily
+import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.logic.EsDslFormatterService
+import org.treeroot.devlog.util.ColorUtils
 
 @Composable
 fun EditableJSONTextView(
     text: String,
     modifier: Modifier = Modifier,
-    onValueChange: (String) -> Unit = {}
+    onValueChange: (String) -> Unit = {},
+    config: UiConfig? = null
 ) {
     val esDslFormatter = remember { EsDslFormatterService() }
     val scrollState = rememberScrollState()
@@ -41,9 +43,12 @@ fun EditableJSONTextView(
         }
     }
 
+    // 获取动态颜色
+    val dynamicColors = ColorUtils.getDynamicColors(config)
+
     Box(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
+            .background(dynamicColors.backgroundColor)
             .padding(8.dp)
     ) {
         BasicTextField(
@@ -54,7 +59,7 @@ fun EditableJSONTextView(
             },
             textStyle = TextStyle(
                 fontFamily = FontFamily.Monospace,
-                color = MaterialTheme.colorScheme.onSurface
+                color = dynamicColors.textColor
             ),
             modifier = Modifier
                 .fillMaxSize()

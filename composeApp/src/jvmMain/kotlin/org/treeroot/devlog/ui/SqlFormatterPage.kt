@@ -12,8 +12,11 @@ import org.treeroot.devlog.components.SqlEditor
 import org.treeroot.devlog.logic.SqlFormatterViewModel
 
 @Composable
-fun SqlFormatterPage(viewModel: SqlFormatterViewModel) {
-
+fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: org.treeroot.devlog.model.UiConfig? = null) {
+    
+    // 获取动态颜色
+    val dynamicColors = org.treeroot.devlog.util.ColorUtils.getDynamicColors(config)
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -24,7 +27,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel) {
         Text(
             text = "MyBatis SQL Formatter",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
+            color = dynamicColors.primaryColor
         )
 
         // 按钮区域
@@ -92,7 +95,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel) {
         Text(
             text = "格式化后SQL:",
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = dynamicColors.textColor
         )
 
         Card(
@@ -113,6 +116,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel) {
                 SqlEditor(
                     value = viewModel.formattedSql.value,
                     onValueChange = { /* 不允许直接编辑格式化后的SQL */ },
+                    config = config,
                     modifier = Modifier.fillMaxSize()
                 )
 
@@ -127,13 +131,13 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel) {
         ) {
             Text(
                 text = if (viewModel.isValid.value) "✓ SQL语法正常" else "⚠ SQL可能存在语法问题",
-                color = if (viewModel.isValid.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                color = if (viewModel.isValid.value) dynamicColors.primaryColor else dynamicColors.errorColor,
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
                 text = "字符数: ${viewModel.originalSql.value.length}",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = dynamicColors.textVariantColor
             )
         }
     }

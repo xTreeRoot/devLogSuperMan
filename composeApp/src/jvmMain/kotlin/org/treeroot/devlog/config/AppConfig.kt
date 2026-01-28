@@ -3,6 +3,7 @@ package org.treeroot.devlog.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import org.treeroot.devlog.model.UiConfig
 import java.io.File
 
 /**
@@ -13,7 +14,8 @@ data class AppConfig(
     val ai: AiConfig = AiConfig(),
     val app: AppInfo = AppInfo(),
     val database: DatabaseConfig = DatabaseConfig(),
-    val logging: LoggingConfig = LoggingConfig()
+    val logging: LoggingConfig = LoggingConfig(),
+    val ui: UiConfig = UiConfig()
 )
 
 data class AiConfig(
@@ -74,7 +76,7 @@ class ConfigManager {
     fun loadConfig(configPath: String = "config.yaml"): AppConfig {
         // 首先尝试在项目根目录查找配置文件
         val configFile = File(configPath)
-        
+
         if (configFile.exists()) {
             try {
                 config = objectMapper.readValue(configFile, AppConfig::class.java)
@@ -98,7 +100,7 @@ class ConfigManager {
                 }
             }
         }
-        
+
         // 如果配置文件不存在，返回默认配置
         println("配置文件 $configPath 不存在，使用默认配置")
         return AppConfig()

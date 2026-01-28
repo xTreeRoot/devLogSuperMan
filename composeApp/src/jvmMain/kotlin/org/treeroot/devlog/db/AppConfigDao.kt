@@ -1,6 +1,6 @@
 package org.treeroot.devlog.db
 
-import org.treeroot.devlog.model.AppConfig
+import org.treeroot.devlog.model.UiConfig
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -37,7 +37,7 @@ class AppConfigDao(private val databasePath: String) {
         }
     }
 
-    fun getConfig(): AppConfig {
+    fun getConfig(): UiConfig {
         val connection = getConnection()
         try {
             val statement = connection.prepareStatement("SELECT * FROM app_config WHERE id = ?")
@@ -45,7 +45,7 @@ class AppConfigDao(private val databasePath: String) {
             val resultSet = statement.executeQuery()
 
             return if (resultSet.next()) {
-                AppConfig(
+                UiConfig(
                     id = resultSet.getLong("id"),
                     backgroundImagePath = resultSet.getString("background_image_path") ?: "",
                     backgroundOpacity = resultSet.getDouble("background_opacity").toFloat(),
@@ -53,17 +53,17 @@ class AppConfigDao(private val databasePath: String) {
                 )
             } else {
                 // 如果没有记录，返回默认配置
-                AppConfig()
+                UiConfig()
             }
         } catch (e: SQLException) {
             e.printStackTrace()
-            return AppConfig() // 返回默认配置
+            return UiConfig() // 返回默认配置
         } finally {
             connection.close()
         }
     }
 
-    fun saveConfig(config: AppConfig) {
+    fun saveConfig(config: UiConfig) {
         val connection = getConnection()
         try {
             val statement = connection.prepareStatement(

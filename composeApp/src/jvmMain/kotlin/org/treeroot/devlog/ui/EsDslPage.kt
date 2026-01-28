@@ -9,10 +9,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.EditableJSONTextView
+import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.logic.EsDslViewModel
+import org.treeroot.devlog.util.ColorUtils
 
 @Composable
-fun EsDslPage(esViewModel: EsDslViewModel) {
+fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
+
+    // 获取动态颜色
+    val dynamicColors = ColorUtils.getDynamicColors(config)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -23,7 +29,7 @@ fun EsDslPage(esViewModel: EsDslViewModel) {
         Text(
             text = "ES DSL 处理器",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
+            color = dynamicColors.primaryColor
         )
 
         // 按钮区域
@@ -80,7 +86,7 @@ fun EsDslPage(esViewModel: EsDslViewModel) {
                 Text(
                     text = "DSL 查询:",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = dynamicColors.textColor
                 )
 
                 Card(
@@ -103,6 +109,7 @@ fun EsDslPage(esViewModel: EsDslViewModel) {
                             onValueChange = { newText ->
                                 esViewModel.updateFormattedDsl(newText)
                             },
+                            config = config,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -118,7 +125,7 @@ fun EsDslPage(esViewModel: EsDslViewModel) {
                 Text(
                     text = "解析后结果:",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = dynamicColors.textColor
                 )
 
                 Card(
@@ -141,6 +148,7 @@ fun EsDslPage(esViewModel: EsDslViewModel) {
                             onValueChange = { newText ->
                                 esViewModel.updateFormattedResponse(newText)
                             },
+                            config = config,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -157,7 +165,7 @@ fun EsDslPage(esViewModel: EsDslViewModel) {
             Text(
                 text = "字符数: ${esViewModel.originalDsl.value.length}",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = dynamicColors.textVariantColor
             )
         }
     }

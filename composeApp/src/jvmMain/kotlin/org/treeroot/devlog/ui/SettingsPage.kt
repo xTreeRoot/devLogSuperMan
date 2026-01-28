@@ -8,28 +8,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.DatabaseService
-import org.treeroot.devlog.model.AppConfig
 import org.treeroot.devlog.state.AppStateManager
 import java.io.File
 import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable
-fun SettingsPage() {
+fun SettingsPage(config: UiConfig? = null) {
     val clipboardMonitorService = remember { ClipboardMonitorService() }
     val databaseService = remember { DatabaseService() }
-    
+
     // 从数据库中加载初始值
     val initialConfig = remember { databaseService.loadConfig() }
-    
+
     var enableSilentMode by remember { mutableStateOf(initialConfig.enableClipboardMonitor) }
     var backgroundOpacity by remember { mutableStateOf(initialConfig.backgroundOpacity) }
     var backgroundImagePath by remember { mutableStateOf(initialConfig.backgroundImagePath) }
-    
+
+    // 获取当前配置，优先使用传入的参数
+    val currentConfig = config ?: initialConfig
+
+    // 获取动态颜色
+    val dynamicColors = org.treeroot.devlog.util.ColorUtils.getDynamicColors(currentConfig)
+
     // 更新数据库和状态管理器
     LaunchedEffect(enableSilentMode, backgroundOpacity, backgroundImagePath) {
-        val newConfig = AppConfig(
+        val newConfig = UiConfig(
             backgroundImagePath = backgroundImagePath,
             backgroundOpacity = backgroundOpacity,
             enableClipboardMonitor = enableSilentMode
@@ -56,7 +62,7 @@ fun SettingsPage() {
         Text(
             text = "设置",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
+            color = dynamicColors.primaryColor
         )
 
         // 静默模式设置
@@ -74,7 +80,7 @@ fun SettingsPage() {
                 Text(
                     text = "静默模式",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = dynamicColors.textColor
                 )
 
                 Row(
@@ -85,7 +91,7 @@ fun SettingsPage() {
                     Text(
                         "启用自动剪贴板监控",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = dynamicColors.textVariantColor
                     )
                     Switch(
                         checked = enableSilentMode,
@@ -114,13 +120,13 @@ fun SettingsPage() {
                 Text(
                     text = "界面透明度",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = dynamicColors.textColor
                 )
 
                 Text(
                     "背景透明度: ${(backgroundOpacity * 100).toInt()}%",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = dynamicColors.textVariantColor
                 )
                 Slider(
                     value = backgroundOpacity,
@@ -150,7 +156,7 @@ fun SettingsPage() {
                 Text(
                     text = "背景图片",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = dynamicColors.textColor
                 )
 
                 Row(
@@ -167,8 +173,8 @@ fun SettingsPage() {
                             if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
                                 val selectedFilePath = fileChooser.selectedFile.absolutePath
                                 backgroundImagePath = selectedFilePath
-                                
-                                val newConfig = AppConfig(
+
+                                val newConfig = UiConfig(
                                     backgroundImagePath = selectedFilePath,
                                     backgroundOpacity = backgroundOpacity,
                                     enableClipboardMonitor = enableSilentMode
@@ -187,13 +193,12 @@ fun SettingsPage() {
                     ) {
                         Text(if (backgroundImagePath.isEmpty()) "选择背景图片" else "更改背景图片")
                     }
-                    
+
                     OutlinedButton(
                         onClick = {
                             // 恢复默认 - 清除背景图片
                             backgroundImagePath = ""
-                            
-                            val newConfig = AppConfig(
+                            val newConfig = UiConfig(
                                 backgroundImagePath = "",
                                 backgroundOpacity = backgroundOpacity,
                                 enableClipboardMonitor = enableSilentMode
@@ -208,7 +213,7 @@ fun SettingsPage() {
                         Text("恢复默认")
                     }
                 }
-                
+
                 // 显示当前选择的图片路径
                 if (backgroundImagePath.isNotEmpty()) {
                     val file = File(backgroundImagePath)
@@ -216,14 +221,14 @@ fun SettingsPage() {
                         Text(
                             text = "已选择: ${file.name}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = dynamicColors.textVariantColor,
                             modifier = Modifier.padding(top = 8.dp)
                         )
                     } else {
                         Text(
                             text = "图片文件不存在，请重新选择",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
+                            color = dynamicColors.errorColor,
                             modifier = Modifier.padding(top = 8.dp)
                         )
                         // 重置路径

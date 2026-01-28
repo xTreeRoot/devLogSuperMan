@@ -15,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.logic.EsDslViewModel
 import org.treeroot.devlog.logic.SqlFormatterViewModel
+import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.service.DatabaseService
 import org.treeroot.devlog.state.AppStateManager
 import org.treeroot.devlog.util.ImageUtils
@@ -58,8 +59,14 @@ fun MainApp() {
             SecondaryTabRow(
                 selectedTabIndex = selectedTab,
                 modifier = Modifier.padding(horizontal = 20.dp),
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = Color.Transparent,
+                contentColor = if (config.backgroundImagePath.isNotEmpty()) {
+                    // 如果有背景图片，使用白色文字以提高对比度
+                    Color.White
+                } else {
+                    // 如果没有背景图片，使用主题颜色
+                    MaterialTheme.colorScheme.onSurface
+                },
                 divider = {}
             ) {
                 Tab(
@@ -105,9 +112,9 @@ fun MainApp() {
                 modifier = Modifier.weight(1f)
             ) {
                 when (selectedTab) {
-                    0 -> SqlFormatterPage(viewModel = sqlFormatterViewModel)
-                    1 -> EsDslPage(esViewModel = esDslViewModel)
-                    2 -> SettingsPage()
+                    0 -> SqlFormatterPage(viewModel = sqlFormatterViewModel, config = config)
+                    1 -> EsDslPage(esViewModel = esDslViewModel, config = config)
+                    2 -> SettingsPage(config = config)
                 }
             }
         }
@@ -118,12 +125,12 @@ fun MainApp() {
  * 背景层 - 独立的可组合函数，避免标签页切换时重组
  */
 @Composable
-private fun BackgroundLayer(config: org.treeroot.devlog.model.AppConfig) {
+private fun BackgroundLayer(config: UiConfig) {
     // 如果设置了背景图片，则显示背景图片
     if (config.backgroundImagePath.isNotEmpty()) {
         if (ImageUtils.isValidImageFile(config.backgroundImagePath)) {
-            val imageBitmap = remember(config.backgroundImagePath) { 
-                ImageUtils.loadImageBitmap(config.backgroundImagePath) 
+            val imageBitmap = remember(config.backgroundImagePath) {
+                ImageUtils.loadImageBitmap(config.backgroundImagePath)
             }
             if (imageBitmap != null) {
                 Image(

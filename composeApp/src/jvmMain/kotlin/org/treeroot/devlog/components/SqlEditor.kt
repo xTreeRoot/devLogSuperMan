@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -19,6 +18,7 @@ import androidx.compose.ui.unit.sp
 fun SqlEditor(
     value: String,
     onValueChange: (String) -> Unit,
+    config: org.treeroot.devlog.model.UiConfig? = null,
     modifier: Modifier = Modifier
 ) {
     val state = remember { mutableStateOf(TextFieldValue(value)) }
@@ -28,9 +28,12 @@ fun SqlEditor(
         state.value = TextFieldValue(value, selection = state.value.selection)
     }
 
+    // 获取动态颜色
+    val dynamicColors = org.treeroot.devlog.util.ColorUtils.getDynamicColors(config)
+
     Box(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
+            .background(dynamicColors.backgroundColor)
             .padding(8.dp)
     ) {
         BasicTextField(
@@ -41,7 +44,7 @@ fun SqlEditor(
             },
             textStyle = TextStyle(
                 fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = dynamicColors.textColor,
                 fontFamily = FontFamily.Monospace
             ),
             modifier = Modifier
