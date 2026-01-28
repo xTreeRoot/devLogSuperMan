@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import org.treeroot.devlog.DevLog
+import org.treeroot.devlog.util.ColorUtils
 import org.treeroot.devlog.logic.EsDslViewModel
 import org.treeroot.devlog.logic.SqlFormatterViewModel
 import org.treeroot.devlog.model.UiConfig
@@ -59,14 +61,8 @@ fun MainApp() {
             SecondaryTabRow(
                 selectedTabIndex = selectedTab,
                 modifier = Modifier.padding(horizontal = 20.dp),
-                containerColor = Color.Transparent,
-                contentColor = if (config.backgroundImagePath.isNotEmpty()) {
-                    // 如果有背景图片，使用白色文字以提高对比度
-                    Color.White
-                } else {
-                    // 如果没有背景图片，使用主题颜色
-                    MaterialTheme.colorScheme.onSurface
-                },
+                containerColor = ColorUtils.getComponentBackgroundColor(config),
+                contentColor =  Color.White,
                 divider = {}
             ) {
                 Tab(
@@ -142,17 +138,14 @@ private fun BackgroundLayer(config: UiConfig) {
                 )
             }
         }
-    } else {
+    }
+    else {
+        DevLog.info("没有背景图片")
         // 如果没有背景图片，使用半透明黑色覆盖层
         Spacer(
             modifier = Modifier.fillMaxSize()
-                .background(Color.Black.copy(alpha = (1f - config.backgroundOpacity).coerceIn(0f, 0.5f)))
+                .background( Color.White)
         )
-    }
 
-    // 半透明覆盖层确保内容可读性
-    Spacer(
-        modifier = Modifier.fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.1f))
-    )
+    }
 }

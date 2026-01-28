@@ -106,7 +106,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: org.treeroot.devl
                 .weight(1f)
                 .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
-                containerColor = Color.Transparent
+                containerColor = ColorUtils.getComponentBackgroundColor(config)
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {

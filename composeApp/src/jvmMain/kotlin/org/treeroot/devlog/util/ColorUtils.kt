@@ -47,4 +47,18 @@ object ColorUtils {
             }
         )
     }
+
+
+    /**
+     * 根据配置决定组件背景色
+     * 如果有背景图片则透明，否则使用白色以保证可读性
+     */
+    @Composable
+    fun getComponentBackgroundColor(config: UiConfig?): Color {
+        return if (config?.backgroundImagePath?.isNotEmpty() == true) {
+            Color.Transparent
+        } else {
+            MaterialTheme.colorScheme.surface
+        }
+    }
 }

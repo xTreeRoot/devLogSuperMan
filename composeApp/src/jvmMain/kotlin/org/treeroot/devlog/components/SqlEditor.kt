@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +36,7 @@ fun SqlEditor(
 
     Box(
         modifier = modifier
-            .background(Color.Transparent)
+            .background(ColorUtils.getComponentBackgroundColor(config))
             .padding(8.dp)
     ) {
         BasicTextField(
@@ -51,7 +52,7 @@ fun SqlEditor(
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Transparent)
+                .background(ColorUtils.getComponentBackgroundColor(config))
                 .verticalScroll(rememberScrollState()),
             singleLine = false
         )
