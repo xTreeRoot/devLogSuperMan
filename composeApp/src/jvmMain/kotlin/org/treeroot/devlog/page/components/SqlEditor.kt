@@ -6,21 +6,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.treeroot.devlog.json.model.UiConfig
@@ -38,7 +35,7 @@ fun SqlEditor(
     val state = remember { mutableStateOf(TextFieldValue(value)) }
 
     // 右键菜单状态
-    var showContextMenu by remember { mutableStateOf(false) }
+    val showContextMenu = remember { mutableStateOf(false) }
     var contextMenuPosition by remember { mutableStateOf(Offset.Zero) }
 
     // 选中的SQL文本
@@ -63,25 +60,23 @@ fun SqlEditor(
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
-                        // 检测释放事件
-                        if (event.type == PointerEventType.Release) {
-                            //  判断是否是右键释放
-                            if (event.buttons.isSecondaryPressed) {
-                                val change = event.changes.first()
-                                // 获取选中文本
-                                val selectionStart = state.value.selection.min
-                                val selectionEnd = state.value.selection.max
-                                selectedSql =
-                                    if (selectionStart != selectionEnd) {
-                                        state.value.text.substring(selectionStart, selectionEnd)
-                                    } else {
-                                        state.value.text
-                                    }
 
-                                contextMenuPosition = change.position
-                                showContextMenu = true
+                        // 只处理“右键按下”的瞬间
+                        if (event.buttons.isSecondaryPressed) {
+                            // 查找是否有指针刚刚按下（previousPressed = false, pressed = true）
+                            val rightClickPress = event.changes.firstOrNull { change ->
+                                !change.previousPressed && change.pressed
+                            }
+                            if (rightClickPress != null) {
+                                showContextMenu.value = false // 先关闭
+                                contextMenuPosition = rightClickPress.position
+                                showContextMenu.value = true
+                                rightClickPress.consume()
+                                // 可选：消费整个事件的其他 change，避免干扰
+                                event.changes.forEach { it.consume() }
                             }
                         }
+
                     }
                 }
             }
@@ -103,59 +98,13 @@ fun SqlEditor(
                 .verticalScroll(rememberScrollState()),
             singleLine = false
         )
-        // 右键菜单
-        DropdownMenu(
-            expanded = showContextMenu,
-            onDismissRequest = { showContextMenu = false },
-            offset = with(density) {
-                DpOffset(
-                    contextMenuPosition.x.toDp(),
-                    contextMenuPosition.y.toDp()
-                )
-            }
-        ) {
-            if (onExecuteSql != null) {
-                DropdownMenuItem(
-                    text = { Text("执行完整SQL") },
-                    onClick = {
-                        showContextMenu = false
-                        onExecuteSql()
-                    }
-                )
-            }
-
-            // 如果有选中的SQL文本，添加执行选中SQL的选项
-            if (selectedSql.isNotBlank() && onExecuteSelectedSql != null) {
-                DropdownMenuItem(
-                    text = { Text("执行选中SQL") },
-                    onClick = {
-                        showContextMenu = false
-                        onExecuteSelectedSql(selectedSql)
-                    }
-                )
-            }
-
-            DropdownMenuItem(
-                text = { Text("复制") },
-                onClick = {
-                    showContextMenu = false
-                    // 复制逻辑由BasicTextField自动处理
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("粘贴") },
-                onClick = {
-                    showContextMenu = false
-                    // 粘贴逻辑由BasicTextField自动处理
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("全选") },
-                onClick = {
-                    showContextMenu = false
-                    // 全选逻辑由BasicTextField自动处理
-                }
-            )
-        }
+        SqlContextMenu(
+            showContextMenu = showContextMenu,
+            contextMenuPosition = contextMenuPosition,
+            selectedSql = selectedSql,
+            onExecuteSql = onExecuteSql,
+            onExecuteSelectedSql = onExecuteSelectedSql,
+            density = density
+        )
     }
 }
