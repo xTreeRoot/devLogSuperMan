@@ -97,13 +97,11 @@ object ClipboardMonitorService {
         // 检查是否为MyBatis SQL格式
         if (sqlFormatterService.detectMybatisFormat(content)) {
             val result = sqlFormatterService.formatSqlWithPrettyStyle(content)
-            DevLog.info("MyBatis formatted result: $result")
             return result
         }
         // 检查是否为ES DSL格式
         else if (esDslFormatterService.isEsQuery(content)) {
             val result = esDslFormatterService.extractAndFormatEsDsl(content)
-            DevLog.info("ES DSL formatted result: $result")
             return result
         }
 
