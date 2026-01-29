@@ -1,4 +1,4 @@
-package org.treeroot.devlog.logic.model
+package org.treeroot.devlog.business.model
 
 /**
  * ES DSL处理结果数据类
@@ -9,6 +9,5 @@ data class EsDslResult(
     val formattedDsl: String = "",
     val formattedResponse: String = "",
     val processingTime: Long = System.currentTimeMillis(),
-    val errorMessage: String? = null,
-    val dslType: String? = null // 查询类型，如search, aggregations等
+    val errorMessage: String? = null
 )

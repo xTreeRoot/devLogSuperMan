@@ -2,6 +2,7 @@ package org.treeroot.devlog.business
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
+import org.treeroot.devlog.business.model.EsDslResult
 
 /**
  * ES DSL格式化服务
@@ -24,8 +25,7 @@ class EsDslFormatterService {
 
     /** 提取并格式化ES DSL */
     fun extractAndFormatEsDsl(text: String): String {
-        val (dsl, _) = separateDslAndResponse(text)
-        return formatJson(dsl)
+        return separateDslAndResponse(text).formattedDsl
     }
 
     /** 从文本中提取JSON（首个JSON对象） */
@@ -74,14 +74,20 @@ class EsDslFormatterService {
 
 
     /** 分离DSL和响应 */
-    fun separateDslAndResponse(text: String): Pair<String, String> {
-        if (text.isBlank()) return Pair("", "")
+    fun separateDslAndResponse(text: String): EsDslResult {
+        if (text.isBlank()) return EsDslResult(success = true, formattedDsl = "", formattedResponse = "")
+
+        var dsl = ""
+        var response = ""
+
         return try {
             // 首先检查是否包含curl命令和HTTP响应，这种情况需要处理原始文本
             when {
                 // 处理包含HTTP响应的情况（以#开头的行通常是HTTP响应）
                 text.contains("curl") && text.contains("# HTTP/") -> {
-                    extractCurlRequestAndResponseFromFullLog(text)
+                    val (extractedDsl, extractedResponse) = extractCurlRequestAndResponseFromFullLog(text)
+                    dsl = extractedDsl
+                    response = extractedResponse
                 }
                 // 处理包含curl命令的情况
                 else -> {
@@ -90,7 +96,9 @@ class EsDslFormatterService {
 
                     when {
                         cleanedText.contains("curl") && cleanedText.contains("-X") -> {
-                            extractCurlRequestAndResponse(cleanedText)
+                            val (extractedDsl, extractedResponse) = extractCurlRequestAndResponse(cleanedText)
+                            dsl = extractedDsl
+                            response = extractedResponse
                         }
 
                         else -> {
@@ -106,30 +114,72 @@ class EsDslFormatterService {
 
                                 // 如果找到了查询和响应，返回它们；否则返回第一个和第二个
                                 if (queryBlock != null && responseBlock != null) {
-                                    Pair(formatJson(queryBlock), formatJson(responseBlock))
+                                    dsl = queryBlock
+                                    response = responseBlock
                                 } else {
                                     // 尝试按顺序分配：第一个作为查询，第二个作为响应
-                                    val query = if (isEsQuery(allJsonBlocks[0])) allJsonBlocks[0] else queryBlock
+                                    dsl = if (isEsQuery(allJsonBlocks[0])) allJsonBlocks[0] else queryBlock
                                         ?: allJsonBlocks[0]
-                                    val response = if (allJsonBlocks.size > 1) {
+                                    response = if (allJsonBlocks.size > 1) {
                                         if (isResponse(allJsonBlocks[1])) allJsonBlocks[1] else responseBlock
                                             ?: allJsonBlocks[1]
                                     } else ""
-                                    Pair(formatJson(query), formatJson(response))
                                 }
                             } else {
                                 // 如果只有一个或没有JSON块，按照原来的逻辑
-                                val queryJson = extractQueryJson(cleanedText)
-                                val responseJson = extractResponseJson(cleanedText)
-                                Pair(formatJson(queryJson), formatJson(responseJson))
+                                dsl = extractQueryJson(cleanedText)
+                                response = extractResponseJson(cleanedText)
                             }
                         }
                     }
                 }
             }
-        } catch (_: Exception) {
+            EsDslResult(
+                success = true,
+                formattedDsl = formatJson(dsl),
+                formattedResponse = formatJson(response),
+                processingTime = System.currentTimeMillis(),
+                errorMessage = null
+            )
+        } catch (e: Exception) {
             val formatted = formatJson(text)
-            if (isEsQuery(formatted)) Pair(formatted, "") else Pair("", formatted)
+            val dslType = if (isEsQuery(formatted)) "query" else "response"
+            if (dslType == "query") {
+                EsDslResult(
+                    success = true,
+                    formattedDsl = formatted,
+                    formattedResponse = "",
+                    processingTime = System.currentTimeMillis(),
+                    errorMessage = null
+                )
+            } else {
+                EsDslResult(
+                    success = true,
+                    formattedDsl = "",
+                    formattedResponse = formatted,
+                    processingTime = System.currentTimeMillis(),
+                    errorMessage = null
+                )
+            }
+        }
+    }
+
+    /**
+     * 处理ES DSL并返回完整的EsDslResult对象
+     */
+    fun processEsDsl(originalDsl: String): EsDslResult {
+        return try {
+            val result = separateDslAndResponse(originalDsl)
+            // 由于separateDslAndResponse已经处理了格式化，这里直接返回结果
+            result
+        } catch (e: Exception) {
+            EsDslResult(
+                success = false,
+                formattedDsl = "",
+                formattedResponse = "",
+                processingTime = System.currentTimeMillis(),
+                errorMessage = "格式化过程中出现错误: \${e.message}"
+            )
         }
     }
 

@@ -5,9 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.treeroot.devlog.DevLog
 import org.treeroot.devlog.business.EsDslFormatterService
-import org.treeroot.devlog.logic.model.EsDslResult
+import org.treeroot.devlog.business.model.EsDslResult
 import org.treeroot.devlog.util.ClipboardHelper
 
 /**
@@ -28,11 +27,6 @@ class EsDslViewModel {
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
 
-    private val _showDslTree = mutableStateOf(false)
-    val showDslTree: State<Boolean> = _showDslTree
-
-    private val _showResultTree = mutableStateOf(false)
-    val showResultTree: State<Boolean> = _showResultTree
 
     // 为了向后兼容，提供原有的属性访问
     val formattedDsl: State<String> = object : State<String> {
@@ -46,44 +40,15 @@ class EsDslViewModel {
     }
 
     /**
-     * 更新原始ES DSL
-     */
-    fun updateOriginalDsl(dsl: String) {
-        _originalDsl.value = dsl
-    }
-
-    /**
      * 格式化ES DSL
      */
     fun formatDsl() {
-        if (_isLoading.value) return // 防止重复点击
+        if (_isLoading.value) return
 
         CoroutineScope(Dispatchers.Default).launch {
             _isLoading.value = true
-
-            try {
-                val (dsl, response) = esDslService.separateDslAndResponse(_originalDsl.value)
-                val dslType = if (esDslService.isEsQuery(dsl)) "query" else "response"
-
-                _result.value = EsDslResult(
-                    success = true,
-                    formattedDsl = dsl,
-                    formattedResponse = response,
-                    processingTime = System.currentTimeMillis(),
-                    errorMessage = null,
-                    dslType = dslType
-                )
-            } catch (e: Exception) {
-                _result.value = EsDslResult(
-                    success = false,
-                    formattedDsl = "",
-                    formattedResponse = "",
-                    processingTime = System.currentTimeMillis(),
-                    errorMessage = "格式化过程中出现错误: ${'$'}{e.message}"
-                )
-            } finally {
-                _isLoading.value = false
-            }
+            _result.value = esDslService.separateDslAndResponse(_originalDsl.value)
+            _isLoading.value = false
         }
     }
 
