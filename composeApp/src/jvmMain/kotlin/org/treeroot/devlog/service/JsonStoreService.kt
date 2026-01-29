@@ -9,6 +9,9 @@ import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.mysql.MySqlConfigInfo
 import org.treeroot.devlog.state.AppStateManager
 
+/**
+ * JSON存储服务，负责UI配置和MySQL配置的加载与保存
+ */
 object JsonStoreService {
     private val uiConfigStorage = UiConfigStorage()
     private val mySqlConfigStorage = MySqlConfigStorage()
