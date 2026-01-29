@@ -27,8 +27,9 @@ class EslTest {
         println("原始数据长度: ${sampleData.length}")
         println("\n--- 分离DSL和响应 ---")
 
-        val (dsl, response) = service.separateDslAndResponse(sampleData)
-
+        val result = service.separateDslAndResponse(sampleData)
+        val dsl = result.formattedDsl
+        val response = result.formattedResponse
         println("DSL部分长度: ${if (dsl.isEmpty()) 0 else dsl.length}")
         println("响应部分长度: ${if (response.isEmpty()) 0 else response.length}")
 
