@@ -11,13 +11,12 @@ import org.treeroot.devlog.service.SystemTrayService
 
 fun main() = application {
     // 初始化系统托盘服务
-    val systemTrayService = SystemTrayService()
-    systemTrayService.initializeTray()
+    SystemTrayService.initializeTray()
 
     Window(
         onCloseRequest = {
             // 最小化到系统托盘而不是直接退出
-            systemTrayService.updateTrayIconBasedOnStatus()
+            SystemTrayService.updateTrayIconBasedOnStatus()
             // 退出应用
             exitApplication()
         },

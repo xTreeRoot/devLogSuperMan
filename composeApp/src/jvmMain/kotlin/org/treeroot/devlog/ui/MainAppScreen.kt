@@ -19,13 +19,13 @@ import org.treeroot.devlog.logic.SqlFormatterViewModel
 import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.JsonStoreService
+import org.treeroot.devlog.service.SystemTrayService
 import org.treeroot.devlog.state.AppStateManager
 import org.treeroot.devlog.util.ImageUtils
 
 @Composable
 fun MainApp() {
     val jsonStoreService = remember { JsonStoreService() }
-    val clipboardMonitorService = remember { ClipboardMonitorService() }
 
     // 从状态管理器获取配置，或者从数据库加载初始配置
     val stateConfig = AppStateManager.currentConfig
@@ -47,10 +47,12 @@ fun MainApp() {
     // 根据配置启动或停止剪贴板监控服务
     LaunchedEffect(config.enableClipboardMonitor) {
         if (config.enableClipboardMonitor) {
-            clipboardMonitorService.startMonitoring()
+            ClipboardMonitorService.startMonitoring()
+            SystemTrayService.updateTrayIconBasedOnStatus() // 更新托盘图标
             DevLog.info("剪贴板监控服务已启动")
         } else {
-            clipboardMonitorService.stopMonitoring()
+            ClipboardMonitorService.stopMonitoring()
+            SystemTrayService.updateTrayIconBasedOnStatus() // 更新托盘图标
             DevLog.info("剪贴板监控服务已停止")
         }
     }

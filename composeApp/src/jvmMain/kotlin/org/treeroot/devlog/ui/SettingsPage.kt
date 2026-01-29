@@ -17,7 +17,6 @@ import org.treeroot.devlog.util.ColorUtils
 
 @Composable
 fun SettingsPage(config: UiConfig? = null) {
-    val clipboardMonitorService = remember { ClipboardMonitorService() }
     val jsonStoreService = remember { JsonStoreService() }
 
     // 从数据库中加载初始值

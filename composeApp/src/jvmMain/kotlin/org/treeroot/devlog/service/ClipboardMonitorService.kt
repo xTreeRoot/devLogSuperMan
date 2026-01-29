@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities
  * 剪贴板监控服务
  * 用于自动检测和格式化剪贴板中的SQL或ES DSL内容
  */
-class ClipboardMonitorService {
+object ClipboardMonitorService {
     private var scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var isMonitoring = false
     private var lastClipboardContent: String? = null

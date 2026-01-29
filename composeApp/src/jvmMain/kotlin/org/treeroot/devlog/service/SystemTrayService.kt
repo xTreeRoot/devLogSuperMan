@@ -1,10 +1,7 @@
 package org.treeroot.devlog.service
 
 import org.treeroot.devlog.DevLog
-import org.treeroot.devlog.model.UiConfig
-import org.treeroot.devlog.state.AppStateManager
 import java.awt.*
-import java.awt.event.ActionListener
 import java.awt.image.BufferedImage
 import javax.swing.ImageIcon
 import javax.swing.JOptionPane
@@ -14,10 +11,9 @@ import javax.swing.SwingUtilities
  * 系统托盘服务
  * 用于在系统托盘中显示应用图标并提供快捷菜单
  */
-class SystemTrayService {
+object SystemTrayService {
     private var trayIcon: TrayIcon? = null
     private var systemTray: SystemTray? = null
-    private val clipboardMonitorService = ClipboardMonitorService()
 
     /**
      * 初始化系统托盘
@@ -34,7 +30,7 @@ class SystemTrayService {
         // 尝试从多个可能的位置加载图标
         val iconStream = javaClass.classLoader.getResourceAsStream("drawable/compose-multiplatform.xml")
             ?: javaClass.classLoader.getResourceAsStream("compose-multiplatform.xml")
-            ?: this::class.java.classLoader.getResourceAsStream("org/treeroot/devlog/tray-icon.png")
+            ?: this::class.java.classLoader.getResourceAsStream("org/treeroot/devlog/迪迦.png")
 
         val trayIconImage = if (iconStream != null) {
             try {
@@ -58,7 +54,6 @@ class SystemTrayService {
         val popupMenu = createPopupMenu()
 
         trayIcon?.popupMenu = popupMenu
-
         try {
             systemTray?.add(trayIcon)
             DevLog.info("系统托盘图标已添加")
@@ -158,7 +153,7 @@ class SystemTrayService {
     private fun exitApp() {
         SwingUtilities.invokeLater {
             // 停止剪贴板监控服务
-            clipboardMonitorService.stopMonitoring()
+            ClipboardMonitorService.stopMonitoring()
 
             // 退出应用
             System.exit(0)
@@ -169,7 +164,17 @@ class SystemTrayService {
      * 更新托盘图标以反映监控状态
      */
     fun updateTrayIconBasedOnStatus() {
-        val isMonitoring = clipboardMonitorService.isMonitoring()
+        val isMonitoring = ClipboardMonitorService.isMonitoring()
+
+        // 获取对应状态的图标
+        val trayIconImage = if (isMonitoring) {
+            createActiveTrayIcon() // 监控中使用绿色实心方块
+        } else {
+            createDefaultTrayIcon() // 停止时使用红色空心方块
+        }
+
+        // 更新托盘图标
+        trayIcon?.image = trayIconImage
 
         // 更新工具提示文本以显示当前监控状态
         val tooltip = if (isMonitoring) {
@@ -184,19 +189,49 @@ class SystemTrayService {
      * 获取当前监控状态
      */
     fun getMonitoringStatus(): Boolean {
-        return clipboardMonitorService.isMonitoring()
+        return ClipboardMonitorService.isMonitoring()
     }
 
     /**
-     * 创建默认托盘图标
+     * 创建默认托盘图标（监控状态：停止）
      */
     private fun createDefaultTrayIcon(): Image {
+        return createTrayIcon("\u25A1", Color.RED) // 白色方块
+    }
+
+    /**
+     * 创建监控中状态的托盘图标
+     */
+    private fun createActiveTrayIcon(): Image {
+        return createTrayIcon("\u25A0", Color.GREEN) // 黑色方块
+    }
+
+    /**
+     * 创建托盘图标
+     * @param symbol 要绘制的符号
+     * @param color 图标颜色
+     */
+    private fun createTrayIcon(symbol: String, color: Color): Image {
         val img = BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB)
-        val g = img.graphics
-        g.color = Color.BLUE
-        g.fillRect(0, 0, 32, 32)
-        g.color = Color.WHITE
-        g.drawString("DL", 8, 20)
+        val g = img.graphics as Graphics2D
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+
+        // 绘制背景圆圈
+        g.color = Color(240, 240, 240) // 浅灰色背景
+        g.fillOval(2, 2, 28, 28)
+
+        // 绘制边框
+        g.color = Color.GRAY
+        g.drawOval(2, 2, 28, 28)
+
+        // 绘制状态符号
+        g.color = color
+        g.font = Font(g.font.name, Font.BOLD, 20)
+        val fontMetrics = g.fontMetrics
+        val width = fontMetrics.stringWidth(symbol)
+        val height = fontMetrics.height
+        g.drawString(symbol, (32 - width) / 2, (32 + height) / 2 - 2)
+
         g.dispose()
         return img
     }
