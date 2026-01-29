@@ -14,19 +14,27 @@ class AdvancedSqlFormatterService {
             return false
         }
 
-        val mybatisPatterns = listOf(
-            "Preparing: ",
-            "Parameters: ",
-            "DEBUG ",
-            "==>  Preparing: ",
-            "==> Parameters: ",
-            "<==      Total: ",
-            "Creating a new SqlSession",
-            "SqlSession ["
-        )
-
         val lowerText = text.lowercase()
-        return mybatisPatterns.any { pattern -> lowerText.contains(pattern.lowercase()) }
+
+        // 检查是否同时包含Preparing和Parameters，这是MyBatis日志的关键特征
+        val hasPreparing = lowerText.contains("preparing:")
+        val hasParameters = lowerText.contains("parameters:")
+
+        if (hasPreparing && hasParameters) {
+            // 如果上面的主要条件不满足，再检查其他辅助模式
+            val mybatisPatterns = listOf(
+                "==>  Preparing: ",
+                "==> Parameters: ",
+                "<==      Total: ",
+                "Creating a new SqlSession",
+                "SqlSession ["
+            )
+            return mybatisPatterns.any { pattern -> lowerText.contains(pattern.lowercase()) }
+        }
+
+        return false
+
+
     }
 
     /**
@@ -404,16 +412,17 @@ class AdvancedSqlFormatterService {
      * WHERE ...
      * ORDER BY ...
      */
-    suspend fun formatMySqlPretty(raw: String): String = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
-        // 先提取SQL，再格式化
-        val extractedSql = extractSqlFromLog(raw)
-        extractedSql.split(";")
-            .map { it.trim() }
-            .filter { it.isNotBlank() }
-            .joinToString("\n\n") { sql ->
-                formatSingleSql(sql)
-            }
-    }
+    suspend fun formatMySqlPretty(raw: String): String =
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+            // 先提取SQL，再格式化
+            val extractedSql = extractSqlFromLog(raw)
+            extractedSql.split(";")
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
+                .joinToString("\n\n") { sql ->
+                    formatSingleSql(sql)
+                }
+        }
 
     /**
      * 格式化单条 SQL

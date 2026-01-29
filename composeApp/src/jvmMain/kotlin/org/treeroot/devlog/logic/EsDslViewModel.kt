@@ -72,7 +72,6 @@ class EsDslViewModel {
 
     /**
      * 更新格式化后的 DSL 内容
-     * 用户在 org.treeroot.devlog.components.EditableJSONTextView 编辑 DSL 时调用
      */
     fun updateFormattedDsl(newText: String) {
         _formattedDsl.value = newText
@@ -108,11 +107,4 @@ class EsDslViewModel {
         }
     }
 
-    fun toggleDslTree() {
-        _showDslTree.value = !_showDslTree.value
-    }
-
-    fun toggleResultTree() {
-        _showResultTree.value = !_showResultTree.value
-    }
 }

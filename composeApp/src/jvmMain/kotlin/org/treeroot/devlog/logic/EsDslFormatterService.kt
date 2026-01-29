@@ -3,15 +3,20 @@ package org.treeroot.devlog.logic
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 
+/**
+ * es dsl格式化服务
+ */
 class EsDslFormatterService {
 
     private val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+
+
     /** 格式化JSON */
     fun formatJson(jsonString: String): String {
         if (jsonString.isBlank()) return jsonString
         return try {
             val jsonElement = JsonParser.parseString(jsonString)
-            gsonPretty.toJson(jsonElement) //
+            gsonPretty.toJson(jsonElement)
         } catch (_: Exception) {
             jsonString
         }
@@ -19,10 +24,9 @@ class EsDslFormatterService {
 
     /** 提取并格式化ES DSL */
     fun extractAndFormatEsDsl(text: String): String {
-        val extracted = extractJsonFromText(text)
-        return if (extracted.isNotBlank()) formatJson(extracted) else formatJson(text)
+        val (dsl, _) = separateDslAndResponse(text)
+       return dsl
     }
-
 
     /** 从文本中提取JSON（首个JSON对象） */
     fun extractJsonFromText(text: String): String {
@@ -61,6 +65,7 @@ class EsDslFormatterService {
         if (jsonString.isBlank()) return false
         return try { JsonParser.parseString(jsonString); true } catch (_: Exception) { false }
     }
+
 
     /** 分离DSL和响应 */
     fun separateDslAndResponse(text: String): Pair<String, String> {
@@ -114,7 +119,7 @@ class EsDslFormatterService {
 
 
     /** 是否是ES查询 */
-    private fun isEsQuery(jsonString: String): Boolean {
+    fun isEsQuery(jsonString: String): Boolean {
         val indicators = listOf("query","match","term","bool","must","should","filter")
         return indicators.any { jsonString.lowercase().contains("\"$it\"") }
     }
