@@ -1,5 +1,6 @@
 package org.treeroot.devlog.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -8,13 +9,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import org.treeroot.devlog.business.view.EnhancedSqlFormatterViewModel
+import org.treeroot.devlog.components.DataTable
 import org.treeroot.devlog.components.SqlEditor
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.util.ColorUtils
 
 @Composable
-fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null) {
+fun SqlFormatterPage(viewModel: EnhancedSqlFormatterViewModel, config: UiConfig? = null) {
 
     // 获取动态颜色
     val dynamicColors = ColorUtils.getDynamicColors(config)
@@ -91,6 +93,39 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
             ) {
                 Text("复制")
             }
+
+            // MySQL连接状态指示器
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "数据库连接: ",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = dynamicColors.textVariantColor
+                )
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .background(
+                            if (viewModel.connectionStatus.value) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.error
+                            },
+                            shape = androidx.compose.foundation.shape.CircleShape
+                        )
+                )
+                Text(
+                    text = if (viewModel.connectionStatus.value) "已连接" else "未连接",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (viewModel.connectionStatus.value) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    }
+                )
+            }
         }
 
         // 格式化后SQL显示区域
@@ -119,8 +154,117 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
                     value = viewModel.formattedSql.value,
                     onValueChange = { /* 不允许直接编辑格式化后的SQL */ },
                     config = config,
+                    onExecuteSql = { viewModel.executeQuery(viewModel.formattedSql.value) },
                     modifier = Modifier.fillMaxSize()
                 )
+            }
+        }
+
+        // 查询结果区域
+        if (viewModel.queryResult.value != null) {
+            val result = viewModel.queryResult.value!!
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 300.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "查询结果:",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = dynamicColors.textColor
+                    )
+
+                    // 导出结果按钮
+                    Button(
+                        onClick = { /* 导出功能待实现 */ },
+                        enabled = result.success && result.data.isNotEmpty(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                            contentColor = MaterialTheme.colorScheme.onTertiary
+                        )
+                    ) {
+                        Text("导出结果")
+                    }
+                }
+
+                if (result.success) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clip(RoundedCornerShape(16.dp)),
+                        colors = CardDefaults.cardColors(
+                            containerColor = ColorUtils.getContainerBackgroundColor(config)
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = if (config?.backgroundImagePath?.isNotEmpty() == true) 0.dp else 4.dp)
+                    ) {
+                        if (result.data.isNotEmpty()) {
+                            DataTable(
+                                columnNames = result.columnNames,
+                                rowData = result.data,
+                                config = config,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp)
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "查询返回空结果",
+                                    color = dynamicColors.textVariantColor
+                                )
+                            }
+                        }
+                    }
+
+                    // 显示查询统计信息
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "行数: ${'$'}{result.rowCount}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = dynamicColors.textVariantColor
+                        )
+                        Text(
+                            text = "耗时: ${'$'}{System.currentTimeMillis() - result.queryTime} ms",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = dynamicColors.textVariantColor
+                        )
+                    }
+                } else {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .padding(vertical = 8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Text(
+                            text = "错误: ${result.errorMessage ?: "未知错误"}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            modifier = Modifier.padding(12.dp)
+                        )
+                    }
+                }
             }
         }
 
@@ -136,7 +280,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = "字符数: ${viewModel.originalSql.value.length}",
+                text = "字符数: ${'$'}{viewModel.originalSql.value.length}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = dynamicColors.textVariantColor
             )
