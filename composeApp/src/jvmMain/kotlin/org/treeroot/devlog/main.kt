@@ -7,12 +7,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import org.treeroot.devlog.service.SystemTrayService
 
 fun main() = application {
-    // 初始化数据库
+    // 初始化系统托盘服务
+    val systemTrayService = SystemTrayService()
+    systemTrayService.initializeTray()
 
     Window(
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = {
+            // 最小化到系统托盘而不是直接退出
+            systemTrayService.updateTrayIconBasedOnStatus()
+            // 退出应用
+            exitApplication()
+        },
         title = "devLogSuperMan",
         state = WindowState(
             // 初始宽高

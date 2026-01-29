@@ -151,8 +151,6 @@ private fun BackgroundLayer(config: UiConfig) {
             }
         }
     } else {
-        DevLog.info("没有背景图片")
-        // 如果没有背景图片，使用 surface 颜色作为背景
         Spacer(
             modifier = Modifier.fillMaxSize()
                 .background(Color(0xFFF5F5F5))
