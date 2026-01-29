@@ -44,13 +44,7 @@ fun SettingsPage(config: UiConfig? = null) {
         AppStateManager.updateConfig(newConfig)
     }
 
-    LaunchedEffect(enableSilentMode) {
-        if (enableSilentMode) {
-            clipboardMonitorService.startMonitoring()
-        } else {
-            clipboardMonitorService.stopMonitoring()
-        }
-    }
+
 
     Column(
         modifier = Modifier

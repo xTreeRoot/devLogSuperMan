@@ -119,14 +119,14 @@ class ClipboardMonitorService {
             var formattedContent: String? = null
             var isFormatted = false
 
-            // 检查是否为MyBatis SQL格式 (最具体的第一)
+            // 检查是否为MyBatis SQL格式
             if (sqlFormatterService.detectMybatisFormat(currentContent)) {
                 DevLog.info("Detected MyBatis SQL format")
                 formattedContent = sqlFormatterService.extractAndFormatMybatisSql(currentContent)
                 isFormatted = true
                 DevLog.info("MyBatis formatted result: $formattedContent")
             }
-            // 检查是否为ES DSL格式 (第二具体)
+            // 检查是否为ES DSL格式
             else if (esDslFormatterService.isEsQuery(currentContent)) {
                 DevLog.info("Detected ES DSL format")
                 formattedContent = esDslFormatterService.extractAndFormatEsDsl(currentContent)
