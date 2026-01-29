@@ -13,7 +13,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import org.treeroot.devlog.model.UiConfig
+import org.treeroot.devlog.json.model.UiConfig
 import org.treeroot.devlog.util.ColorUtils
 
 @Composable

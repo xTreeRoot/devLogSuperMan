@@ -1,19 +1,19 @@
 package org.treeroot.devlog.json
 
 import com.google.gson.reflect.TypeToken
-import org.treeroot.devlog.mysql.MySqlConfigInfo
+import org.treeroot.devlog.json.model.MySqlConfig
 
 /**
  * MySQL配置存储类
  * 专门用于存储MySQL连接配置列表
  */
-class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.json") {
+class MySqlConfigStorage : ListConfigStorage<MySqlConfig>("mysql_configs.json") {
 
     /**
      * 获取泛型列表类型，用于Gson反序列化
      */
     override fun getListType(): java.lang.reflect.Type {
-        return object : TypeToken<List<MySqlConfigInfo>>() {}.type
+        return object : TypeToken<List<MySqlConfig>>() {}.type
     }
 
 
@@ -21,7 +21,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
     /**
      * 加载MySQL配置列表
      */
-    fun loadMySqlConfigs(): List<MySqlConfigInfo> {
+    fun loadMySqlConfigs(): List<MySqlConfig> {
         return loadConfig()
     }
 
@@ -35,7 +35,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
     /**
      * 添加单个MySQL配置
      */
-    fun addMySqlConfig(config: MySqlConfigInfo): List<MySqlConfigInfo> {
+    fun addMySqlConfig(config: MySqlConfig): List<MySqlConfig> {
         val configs = loadMySqlConfigs().toMutableList()
         // 检查ID是否已存在
         if (configs.any { it.id == config.id }) {
@@ -49,7 +49,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
     /**
      * 更新单个MySQL配置
      */
-    fun updateMySqlConfig(config: MySqlConfigInfo): List<MySqlConfigInfo> {
+    fun updateMySqlConfig(config: MySqlConfig): List<MySqlConfig> {
         val configs = loadMySqlConfigs().map { existingConfig ->
             if (existingConfig.id == config.id) {
                 config
@@ -70,7 +70,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
     /**
      * 删除MySQL配置
      */
-    fun deleteMySqlConfig(id: String): List<MySqlConfigInfo> {
+    fun deleteMySqlConfig(id: String): List<MySqlConfig> {
         val configs = loadMySqlConfigs().filter { it.id != id }.toMutableList()
         saveConfig(configs)
         return configs
@@ -79,7 +79,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
     /**
      * 根据ID获取MySQL配置
      */
-    fun getMySqlConfigById(id: String): MySqlConfigInfo? {
+    fun getMySqlConfigById(id: String): MySqlConfig? {
         val configs = loadMySqlConfigs()
         return configs.find { it.id == id }
     }
@@ -87,7 +87,7 @@ class MySqlConfigStorage : ListConfigStorage<MySqlConfigInfo>("mysql_configs.jso
     /**
      * 设置默认MySQL配置
      */
-    fun setDefaultMySqlConfig(id: String): List<MySqlConfigInfo> {
+    fun setDefaultMySqlConfig(id: String): List<MySqlConfig> {
         val configs = loadMySqlConfigs().map { existingConfig ->
             if (existingConfig.id == id) {
                 existingConfig.copy(isDefault = true)

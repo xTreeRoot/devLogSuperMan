@@ -1,10 +1,11 @@
-package org.treeroot.devlog.mysql
+package org.treeroot.devlog.logic
 
-import org.treeroot.devlog.data.MySqlQueryResult
-import java.sql.Connection
+import org.treeroot.devlog.logic.model.MySqlQueryResult
+import org.treeroot.devlog.mysql.MySqlConnectConfig
+import org.treeroot.devlog.json.model.MySqlConfig
+import org.treeroot.devlog.mysql.MySqlDatabaseManager
 import java.sql.DriverManager
 import java.util.Properties
-import org.treeroot.devlog.mysql.MySqlConfigInfo
 
 /**
  * MySQL数据库服务类
@@ -24,7 +25,7 @@ class MySqlDatabaseService {
         password: String,
         poolSize: Int = 10
     ) {
-        val config = MySqlConfig(
+        val config = MySqlConnectConfig(
             host = host,
             port = port,
             database = database,
@@ -38,7 +39,7 @@ class MySqlDatabaseService {
     /**
      * 使用配置对象初始化数据库连接
      */
-    fun initializeConnectionWithConfig(config: MySqlConfig) {
+    fun initializeConnectionWithConfig(config: MySqlConnectConfig) {
         databaseManager.initializeConnectionPool(config)
     }
 
@@ -85,7 +86,7 @@ class MySqlDatabaseService {
     /**
      * 使用MySQL配置信息测试数据库连接
      */
-    suspend fun testConnectionWithConfig(configInfo: MySqlConfigInfo): Boolean {
+    suspend fun testConnectionWithConfig(configInfo: MySqlConfig): Boolean {
         return try {
             Class.forName("com.mysql.cj.jdbc.Driver")
             val url = "jdbc:mysql://${configInfo.host}:${configInfo.port}/${configInfo.database}?connectTimeout=5000&socketTimeout=10000"
@@ -94,7 +95,7 @@ class MySqlDatabaseService {
             props.setProperty("password", configInfo.password)
             props.setProperty("useSSL", "false")
             props.setProperty("allowPublicKeyRetrieval", "true")
-            
+
             DriverManager.getConnection(url, props).use { connection ->
                 connection.isValid(5) // 5秒超时
             }

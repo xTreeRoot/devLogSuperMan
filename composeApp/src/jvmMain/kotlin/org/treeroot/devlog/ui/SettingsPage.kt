@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.ImagePicker
-import org.treeroot.devlog.model.UiConfig
+import org.treeroot.devlog.json.model.UiConfig
 import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.state.AppStateManager

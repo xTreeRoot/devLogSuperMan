@@ -1,4 +1,4 @@
-package org.treeroot.devlog.data
+package org.treeroot.devlog.logic.model
 
 /**
  * MySQL查询结果数据类

@@ -1,10 +1,13 @@
-package org.treeroot.devlog.model
+package org.treeroot.devlog.json.model
 
 /**
  * UI配置数据类
  * 用于存储用户界面相关配置
  */
 data class UiConfig(
+    /**
+     * 固定ID
+     */
     val id: Long = 1,
     /**
      * 背景图片路径

@@ -2,8 +2,8 @@ package org.treeroot.devlog
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.treeroot.devlog.mysql.MySqlConfigInfo
-import org.treeroot.devlog.mysql.MySqlDatabaseService
+import org.treeroot.devlog.json.model.MySqlConfig
+import org.treeroot.devlog.logic.MySqlDatabaseService
 import org.treeroot.devlog.service.JsonStoreService
 import java.util.*
 
@@ -19,7 +19,7 @@ class MysqlConfigTest {
 
         // 1. 测试添加MySQL配置
         val configId = UUID.randomUUID().toString()
-        val mysqlConfig = MySqlConfigInfo(
+        val mysqlConfig = MySqlConfig(
             id = configId,
             name = "测试数据库配置",
             host = "localhost",

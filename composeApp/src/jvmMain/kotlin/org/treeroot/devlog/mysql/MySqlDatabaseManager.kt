@@ -2,7 +2,7 @@ package org.treeroot.devlog.mysql
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import org.treeroot.devlog.data.MySqlQueryResult
+import org.treeroot.devlog.logic.model.MySqlQueryResult
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -19,7 +19,7 @@ class MySqlDatabaseManager {
     /**
      * 初始化数据库连接池
      */
-    fun initializeConnectionPool(config: MySqlConfig) {
+    fun initializeConnectionPool(config: MySqlConnectConfig) {
         val configBuilder = HikariConfig().apply {
             jdbcUrl = "jdbc:mysql://${config.host}:${config.port}/${config.database}?useSSL=${config.useSSL}&serverTimezone=UTC&characterEncoding=utf8&connectTimeout=${config.connectTimeout}&socketTimeout=${config.socketTimeout}"
             this.username = config.username

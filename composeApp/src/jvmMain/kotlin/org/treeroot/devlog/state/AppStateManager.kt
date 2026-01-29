@@ -3,7 +3,7 @@ package org.treeroot.devlog.state
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import org.treeroot.devlog.model.UiConfig
+import org.treeroot.devlog.json.model.UiConfig
 
 /**
  * 应用状态管理器，用于在组件之间共享配置状态

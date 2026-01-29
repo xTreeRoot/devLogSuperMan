@@ -5,8 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.treeroot.devlog.json.MySqlConfigStorage
 import org.treeroot.devlog.json.UiConfigStorage
-import org.treeroot.devlog.model.UiConfig
-import org.treeroot.devlog.mysql.MySqlConfigInfo
+import org.treeroot.devlog.json.model.UiConfig
+import org.treeroot.devlog.json.model.MySqlConfig
 import org.treeroot.devlog.state.AppStateManager
 
 /**
@@ -38,28 +38,28 @@ object JsonStoreService {
     /**
      * 获取所有MySQL配置
      */
-    fun getAllMySqlConfigs(): List<MySqlConfigInfo> {
+    fun getAllMySqlConfigs(): List<MySqlConfig> {
         return mySqlConfigStorage.loadMySqlConfigs()
     }
 
     /**
      * 获取特定MySQL配置详情
      */
-    fun getMySqlConfigById(id: String): MySqlConfigInfo? {
+    fun getMySqlConfigById(id: String): MySqlConfig? {
         return mySqlConfigStorage.getMySqlConfigById(id)
     }
 
     /**
      * 更新MySQL配置
      */
-    fun updateMySqlConfig(config: MySqlConfigInfo) {
+    fun updateMySqlConfig(config: MySqlConfig) {
         mySqlConfigStorage.updateMySqlConfig(config)
     }
 
     /**
      * 添加新的MySQL配置
      */
-    fun addMySqlConfig(config: MySqlConfigInfo) {
+    fun addMySqlConfig(config: MySqlConfig) {
         mySqlConfigStorage.addMySqlConfig(config)
     }
 

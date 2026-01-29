@@ -3,7 +3,7 @@ package org.treeroot.devlog.util
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import org.treeroot.devlog.model.UiConfig
+import org.treeroot.devlog.json.model.UiConfig
 
 data class DynamicColors(
     val textColor: Color,

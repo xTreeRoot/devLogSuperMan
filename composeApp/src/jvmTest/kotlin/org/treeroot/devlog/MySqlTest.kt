@@ -3,9 +3,9 @@ package org.treeroot.devlog
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.treeroot.devlog.config.ConfigManager
-import org.treeroot.devlog.data.MySqlQueryResult
-import org.treeroot.devlog.mysql.MySqlConfig
-import org.treeroot.devlog.mysql.MySqlDatabaseService
+import org.treeroot.devlog.logic.model.MySqlQueryResult
+import org.treeroot.devlog.mysql.MySqlConnectConfig
+import org.treeroot.devlog.logic.MySqlDatabaseService
 
 /**
  * MySQL数据库操作示例
@@ -24,7 +24,7 @@ class MySqlTest {
         val mysqlTestConfig = configManager.getMySqlTestConfig()
 
         // 使用配置文件中的配置创建MySQL配置
-        val config = MySqlConfig(
+        val config = MySqlConnectConfig(
             host = mysqlTestConfig.host,
             port = mysqlTestConfig.port,
             database = mysqlTestConfig.database,

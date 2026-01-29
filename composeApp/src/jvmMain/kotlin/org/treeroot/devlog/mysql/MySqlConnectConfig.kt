@@ -3,7 +3,7 @@ package org.treeroot.devlog.mysql
 /**
  * MySQL数据库配置数据类
  */
-data class MySqlConfig(
+data class MySqlConnectConfig(
     val host: String = "localhost",
     val port: Int = 3306,
     val database: String,

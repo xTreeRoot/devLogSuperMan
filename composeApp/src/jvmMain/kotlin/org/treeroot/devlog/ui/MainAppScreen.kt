@@ -14,9 +14,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.DevLog
-import org.treeroot.devlog.logic.EsDslViewModel
-import org.treeroot.devlog.logic.SqlFormatterViewModel
-import org.treeroot.devlog.model.UiConfig
+import org.treeroot.devlog.logic.view.EsDslViewModel
+import org.treeroot.devlog.logic.view.SqlFormatterViewModel
+import org.treeroot.devlog.json.model.UiConfig
 import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.service.SystemTrayService

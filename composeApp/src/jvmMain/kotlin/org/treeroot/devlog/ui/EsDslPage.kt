@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.EditableJSONTextView
-import org.treeroot.devlog.logic.EsDslViewModel
-import org.treeroot.devlog.model.UiConfig
+import org.treeroot.devlog.logic.view.EsDslViewModel
+import org.treeroot.devlog.json.model.UiConfig
 import org.treeroot.devlog.util.ColorUtils
 
 @Composable

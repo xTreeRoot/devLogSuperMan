@@ -1,13 +1,13 @@
-package org.treeroot.devlog.logic
+package org.treeroot.devlog.logic.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.treeroot.devlog.data.MySqlQueryResult
-import org.treeroot.devlog.mysql.MySqlConfig
-import org.treeroot.devlog.mysql.MySqlDatabaseService
+import org.treeroot.devlog.logic.model.MySqlQueryResult
+import org.treeroot.devlog.mysql.MySqlConnectConfig
+import org.treeroot.devlog.logic.MySqlDatabaseService
 
 /**
  * MySQL数据库操作的视图模型
@@ -27,7 +27,7 @@ class MySqlDatabaseViewModel : ViewModel() {
     /**
      * 连接到MySQL数据库
      */
-    fun connectToDatabase(config: MySqlConfig) {
+    fun connectToDatabase(config: MySqlConnectConfig) {
         viewModelScope.launch {
             try {
                 databaseService.initializeConnectionWithConfig(config)

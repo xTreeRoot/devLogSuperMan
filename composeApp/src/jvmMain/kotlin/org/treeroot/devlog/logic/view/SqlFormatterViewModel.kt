@@ -1,10 +1,11 @@
-package org.treeroot.devlog.logic
+package org.treeroot.devlog.logic.view
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.treeroot.devlog.logic.SqlFormatterService
 import org.treeroot.devlog.util.ClipboardHelper
 
 /**
