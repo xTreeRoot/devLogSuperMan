@@ -179,6 +179,28 @@ class EnhancedSqlFormatterViewModel : ViewModel() {
             }
         }
     }
+    
+    /**
+     * 根据配置ID激活数据库连接
+     */
+    fun activateConnectionWithConfigId(configId: String) {
+        val success = databaseService.activateConnectionWithConfigId(configId)
+        if (success) {
+            viewModelScope.launch {
+                val isConnected = databaseService.testConnection()
+                _connectionStatus.value = isConnected
+            }
+        } else {
+            _connectionStatus.value = false
+        }
+    }
+    
+    /**
+     * 获取当前激活的配置ID
+     */
+    fun getActiveConfigId(): String? {
+        return databaseService.getActiveConfigId()
+    }
 
     /**
      * 执行SQL查询

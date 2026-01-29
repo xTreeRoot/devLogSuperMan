@@ -4,6 +4,7 @@ import org.treeroot.devlog.business.model.MySqlQueryResult
 import org.treeroot.devlog.mysql.MySqlConnectConfig
 import org.treeroot.devlog.json.model.MySqlConfig
 import org.treeroot.devlog.mysql.MySqlDatabaseManager
+import org.treeroot.devlog.service.JsonStoreService
 import java.sql.DriverManager
 import java.util.Properties
 
@@ -13,6 +14,9 @@ import java.util.Properties
  */
 class MySqlDatabaseService {
     private val databaseManager = MySqlDatabaseManager()
+
+    // 记录当前激活的配置ID
+    private var activeConfigId: String? = null
 
     /**
      * 初始化数据库连接
@@ -41,6 +45,33 @@ class MySqlDatabaseService {
      */
     fun initializeConnectionWithConfig(config: MySqlConnectConfig) {
         databaseManager.initializeConnectionPool(config)
+    }
+
+    /**
+     * 根据配置ID激活数据库连接
+     */
+    fun activateConnectionWithConfigId(configId: String): Boolean {
+        val config = JsonStoreService.getMySqlConfigById(configId)
+        if (config != null) {
+            val connectConfig = MySqlConnectConfig(
+                host = config.host,
+                port = config.port,
+                database = config.database,
+                username = config.username,
+                password = config.password
+            )
+            databaseManager.initializeConnectionPool(connectConfig)
+            activeConfigId = configId
+            return true
+        }
+        return false
+    }
+
+    /**
+     * 获取当前激活的配置ID
+     */
+    fun getActiveConfigId(): String? {
+        return activeConfigId
     }
 
     /**

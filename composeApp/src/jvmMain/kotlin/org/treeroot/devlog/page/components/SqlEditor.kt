@@ -14,10 +14,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.treeroot.devlog.json.model.UiConfig
@@ -29,6 +32,7 @@ fun SqlEditor(
     onValueChange: (String) -> Unit,
     config: UiConfig? = null,
     onExecuteSql: (() -> Unit)? = null, // 新增执行SQL回调
+    onExecuteSelectedSql: ((String) -> Unit)? = null, // 新增执行选中SQL回调
     modifier: Modifier = Modifier
 ) {
     val state = remember { mutableStateOf(TextFieldValue(value)) }
@@ -36,6 +40,12 @@ fun SqlEditor(
     // 右键菜单状态
     var showContextMenu by remember { mutableStateOf(false) }
     var contextMenuPosition by remember { mutableStateOf(Offset.Zero) }
+
+    // 选中的SQL文本
+    var selectedSql by remember { mutableStateOf("") }
+    // 当前Density获取屏幕密度
+    val density = LocalDensity.current
+
 
     // 当外部 value 发生变化时，同步更新内部状态
     LaunchedEffect(value) {
@@ -53,13 +63,24 @@ fun SqlEditor(
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
+                        // 检测释放事件
                         if (event.type == PointerEventType.Release) {
-                            val change = event.changes.first()
-//                            // 检查释放时是否是右键
-//                            if (change.pressed.coerceIn(PointerButtons)) {
-//                                contextMenuPosition = change.position
-//                                showContextMenu = true
-//                            }
+                            //  判断是否是右键释放
+                            if (event.buttons.isSecondaryPressed) {
+                                val change = event.changes.first()
+                                // 获取选中文本
+                                val selectionStart = state.value.selection.min
+                                val selectionEnd = state.value.selection.max
+                                selectedSql =
+                                    if (selectionStart != selectionEnd) {
+                                        state.value.text.substring(selectionStart, selectionEnd)
+                                    } else {
+                                        state.value.text
+                                    }
+
+                                contextMenuPosition = change.position
+                                showContextMenu = true
+                            }
                         }
                     }
                 }
@@ -82,21 +103,38 @@ fun SqlEditor(
                 .verticalScroll(rememberScrollState()),
             singleLine = false
         )
-
         // 右键菜单
         DropdownMenu(
             expanded = showContextMenu,
-            onDismissRequest = { showContextMenu = false }
+            onDismissRequest = { showContextMenu = false },
+            offset = with(density) {
+                DpOffset(
+                    contextMenuPosition.x.toDp(),
+                    contextMenuPosition.y.toDp()
+                )
+            }
         ) {
             if (onExecuteSql != null) {
                 DropdownMenuItem(
-                    text = { Text("执行SQL") },
+                    text = { Text("执行完整SQL") },
                     onClick = {
                         showContextMenu = false
                         onExecuteSql()
                     }
                 )
             }
+
+            // 如果有选中的SQL文本，添加执行选中SQL的选项
+            if (selectedSql.isNotBlank() && onExecuteSelectedSql != null) {
+                DropdownMenuItem(
+                    text = { Text("执行选中SQL") },
+                    onClick = {
+                        showContextMenu = false
+                        onExecuteSelectedSql(selectedSql)
+                    }
+                )
+            }
+
             DropdownMenuItem(
                 text = { Text("复制") },
                 onClick = {
