@@ -1,4 +1,4 @@
-package org.treeroot.devlog.ui
+package org.treeroot.devlog.page
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.business.view.EnhancedSqlFormatterViewModel
-import org.treeroot.devlog.components.DataTable
-import org.treeroot.devlog.components.SqlEditor
+import org.treeroot.devlog.page.components.DataTable
+import org.treeroot.devlog.page.components.SqlEditor
 import org.treeroot.devlog.json.model.UiConfig
 import org.treeroot.devlog.util.ColorUtils
 

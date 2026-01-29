@@ -1,4 +1,4 @@
-package org.treeroot.devlog.ui
+package org.treeroot.devlog.page
 
 import org.treeroot.devlog.DevLog
 import org.treeroot.devlog.constant.ResourceConstant

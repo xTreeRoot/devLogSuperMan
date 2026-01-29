@@ -1,20 +1,18 @@
-package org.treeroot.devlog.ui
+package org.treeroot.devlog.page
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.treeroot.devlog.components.ImagePicker
+import org.treeroot.devlog.page.components.ImagePicker
 import org.treeroot.devlog.json.model.MySqlConfig
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.mysql.MySqlConnectConfig
-import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.state.AppStateManager
 import org.treeroot.devlog.util.ColorUtils
@@ -45,11 +43,11 @@ fun SettingsPage(config: UiConfig? = null) {
         JsonStoreService.saveConfigAsync(newConfig)
         AppStateManager.updateConfig(newConfig)
     }
-    
+
     // MySQL配置管理相关状态
     var mysqlConfigs by remember { mutableStateOf(emptyList<MySqlConfig>()) }
     var showAddMysqlDialog by remember { mutableStateOf(false) }
-    
+
     // 加载MySQL配置
     LaunchedEffect(Unit) {
         mysqlConfigs = JsonStoreService.getAllMySqlConfigs()
@@ -73,7 +71,7 @@ fun SettingsPage(config: UiConfig? = null) {
             modifier = Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = Color.White
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -113,7 +111,7 @@ fun SettingsPage(config: UiConfig? = null) {
             modifier = Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = Color.White
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -149,7 +147,7 @@ fun SettingsPage(config: UiConfig? = null) {
             modifier = Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor =  Color.White
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -179,13 +177,13 @@ fun SettingsPage(config: UiConfig? = null) {
                 )
             }
         }
-        
+
         // MySQL配置管理
         Card(
             modifier = Modifier.fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = Color.White
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -213,7 +211,7 @@ fun SettingsPage(config: UiConfig? = null) {
                         Text("新增配置")
                     }
                 }
-                
+
                 // MySQL配置列表
                 LazyColumn(
                     modifier = Modifier
@@ -275,7 +273,7 @@ fun SettingsPage(config: UiConfig? = null) {
                                             )
                                         }
                                     }
-                                    
+
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
@@ -294,7 +292,7 @@ fun SettingsPage(config: UiConfig? = null) {
                                                 Text("设为默认")
                                             }
                                         }
-                                        
+
                                         Button(
                                             onClick = {
                                                 JsonStoreService.deleteMySqlConfig(mysqlConfig.id)
@@ -317,7 +315,7 @@ fun SettingsPage(config: UiConfig? = null) {
             }
         }
     }
-    
+
     // 添加MySQL配置对话框
     if (showAddMysqlDialog) {
         var configName by remember { mutableStateOf("") }
@@ -327,7 +325,7 @@ fun SettingsPage(config: UiConfig? = null) {
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var remarks by remember { mutableStateOf("") }
-        
+
         AlertDialog(
             onDismissRequest = { showAddMysqlDialog = false },
             title = { Text("新增MySQL配置") },
@@ -391,8 +389,8 @@ fun SettingsPage(config: UiConfig? = null) {
             confirmButton = {
                 Button(
                     onClick = {
-                        if (configName.isNotEmpty() && host.isNotEmpty() && 
-                            port.isNotEmpty() && database.isNotEmpty() && 
+                        if (configName.isNotEmpty() && host.isNotEmpty() &&
+                            port.isNotEmpty() && database.isNotEmpty() &&
                             username.isNotEmpty() && password.isNotEmpty()) {
                             val newConfig = MySqlConfig(
                                 id = UUID.randomUUID().toString(),
@@ -408,7 +406,7 @@ fun SettingsPage(config: UiConfig? = null) {
                             JsonStoreService.addMySqlConfig(newConfig)
                             mysqlConfigs = JsonStoreService.getAllMySqlConfigs()
                             showAddMysqlDialog = false
-                            
+
                             // 重置表单
                             configName = ""
                             host = "localhost"
@@ -419,8 +417,8 @@ fun SettingsPage(config: UiConfig? = null) {
                             remarks = ""
                         }
                     },
-                    enabled = configName.isNotEmpty() && host.isNotEmpty() && 
-                             port.isNotEmpty() && database.isNotEmpty() && 
+                    enabled = configName.isNotEmpty() && host.isNotEmpty() &&
+                             port.isNotEmpty() && database.isNotEmpty() &&
                              username.isNotEmpty() && password.isNotEmpty()
                 ) {
                     Text("保存")

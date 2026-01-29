@@ -1,4 +1,4 @@
-package org.treeroot.devlog.components
+package org.treeroot.devlog.page.components
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background

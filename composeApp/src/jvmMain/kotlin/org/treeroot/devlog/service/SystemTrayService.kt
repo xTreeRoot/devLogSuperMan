@@ -2,7 +2,7 @@ package org.treeroot.devlog.service
 
 import org.treeroot.devlog.DevLog
 import org.treeroot.devlog.constant.ResourceConstant
-import org.treeroot.devlog.ui.TrayPopup
+import org.treeroot.devlog.page.TrayPopup
 import org.treeroot.devlog.util.ImageUtils
 import java.awt.*
 

@@ -1,4 +1,4 @@
-package org.treeroot.devlog.ui
+package org.treeroot.devlog.page
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import org.treeroot.devlog.components.EditableJSONTextView
+import org.treeroot.devlog.page.components.EditableJSONTextView
 import org.treeroot.devlog.business.view.EsDslViewModel
 import org.treeroot.devlog.json.model.UiConfig
 import org.treeroot.devlog.util.ColorUtils

@@ -1,4 +1,4 @@
-package org.treeroot.devlog.components
+package org.treeroot.devlog.page.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,7 +12,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerButtons
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
@@ -35,7 +35,7 @@ fun SqlEditor(
 
     // 右键菜单状态
     var showContextMenu by remember { mutableStateOf(false) }
-    var contextMenuPosition by remember { mutableStateOf(androidx.compose.ui.geometry.Offset.Zero) }
+    var contextMenuPosition by remember { mutableStateOf(Offset.Zero) }
 
     // 当外部 value 发生变化时，同步更新内部状态
     LaunchedEffect(value) {

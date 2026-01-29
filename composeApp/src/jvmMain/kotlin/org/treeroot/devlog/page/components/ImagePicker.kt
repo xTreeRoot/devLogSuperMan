@@ -1,4 +1,4 @@
-package org.treeroot.devlog.components
+package org.treeroot.devlog.page.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import java.awt.FileDialog
+import java.awt.Frame
 import java.io.File
 import java.util.*
 
@@ -33,7 +34,7 @@ fun ImagePicker(
     ) {
         Button(
             onClick = {
-                val fileDialog = FileDialog((null as java.awt.Frame?), "选择图片", FileDialog.LOAD)
+                val fileDialog = FileDialog((null as Frame?), "选择图片", FileDialog.LOAD)
                 // 设置过滤器只显示图片文件
                 fileDialog.setFilenameFilter { _, name ->
                     val lowerName = name.lowercase(Locale.getDefault())

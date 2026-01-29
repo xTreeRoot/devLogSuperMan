@@ -1,4 +1,4 @@
-package org.treeroot.devlog.ui
+package org.treeroot.devlog.page
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +21,7 @@ import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.service.SystemTrayService
 import org.treeroot.devlog.state.AppStateManager
+import org.treeroot.devlog.util.ColorUtils
 import org.treeroot.devlog.util.ImageUtils
 
 @Composable
@@ -74,8 +75,8 @@ fun MainApp() {
             SecondaryTabRow(
                 selectedTabIndex = selectedTab,
                 modifier = Modifier.fillMaxWidth(),
-                containerColor = if (config.backgroundImagePath.isNotEmpty()) Color.Transparent else MaterialTheme.colorScheme.surface,
-                contentColor = if (config.backgroundImagePath.isNotEmpty()) Color.White else MaterialTheme.colorScheme.onSurface,
+                containerColor = ColorUtils.getContainerBackgroundColor(config),
+                contentColor = ColorUtils.getContainerBackgroundColor(config),
                 divider = {}
             ) {
                 Tab(
