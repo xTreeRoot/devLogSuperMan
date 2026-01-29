@@ -1,8 +1,9 @@
 package org.treeroot.devlog.service
 
+import kotlinx.coroutines.runBlocking
 import org.treeroot.devlog.DevLog
-import org.treeroot.devlog.logic.SqlFormatterService
 import org.treeroot.devlog.logic.EsDslFormatterService
+import org.treeroot.devlog.logic.SqlFormatterService
 import org.treeroot.devlog.util.ClipboardHelper
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -63,30 +64,22 @@ object ClipboardMonitorService {
     }
 
 
-
-
     /**
      * 监控剪贴板内容变化
      */
-    private fun monitorClipboard() {
+    private fun monitorClipboard() = runBlocking {
         val currentContent = ClipboardHelper.getTextFromClipboard()
 
         if (currentContent != null && currentContent != lastClipboardContent) {
-            DevLog.info("Clipboard changed, content: $currentContent")
-
-            var formattedContent: String? = null
-            var isFormatted = false
-
+            var isFormatted: Boolean
             // 通过服务来处理不同类型的格式化
-            formattedContent = processContentByType(currentContent)
+            val formattedContent = processContentByType(currentContent)
             isFormatted = !formattedContent.isNullOrEmpty()
 
             // 如果进行了格式化操作且格式化结果不为空，则复制到剪贴板
             if (isFormatted && !formattedContent.isNullOrEmpty()) {
                 DevLog.info("Formatted content: $formattedContent")
-                val copyResult = ClipboardHelper.copyToClipboard(formattedContent)
-                DevLog.info("Copy to clipboard result: $copyResult")
-                DevLog.info("Copied formatted content to clipboard")
+                ClipboardHelper.copyToClipboard(formattedContent)
                 // 更新lastClipboardContent为格式化后的内容，避免重复处理
                 lastClipboardContent = formattedContent
             } else {
@@ -101,17 +94,15 @@ object ClipboardMonitorService {
      * @param content 待处理的内容
      * @return 格式化后的内容，如果不需要格式化则返回null
      */
-    private fun processContentByType(content: String): String? {
+    private suspend fun processContentByType(content: String): String? {
         // 检查是否为MyBatis SQL格式
         if (sqlFormatterService.detectMybatisFormat(content)) {
-            DevLog.info("Detected MyBatis SQL format")
-            val result = sqlFormatterService.extractAndFormatMybatisSql(content)
+            val result = sqlFormatterService.formatSqlWithPrettyStyle(content)
             DevLog.info("MyBatis formatted result: $result")
             return result
         }
         // 检查是否为ES DSL格式
         else if (esDslFormatterService.isEsQuery(content)) {
-            DevLog.info("Detected ES DSL format")
             val result = esDslFormatterService.extractAndFormatEsDsl(content)
             DevLog.info("ES DSL formatted result: $result")
             return result
@@ -119,23 +110,6 @@ object ClipboardMonitorService {
 
         // 如果都不匹配，返回null表示无需格式化
         return null
-    }
-
-    /**
-     * 检测文本是否包含SQL格式
-     * @param text 待检测文本
-     * @return true 表示可能是SQL语句
-     */
-    private fun isSqlFormat(text: String): Boolean {
-        if (text.isBlank()) return false
-
-        val sqlIndicators = listOf(
-            "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP",
-            "select", "insert", "update", "delete", "create", "alter", "drop"
-        )
-
-        val trimmedText = text.trim().uppercase()
-        return sqlIndicators.any { indicator -> trimmedText.contains(indicator) }
     }
 
 

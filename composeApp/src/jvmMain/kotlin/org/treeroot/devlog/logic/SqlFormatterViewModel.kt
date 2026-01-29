@@ -45,12 +45,7 @@ class SqlFormatterViewModel {
             _errorMessage.value = ""
 
             try {
-                // 检测是否为MyBatis日志格式
-                val result = if (formatterService.detectMybatisFormat(_originalSql.value)) {
-                    formatterService.extractAndFormatMybatisSql(_originalSql.value)
-                } else {
-                    formatterService.formatSqlOneNodePerLine(_originalSql.value)
-                }
+                val result = formatterService.smartFormatSql(_originalSql.value)
 
                 val isValid = formatterService.validateSql(result)
 

@@ -13,7 +13,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import org.treeroot.devlog.logic.EsDslFormatterService
 import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.util.ColorUtils
 
@@ -24,24 +23,18 @@ fun EditableJSONTextView(
     onValueChange: (String) -> Unit = {},
     config: UiConfig? = null
 ) {
-    val esDslFormatter = remember { EsDslFormatterService() }
     val scrollState = rememberScrollState()
 
-    // 初次进来就格式化 JSON
     var textFieldValue by remember(text) {
         mutableStateOf(
-            TextFieldValue(
-                if (text.isNotBlank()) esDslFormatter.formatJson(text) else text
-            )
+            TextFieldValue(text)
         )
     }
 
-    // 当外部 text 改变时，也自动格式化
+    // 当外部 text 改变时，同步更新
     LaunchedEffect(text) {
-        val formatted = if (text.isNotBlank()) esDslFormatter.formatJson(text) else text
-        if (formatted != textFieldValue.text) {
-            textFieldValue = TextFieldValue(formatted)
-            onValueChange(formatted) // 同步给外部 ViewModel
+        if (text != textFieldValue.text) {
+            textFieldValue = TextFieldValue(text)
         }
     }
 

@@ -469,4 +469,60 @@ class SqlFormatterService {
             sql
         }
     }
+
+    /**
+     * 智能格式化SQL - 自动检测格式并选择合适的格式化方法
+     */
+    fun smartFormatSql(sql: String): String {
+        return if (detectMybatisFormat(sql)) {
+            extractAndFormatMybatisSql(sql)
+        } else {
+            formatSqlOneNodePerLine(sql)
+        }
+    }
+
+    /**
+     * 同步版本的MySQL Pretty格式化SQL
+     */
+    fun formatSqlWithPrettyStyleSync(sql: String): String {
+        if (sql.isBlank()) {
+            return sql
+        }
+
+        return try {
+            // 调用内部的formatMySqlPretty函数的同步版本
+            val extractedSql = extractSqlFromLog(sql)
+            extractedSql.split(";")
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
+                .joinToString("\n\n") { sqlPart ->
+                    formatSingleSql(sqlPart)
+                }
+        } catch (_: Exception) {
+            // 如果格式化失败，返回原始字符串
+            sql
+        }
+    }
+
+    /**
+     * 智能格式化SQL（Pretty样式）- 自动检测格式并选择合适的格式化方法
+     */
+    fun smartFormatSqlWithPrettyStyle(sql: String): String {
+        return if (detectMybatisFormat(sql)) {
+            extractAndFormatMybatisSql(sql)
+        } else {
+            formatSqlWithPrettyStyleSync(sql)
+        }
+    }
+
+    /**
+     * 智能格式化SQL（Pretty样式）suspend 版本
+     */
+    suspend fun smartFormatSqlWithPrettyStyleAsync(sql: String): String {
+        return if (detectMybatisFormat(sql)) {
+            extractAndFormatMybatisSql(sql)
+        } else {
+            formatSqlWithPrettyStyle(sql)
+        }
+    }
 }

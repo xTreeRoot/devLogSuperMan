@@ -76,7 +76,7 @@ class EsDslFormatterService {
                 else -> {
                     val queryJson = extractQueryJson(text)
                     val responseJson = extractResponseJson(text)
-                    Pair(queryJson, responseJson)
+                    Pair(formatJson(queryJson), formatJson(responseJson))
                 }
             }
         } catch (_: Exception) {

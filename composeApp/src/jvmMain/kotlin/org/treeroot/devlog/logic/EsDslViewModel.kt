@@ -81,14 +81,6 @@ class EsDslViewModel {
 
 
     /**
-     * 清空所有内容
-     */
-    fun clearAll() {
-        _originalDsl.value = ""
-        _formattedDsl.value = ""
-    }
-
-    /**
      * 复制格式化后的ES DSL到剪贴板
      */
     fun copyFormattedDslToClipboard() {
