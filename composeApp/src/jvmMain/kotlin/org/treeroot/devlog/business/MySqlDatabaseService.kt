@@ -1,6 +1,6 @@
-package org.treeroot.devlog.logic
+package org.treeroot.devlog.business
 
-import org.treeroot.devlog.logic.model.MySqlQueryResult
+import org.treeroot.devlog.business.model.MySqlQueryResult
 import org.treeroot.devlog.mysql.MySqlConnectConfig
 import org.treeroot.devlog.json.model.MySqlConfig
 import org.treeroot.devlog.mysql.MySqlDatabaseManager

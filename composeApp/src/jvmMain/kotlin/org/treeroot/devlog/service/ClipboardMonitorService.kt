@@ -2,8 +2,8 @@ package org.treeroot.devlog.service
 
 import kotlinx.coroutines.runBlocking
 import org.treeroot.devlog.DevLog
-import org.treeroot.devlog.logic.EsDslFormatterService
-import org.treeroot.devlog.logic.SqlFormatterService
+import org.treeroot.devlog.business.EsDslFormatterService
+import org.treeroot.devlog.business.SqlFormatterService
 import org.treeroot.devlog.util.ClipboardHelper
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -83,7 +83,6 @@ object ClipboardMonitorService {
                 // 更新lastClipboardContent为格式化后的内容，避免重复处理
                 lastClipboardContent = formattedContent
             } else {
-                DevLog.info("No formatting needed or formatting failed, isFormatted: $isFormatted, formattedContent is null or empty: ${formattedContent.isNullOrEmpty()}")
                 lastClipboardContent = currentContent
             }
         }

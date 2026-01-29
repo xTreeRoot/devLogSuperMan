@@ -3,7 +3,7 @@ package org.treeroot.devlog
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.treeroot.devlog.json.model.MySqlConfig
-import org.treeroot.devlog.logic.MySqlDatabaseService
+import org.treeroot.devlog.business.MySqlDatabaseService
 import org.treeroot.devlog.service.JsonStoreService
 import java.util.*
 

@@ -7,6 +7,8 @@ import java.awt.Image
 import java.io.File
 import java.io.InputStream
 import javax.imageio.ImageIO
+import javax.swing.Icon
+import javax.swing.ImageIcon
 
 /**
  * 图像处理工具类
@@ -50,6 +52,50 @@ object ImageUtils {
             rollBack
         }
     }
+
+    /**
+     * 从 classpath 资源路径加载 Image
+     * @param filePath 资源路径（如 "images/icon.png"）
+     * @return 加载的 Image，若失败则返回 null
+     */
+    fun loadImage(filePath: String): Image? {
+        return try {
+            javaClass.classLoader.getResourceAsStream(filePath)?.use { inputStream ->
+                ImageIO.read(inputStream) // BufferedImage 是 Image 的子类
+            } ?: run {
+                DevLog.error("资源未找到: $filePath")
+                null
+            }
+        } catch (e: Exception) {
+            DevLog.error("加载图像失败: $filePath, 错误: ${e.message}", e)
+            null
+        }
+    }
+
+    /**
+     * 将 Image 转换为 Icon
+     */
+    fun imageToIcon(filePath: String): Icon {
+        return ImageIcon(loadImage(filePath))
+    }
+    
+    /**
+     * 将 Image 转换为指定尺寸的 Icon
+     * @param filePath 资源路径
+     * @param width 图标宽度
+     * @param height 图标高度
+     * @return 指定尺寸的 ImageIcon
+     */
+    fun imageToIcon(filePath: String, width: Int, height: Int): Icon {
+        val image = loadImage(filePath)
+        return if (image != null) {
+            ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH))
+        } else {
+            ImageIcon()
+        }
+    }
+
+
 
 
     /**

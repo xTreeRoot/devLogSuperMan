@@ -1,11 +1,12 @@
-package org.treeroot.devlog.logic.view
+package org.treeroot.devlog.business.view
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.treeroot.devlog.logic.EsDslFormatterService
+import org.treeroot.devlog.business.EsDslFormatterService
+import org.treeroot.devlog.logic.model.EsDslResult
 import org.treeroot.devlog.util.ClipboardHelper
 
 /**
@@ -20,11 +21,8 @@ class EsDslViewModel {
     private val _originalDsl = mutableStateOf("")
     val originalDsl: State<String> = _originalDsl
 
-    private val _formattedDsl = mutableStateOf("")
-    val formattedDsl: State<String> = _formattedDsl
-
-    private val _formattedResponse = mutableStateOf("")
-    val formattedResponse: State<String> = _formattedResponse
+    private val _result = mutableStateOf(EsDslResult(success = true))
+    val result: State<EsDslResult> = _result
 
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
@@ -34,6 +32,17 @@ class EsDslViewModel {
 
     private val _showResultTree = mutableStateOf(false)
     val showResultTree: State<Boolean> = _showResultTree
+
+    // 为了向后兼容，提供原有的属性访问
+    val formattedDsl: State<String> = object : State<String> {
+        override val value: String
+            get() = _result.value.formattedDsl
+    }
+
+    val formattedResponse: State<String> = object : State<String> {
+        override val value: String
+            get() = _result.value.formattedResponse
+    }
 
     /**
      * 更新原始ES DSL
@@ -53,11 +62,24 @@ class EsDslViewModel {
 
             try {
                 val (dsl, response) = esDslService.separateDslAndResponse(_originalDsl.value)
-                _formattedDsl.value = dsl
-                _formattedResponse.value = response
+                val dslType = if (esDslService.isEsQuery(dsl)) "query" else "response"
+
+                _result.value = EsDslResult(
+                    success = true,
+                    formattedDsl = dsl,
+                    formattedResponse = response,
+                    processingTime = System.currentTimeMillis(),
+                    errorMessage = null,
+                    dslType = dslType
+                )
             } catch (e: Exception) {
-                _formattedDsl.value = "格式化过程中出现错误: ${e.message}"
-                _formattedResponse.value = ""
+                _result.value = EsDslResult(
+                    success = false,
+                    formattedDsl = "",
+                    formattedResponse = "",
+                    processingTime = System.currentTimeMillis(),
+                    errorMessage = "格式化过程中出现错误: ${'$'}{e.message}"
+                )
             } finally {
                 _isLoading.value = false
             }
@@ -68,15 +90,15 @@ class EsDslViewModel {
      * 更新格式化后的响应内容
      */
     fun updateFormattedResponse(newText: String) {
-        _formattedResponse.value = newText
+        _result.value = _result.value.copy(formattedResponse = newText)
     }
 
     /**
      * 更新格式化后的 DSL 内容
      */
     fun updateFormattedDsl(newText: String) {
-        _formattedDsl.value = newText
-        // 同步更新 originalDsl，以便后续点击“格式化”时使用最新内容
+        _result.value = _result.value.copy(formattedDsl = newText)
+        // 同步更新 originalDsl，以便后续点击"格式化"时使用最新内容
         _originalDsl.value = newText
     }
 
@@ -85,8 +107,8 @@ class EsDslViewModel {
      * 复制格式化后的ES DSL到剪贴板
      */
     fun copyFormattedDslToClipboard() {
-        if (_formattedDsl.value.isNotEmpty()) {
-            ClipboardHelper.copyToClipboard(_formattedDsl.value)
+        if (result.value.formattedDsl.isNotEmpty()) {
+            ClipboardHelper.copyToClipboard(result.value.formattedDsl)
         }
     }
 

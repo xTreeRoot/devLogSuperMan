@@ -1,4 +1,4 @@
-package org.treeroot.devlog.logic
+package org.treeroot.devlog.business
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser

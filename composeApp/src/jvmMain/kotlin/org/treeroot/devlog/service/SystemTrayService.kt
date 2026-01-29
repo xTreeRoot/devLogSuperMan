@@ -1,10 +1,10 @@
 package org.treeroot.devlog.service
 
 import org.treeroot.devlog.DevLog
+import org.treeroot.devlog.constant.ResourceConstant
 import org.treeroot.devlog.ui.TrayPopup
 import org.treeroot.devlog.util.ImageUtils
 import java.awt.*
-import javax.imageio.ImageIO
 
 /**
  * 系统托盘服务
@@ -25,7 +25,7 @@ object SystemTrayService {
         systemTray = SystemTray.getSystemTray()
         var trayIconImage: Image?
         try {
-            trayIconImage = ImageUtils.loadImage("org/treeroot/devlog/ATM.png", createStopTrayIcon())
+            trayIconImage = ImageUtils.loadImage(ResourceConstant.ATM_PATH, createStopTrayIcon())
         } catch (e: Exception) {
             trayIconImage = createStopTrayIcon()
             DevLog.warn("无法加载指定图标，使用默认图标: ${e.message}")
@@ -53,7 +53,7 @@ object SystemTrayService {
 
         // 获取对应状态的图标
         val trayIconImage = if (isMonitoring) {
-            ImageIO.read(ImageUtils.loadImageInputStream("org/treeroot/devlog/ATM.png"))
+            ImageUtils.loadImage(ResourceConstant.ATM_PATH)
         } else {
             // 停止时使用红色空心方块
             createStopTrayIcon()

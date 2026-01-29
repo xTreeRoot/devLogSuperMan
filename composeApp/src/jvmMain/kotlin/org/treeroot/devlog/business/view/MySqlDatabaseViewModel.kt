@@ -1,13 +1,13 @@
-package org.treeroot.devlog.logic.view
+package org.treeroot.devlog.business.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.treeroot.devlog.logic.model.MySqlQueryResult
+import org.treeroot.devlog.business.model.MySqlQueryResult
 import org.treeroot.devlog.mysql.MySqlConnectConfig
-import org.treeroot.devlog.logic.MySqlDatabaseService
+import org.treeroot.devlog.business.MySqlDatabaseService
 
 /**
  * MySQL数据库操作的视图模型

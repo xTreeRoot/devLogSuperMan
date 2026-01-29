@@ -2,7 +2,7 @@ package org.treeroot.devlog.mysql
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import org.treeroot.devlog.logic.model.MySqlQueryResult
+import org.treeroot.devlog.business.model.MySqlQueryResult
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet

@@ -1,4 +1,4 @@
-package org.treeroot.devlog.logic
+package org.treeroot.devlog.business
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

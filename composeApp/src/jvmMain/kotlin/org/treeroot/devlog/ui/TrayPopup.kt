@@ -1,8 +1,10 @@
 package org.treeroot.devlog.ui
 
 import org.treeroot.devlog.DevLog
+import org.treeroot.devlog.constant.ResourceConstant
 import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.SystemTrayService.initializeTray
+import org.treeroot.devlog.util.ImageUtils
 import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics2D
@@ -76,20 +78,20 @@ object TrayPopup {
     fun showAboutDialog() {
         SwingUtilities.invokeLater {
             val aboutMessage = """
-                devLogSuperMan
-                
-                版本: 1.0.0
-                功能: SQL和ES DSL格式化工具
-                作者: TreeRoot
-                
-                一个方便开发者的日志处理工具
-            """.trimIndent()
-
+            devLogSuperMan
+            
+            版本: 1.0.0
+            功能: SQL和ES DSL格式化工具
+            作者: TreeRoot
+            
+            一个方便开发者的日志处理工具
+        """.trimIndent()
             JOptionPane.showMessageDialog(
                 null,
                 aboutMessage,
                 "关于 devLogSuperMan",
-                JOptionPane.INFORMATION_MESSAGE
+                JOptionPane.INFORMATION_MESSAGE,
+                ImageUtils.imageToIcon(ResourceConstant.ATM_PATH, 100, 100)
             )
         }
     }

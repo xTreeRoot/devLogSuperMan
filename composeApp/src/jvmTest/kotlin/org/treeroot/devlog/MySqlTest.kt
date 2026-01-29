@@ -3,9 +3,9 @@ package org.treeroot.devlog
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.treeroot.devlog.config.ConfigManager
-import org.treeroot.devlog.logic.model.MySqlQueryResult
+import org.treeroot.devlog.business.model.MySqlQueryResult
 import org.treeroot.devlog.mysql.MySqlConnectConfig
-import org.treeroot.devlog.logic.MySqlDatabaseService
+import org.treeroot.devlog.business.MySqlDatabaseService
 
 /**
  * MySQL数据库操作示例

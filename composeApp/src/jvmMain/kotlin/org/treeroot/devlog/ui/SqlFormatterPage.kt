@@ -10,7 +10,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.components.SqlEditor
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.logic.view.SqlFormatterViewModel
+import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.util.ColorUtils
 
 @Composable
