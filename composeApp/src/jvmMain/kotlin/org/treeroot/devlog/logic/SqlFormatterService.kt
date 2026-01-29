@@ -1,10 +1,13 @@
 package org.treeroot.devlog.logic
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 /**
- * 高级SQL格式化服务类
- * 提供更精细的SQL格式化功能，包括MyBatis日志解析
+ * SQL格式化服务类
+ * 提供SQL格式化功能，包括MyBatis日志解析
  */
-class AdvancedSqlFormatterService {
+class SqlFormatterService {
 
     /**
      * 检测文本是否包含MyBatis日志格式
@@ -33,8 +36,6 @@ class AdvancedSqlFormatterService {
         }
 
         return false
-
-
     }
 
     /**
@@ -336,14 +337,13 @@ class AdvancedSqlFormatterService {
         var parenCount = 0
         var bracketCount = 0
         var braceCount = 0
-        val inSingleQuote = false
         var inDoubleQuote = false
         var i = 0
 
         while (i < sql.length) {
             val ch = sql[i]
 
-            if (!inSingleQuote && !inDoubleQuote) {
+            if (!inDoubleQuote) {
                 when (ch) {
                     '(' -> parenCount++
                     ')' -> parenCount--
@@ -413,7 +413,7 @@ class AdvancedSqlFormatterService {
      * ORDER BY ...
      */
     suspend fun formatMySqlPretty(raw: String): String =
-        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+        withContext(Dispatchers.Default) {
             // 先提取SQL，再格式化
             val extractedSql = extractSqlFromLog(raw)
             extractedSql.split(";")

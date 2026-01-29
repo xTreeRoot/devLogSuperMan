@@ -1,13 +1,12 @@
 package org.treeroot.devlog.service
 
 import org.treeroot.devlog.DevLog
-import org.treeroot.devlog.logic.AdvancedSqlFormatterService
+import org.treeroot.devlog.logic.SqlFormatterService
 import org.treeroot.devlog.logic.EsDslFormatterService
 import org.treeroot.devlog.util.ClipboardHelper
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
-import javax.swing.SwingUtilities
 
 /**
  * 剪贴板监控服务
@@ -17,7 +16,7 @@ object ClipboardMonitorService {
     private var scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var isMonitoring = false
     private var lastClipboardContent: String? = null
-    private val sqlFormatterService = AdvancedSqlFormatterService()
+    private val sqlFormatterService = SqlFormatterService()
     private val esDslFormatterService = EsDslFormatterService()
 
     /**
@@ -62,51 +61,10 @@ object ClipboardMonitorService {
         // 重新创建调度器以备下次使用
         scheduler = Executors.newScheduledThreadPool(1)
     }
-    /**
-     * 检测文本是否包含ES DSL格式
-     * @param text 待检测文本
-     * @return true 表示可能是ES查询或响应
-     */
-    fun detectEsFormat(text: String): Boolean {
-        if (text.isBlank()) return false
 
-        // 检查是否为有效的JSON结构
-        if (!isValidJsonStructure(text)) return false
 
-        val esIndicators = listOf(
-            "\"query\"",
-            "\"bool\"",
-            "\"match\"",
-            "\"term\"",
-            "\"must\"",
-            "\"should\"",
-            "\"filter\"",
-            "\"aggs\"",
-            "\"aggregations\"",
-            "\"size\"",
-            "\"from\"",
-            "\"sort\"",
-            "_source",
-            "took",
-            "hits",
-            "timed_out",
-            "_shards"
-        )
 
-        val lowerText = text.lowercase()
-        return esIndicators.any { indicator -> lowerText.contains(indicator) }
-    }
 
-    /**
-     * 检查文本是否为有效的JSON结构
-     * @param text 待检测文本
-     * @return true 表示可能是有效的JSON
-     */
-    private fun isValidJsonStructure(text: String): Boolean {
-        val trimmed = text.trim()
-        return (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
-               (trimmed.startsWith("[") && trimmed.endsWith("]"))
-    }
     /**
      * 监控剪贴板内容变化
      */
@@ -119,27 +77,9 @@ object ClipboardMonitorService {
             var formattedContent: String? = null
             var isFormatted = false
 
-            // 检查是否为MyBatis SQL格式
-            if (sqlFormatterService.detectMybatisFormat(currentContent)) {
-                DevLog.info("Detected MyBatis SQL format")
-                formattedContent = sqlFormatterService.extractAndFormatMybatisSql(currentContent)
-                isFormatted = true
-                DevLog.info("MyBatis formatted result: $formattedContent")
-            }
-            // 检查是否为ES DSL格式
-            else if (esDslFormatterService.isEsQuery(currentContent)) {
-                DevLog.info("Detected ES DSL format")
-                formattedContent = esDslFormatterService.extractAndFormatEsDsl(currentContent)
-                isFormatted = true
-                DevLog.info("ES DSL formatted result: $formattedContent")
-            }
-            // 最后检查普通SQL格式 (最通用的)
-            else if (isSqlFormat(currentContent)) {
-                DevLog.info("Detected SQL format")
-                formattedContent = sqlFormatterService.formatSql(currentContent)
-                isFormatted = true
-                DevLog.info("SQL formatted result: $formattedContent")
-            }
+            // 通过服务来处理不同类型的格式化
+            formattedContent = processContentByType(currentContent)
+            isFormatted = !formattedContent.isNullOrEmpty()
 
             // 如果进行了格式化操作且格式化结果不为空，则复制到剪贴板
             if (isFormatted && !formattedContent.isNullOrEmpty()) {
@@ -154,6 +94,31 @@ object ClipboardMonitorService {
                 lastClipboardContent = currentContent
             }
         }
+    }
+
+    /**
+     * 根据内容类型处理格式化
+     * @param content 待处理的内容
+     * @return 格式化后的内容，如果不需要格式化则返回null
+     */
+    private fun processContentByType(content: String): String? {
+        // 检查是否为MyBatis SQL格式
+        if (sqlFormatterService.detectMybatisFormat(content)) {
+            DevLog.info("Detected MyBatis SQL format")
+            val result = sqlFormatterService.extractAndFormatMybatisSql(content)
+            DevLog.info("MyBatis formatted result: $result")
+            return result
+        }
+        // 检查是否为ES DSL格式
+        else if (esDslFormatterService.isEsQuery(content)) {
+            DevLog.info("Detected ES DSL format")
+            val result = esDslFormatterService.extractAndFormatEsDsl(content)
+            DevLog.info("ES DSL formatted result: $result")
+            return result
+        }
+
+        // 如果都不匹配，返回null表示无需格式化
+        return null
     }
 
     /**
@@ -172,7 +137,6 @@ object ClipboardMonitorService {
         val trimmedText = text.trim().uppercase()
         return sqlIndicators.any { indicator -> trimmedText.contains(indicator) }
     }
-
 
 
     /**

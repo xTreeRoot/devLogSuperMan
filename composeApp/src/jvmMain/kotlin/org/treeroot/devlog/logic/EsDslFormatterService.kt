@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 
 /**
- * es dsl格式化服务
+ * ES DSL格式化服务
  */
 class EsDslFormatterService {
 

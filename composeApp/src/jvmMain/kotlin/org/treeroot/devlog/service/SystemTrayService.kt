@@ -27,7 +27,7 @@ object SystemTrayService {
         try {
             trayIconImage = ImageUtils.loadImage("org/treeroot/devlog/ATM.png", createStopTrayIcon())
         } catch (e: Exception) {
-            trayIconImage = createStopTrayIcon() // 发生异常时创建默认图标
+            trayIconImage = createStopTrayIcon()
             DevLog.warn("无法加载指定图标，使用默认图标: ${e.message}")
         }
         trayIcon = TrayIcon(trayIconImage, "devLogSuperMan")
@@ -53,7 +53,7 @@ object SystemTrayService {
 
         // 获取对应状态的图标
         val trayIconImage = if (isMonitoring) {
-            ImageIO.read(ImageUtils.loadImageInputStream("org/treeroot/devlog/迪迦.png"))
+            ImageIO.read(ImageUtils.loadImageInputStream("org/treeroot/devlog/ATM.png"))
         } else {
             // 停止时使用红色空心方块
             createStopTrayIcon()
