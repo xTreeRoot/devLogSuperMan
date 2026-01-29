@@ -9,7 +9,7 @@ import org.treeroot.devlog.model.UiConfig
 import org.treeroot.devlog.mysql.MySqlConfigInfo
 import org.treeroot.devlog.state.AppStateManager
 
-class JsonStoreService {
+object JsonStoreService {
     private val uiConfigStorage = UiConfigStorage()
     private val mySqlConfigStorage = MySqlConfigStorage()
     private val ioScope = CoroutineScope(Dispatchers.IO)

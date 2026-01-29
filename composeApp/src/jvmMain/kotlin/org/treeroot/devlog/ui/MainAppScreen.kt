@@ -25,12 +25,11 @@ import org.treeroot.devlog.util.ImageUtils
 
 @Composable
 fun MainApp() {
-    val jsonStoreService = remember { JsonStoreService() }
 
     // 从状态管理器获取配置，或者从数据库加载初始配置
     val stateConfig = AppStateManager.currentConfig
     val initialConfig = if (stateConfig != null) stateConfig else {
-        val loadedConfig = jsonStoreService.loadUiConfig()
+        val loadedConfig = JsonStoreService.loadUiConfig()
         AppStateManager.updateConfig(loadedConfig)
         loadedConfig
     }

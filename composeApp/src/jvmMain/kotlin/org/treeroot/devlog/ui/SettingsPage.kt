@@ -17,10 +17,8 @@ import org.treeroot.devlog.util.ColorUtils
 
 @Composable
 fun SettingsPage(config: UiConfig? = null) {
-    val jsonStoreService = remember { JsonStoreService() }
-
     // 从数据库中加载初始值
-    val initialConfig = remember { jsonStoreService.loadUiConfig() }
+    val initialConfig = remember { JsonStoreService.loadUiConfig() }
 
     var enableSilentMode by remember { mutableStateOf(initialConfig.enableClipboardMonitor) }
     var backgroundOpacity by remember { mutableStateOf(initialConfig.backgroundOpacity) }
@@ -39,7 +37,7 @@ fun SettingsPage(config: UiConfig? = null) {
             backgroundOpacity = backgroundOpacity,
             enableClipboardMonitor = enableSilentMode
         )
-        jsonStoreService.saveConfigAsync(newConfig)
+        JsonStoreService.saveConfigAsync(newConfig)
         AppStateManager.updateConfig(newConfig)
     }
 
@@ -161,7 +159,7 @@ fun SettingsPage(config: UiConfig? = null) {
                             backgroundOpacity = backgroundOpacity,
                             enableClipboardMonitor = enableSilentMode
                         )
-                        jsonStoreService.saveConfigAsync(newConfig)
+                        JsonStoreService.saveConfigAsync(newConfig)
                         AppStateManager.updateConfig(newConfig)
                     },
                     buttonText = if (backgroundImagePath.isEmpty()) "选择背景图片" else "更改背景图片",

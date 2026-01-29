@@ -15,8 +15,7 @@ class MysqlConfigTest {
     @Test
     fun testMysqlConfigStorage() = runBlocking {
         println("开始测试MySQL配置存储功能...")
-        val jsonStoreService = JsonStoreService()
-        jsonStoreService.deleteAllMysqlConfigs()
+        JsonStoreService.deleteAllMysqlConfigs()
 
         // 1. 测试添加MySQL配置
         val configId = UUID.randomUUID().toString()
@@ -33,12 +32,12 @@ class MysqlConfigTest {
         )
 
         println("添加MySQL配置...")
-        jsonStoreService.addMySqlConfig(mysqlConfig)
+        JsonStoreService.addMySqlConfig(mysqlConfig)
         println("MySQL配置添加成功")
 
         // 2. 测试获取所有MySQL配置
         println("获取所有MySQL配置...")
-        val allConfigs = jsonStoreService.getAllMySqlConfigs()
+        val allConfigs = JsonStoreService.getAllMySqlConfigs()
         println("共有 ${allConfigs.size} 个MySQL配置")
         allConfigs.forEach { config ->
             println("配置: ${config.name} (${config.host}:${config.port})")
@@ -46,26 +45,26 @@ class MysqlConfigTest {
 
         // 3. 测试获取特定配置
         println("获取特定MySQL配置...")
-        val retrievedConfig = jsonStoreService.getMySqlConfigById(configId)
+        val retrievedConfig = JsonStoreService.getMySqlConfigById(configId)
         println("检索到配置: ${retrievedConfig?.name}")
 
         // 4. 测试更新配置
         println("更新MySQL配置...")
         val updatedConfig = mysqlConfig.copy(name = "更新后的测试数据库配置", remarks = "已更新的配置", isDefault = true)
-        jsonStoreService.updateMySqlConfig(updatedConfig)
+        JsonStoreService.updateMySqlConfig(updatedConfig)
         println("MySQL配置更新成功")
 
         // 5. 验证更新结果
-        val updatedRetrievedConfig = jsonStoreService.getMySqlConfigById(configId)
+        val updatedRetrievedConfig = JsonStoreService.getMySqlConfigById(configId)
         println("更新后的配置名称: ${updatedRetrievedConfig?.name}")
 
         // 6. 测试设置默认配置
         println("设置默认MySQL配置...")
-        jsonStoreService.setDefaultMySqlConfig(configId)
+        JsonStoreService.setDefaultMySqlConfig(configId)
         println("默认配置设置成功")
 
         // 7. 验证默认配置
-        val allConfigsAfterSetDefault = jsonStoreService.getAllMySqlConfigs()
+        val allConfigsAfterSetDefault = JsonStoreService.getAllMySqlConfigs()
         val defaultConfig = allConfigsAfterSetDefault.find { it.isDefault }
         println("默认配置: ${defaultConfig?.name}")
 
