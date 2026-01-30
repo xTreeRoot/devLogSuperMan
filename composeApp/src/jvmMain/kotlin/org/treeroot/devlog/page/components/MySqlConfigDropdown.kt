@@ -25,9 +25,8 @@ fun MySqlConfigDropdown(
     var expanded by remember { mutableStateOf(false) }
     val allConfigs by remember { mutableStateOf(JsonStoreService.getAllMySqlConfigs()) }
     val activeConfig = allConfigs.find { it.id == viewModel.getActiveConfigId() }
-    val displayText = activeConfig?.let { "${it.name} (${it.host}:${it.port}/${it.database})" }
+    val displayText =  activeConfig?.let { "${it.name}/${it.database} (${it.remarks})" }
         ?: "请选择数据库配置"
-
     // 搜索功能
     var searchQuery by remember { mutableStateOf("") }
     val filteredConfigs = allConfigs.filter { config ->
