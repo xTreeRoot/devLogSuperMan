@@ -24,21 +24,31 @@ fun MySqlConfigDropdown(
 
     var expanded by remember { mutableStateOf(false) }
 
-    // 使 allConfigs 能够响应外部变化
-    val allConfigs by remember {
-        derivedStateOf {
-            JsonStoreService.getAllMySqlConfigs()
-        }
-    }
-
     // 使用 ViewModel 中的响应式状态
+    val allConfigs by viewModel.allConfigs
     val activeConfigId by viewModel.activeConfigId
 
     // 使用 derivedStateOf 来计算显示文本，这样会自动响应依赖项的变化
-    val displayText by remember {
+    val displayText by remember(activeConfigId, allConfigs) {
         derivedStateOf {
             val activeConfig = allConfigs.find { it.id == activeConfigId }
-            activeConfig?.let { "${it.name}/${it.database} (${it.remarks})" } ?: "请选择数据库配置"
+            if (activeConfig != null) {
+                "${activeConfig.name}/${activeConfig.database} (${activeConfig.remarks})"
+            } else {
+                // 如果在 allConfigs 中没找到，但 activeConfigId 存在，尝试从 JsonStoreService 直接获取默认的
+                val allMySqlConfigs = JsonStoreService.getAllMySqlConfigs()
+                val defaultConfig = allMySqlConfigs.find { it.isDefault }
+                defaultConfig?.let { config ->
+                    "${config.name}/${config.database} (${config.remarks})"
+                } ?: "请选择数据库配置"
+            }
+        }
+    }
+
+    // 当 activeConfigId 发生变化时，刷新配置列表以确保显示最新的配置信息
+    LaunchedEffect(activeConfigId) {
+        if (activeConfigId != null) {
+            viewModel.refreshAllConfigs()
         }
     }
 
@@ -62,7 +72,7 @@ fun MySqlConfigDropdown(
             onClick = { expanded = !expanded },
             modifier = Modifier.widthIn(min = 180.dp)
         ) {
-            Text(displayText)
+            Text(displayText ?: "请选择数据库配置")
         }
 
         // 下拉菜单

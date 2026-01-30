@@ -12,6 +12,7 @@ import org.treeroot.devlog.business.MySqlDatabaseService
 import org.treeroot.devlog.business.SqlFormatterService
 import org.treeroot.devlog.business.model.MySqlQueryResult
 import org.treeroot.devlog.business.model.SqlFormatResult
+import org.treeroot.devlog.json.model.MySqlConfig
 import org.treeroot.devlog.mysql.MySqlConnectConfig
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.util.ClipboardHelper
@@ -59,10 +60,28 @@ class SqlFormatterViewModel : ViewModel() {
     private val _activeConfigId = mutableStateOf<String?>(null)
     val activeConfigId: State<String?> = _activeConfigId
 
+    private val _allConfigs = mutableStateOf(JsonStoreService.getAllMySqlConfigs())
+    val allConfigs: State<List<MySqlConfig>> = _allConfigs
+
     private val _queryResult = mutableStateOf<MySqlQueryResult?>(null)
     val queryResult: State<MySqlQueryResult?> = _queryResult
 
     private val _isExecuting = mutableStateOf(false)
+
+    init {
+        updateAllConfigs()
+    }
+
+    private fun updateAllConfigs() {
+        _allConfigs.value = JsonStoreService.getAllMySqlConfigs()
+    }
+
+    /**
+     * 刷新所有配置列表
+     */
+    fun refreshAllConfigs() {
+        updateAllConfigs()
+    }
 
     /**
      * 格式化SQL
@@ -210,6 +229,7 @@ class SqlFormatterViewModel : ViewModel() {
 
     private fun updateActiveConfigId() {
         _activeConfigId.value = databaseService.getActiveConfigId()
+        updateAllConfigs() // 同时更新配置列表
     }
 
     /**
