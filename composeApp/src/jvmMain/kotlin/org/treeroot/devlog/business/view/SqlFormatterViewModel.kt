@@ -68,8 +68,33 @@ class SqlFormatterViewModel : ViewModel() {
 
     private val _isExecuting = mutableStateOf(false)
 
+    // 计算显示文本的状态
+    private val _displayText = mutableStateOf("请选择数据库配置")
+    val displayText: State<String> = _displayText
+
+    // 更新显示文本的方法
+    fun updateDisplayText() {
+        val activeConfig = _allConfigs.value.find { it.id == _activeConfigId.value }
+        _displayText.value = if (activeConfig != null) {
+            formatConfigDisplay(activeConfig)
+        } else {
+            // 尝试查找默认配置
+            val allMySqlConfigs = JsonStoreService.getAllMySqlConfigs()
+            val defaultConfig = allMySqlConfigs.find { it.isDefault }
+            defaultConfig?.let { config ->
+                formatConfigDisplay(config)
+            } ?: "请选择数据库配置"
+        }
+    }
+
+    // 格式化配置显示的私有辅助函数
+    private fun formatConfigDisplay(config: MySqlConfig): String {
+        return "${config.name}/${config.database} (${config.remarks})"
+    }
+
     init {
         updateAllConfigs()
+        updateDisplayText()
     }
 
     private fun updateAllConfigs() {
@@ -81,6 +106,7 @@ class SqlFormatterViewModel : ViewModel() {
      */
     fun refreshAllConfigs() {
         updateAllConfigs()
+        updateDisplayText()
     }
 
     /**
@@ -230,6 +256,7 @@ class SqlFormatterViewModel : ViewModel() {
     private fun updateActiveConfigId() {
         _activeConfigId.value = databaseService.getActiveConfigId()
         updateAllConfigs() // 同时更新配置列表
+        updateDisplayText() // 更新显示文本
     }
 
     /**
