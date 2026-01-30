@@ -1,14 +1,9 @@
 package org.treeroot.devlog.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.material3.*
+
 
 /* -------------------------------------------------------------------------- */
 /*                                Light Theme                                 */
@@ -134,36 +129,3 @@ val DarkColorScheme = darkColorScheme(
 /*                                DevLog Theme                                */
 /* -------------------------------------------------------------------------- */
 
-@Composable
-fun DevLogTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(), // ✔ Compose Multiplatform 支持
-    content: @Composable () -> Unit
-) {
-    val colorScheme =
-        if (darkTheme) DarkColorScheme else LightColorScheme
-
-    val typography = Typography(
-        headlineLarge = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
-        headlineMedium = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Medium),
-        titleLarge = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Medium),
-
-        bodyLarge = TextStyle(fontSize = 16.sp),
-        bodyMedium = TextStyle(fontSize = 14.sp),
-        labelSmall = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Medium)
-    )
-
-    val shapes = Shapes(
-        extraSmall = RoundedCornerShape(4.dp),
-        small = RoundedCornerShape(6.dp),
-        medium = RoundedCornerShape(8.dp),
-        large = RoundedCornerShape(12.dp),
-        extraLarge = RoundedCornerShape(28.dp)
-    )
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = typography,
-        shapes = shapes,
-        content = content
-    )
-}

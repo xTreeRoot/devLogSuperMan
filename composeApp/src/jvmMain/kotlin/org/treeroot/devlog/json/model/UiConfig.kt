@@ -20,5 +20,14 @@ data class UiConfig(
     /**
      * 是否启用剪贴板监控
      */
-    val enableClipboardMonitor: Boolean = false
+    val enableClipboardMonitor: Boolean = false,
+    /**
+     * 是否系统自适应主题
+     */
+    val isSystemAdaptive: Boolean = true,
+    /**
+     * 主题模式：false为亮色，true为暗色
+     * 当isSystemAdaptive为true时此设置无效
+     */
+    val isDarkTheme: Boolean = false
 )
