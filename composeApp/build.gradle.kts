@@ -23,6 +23,8 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            //ant-design-kmp
+            //implementation("digital.guimauve.antdesign:ui:1.0.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -39,6 +41,7 @@ kotlin {
             implementation("mysql:mysql-connector-java:8.0.33")
             // HikariCP连接池
             implementation("com.zaxxer:HikariCP:5.0.1")
+
         }
     }
 }

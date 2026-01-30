@@ -3,18 +3,10 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        mavenCentral()
         maven("https://maven.aliyun.com/repository/public")
         gradlePluginPortal()
-        mavenCentral()
-        google {
-            mavenContent {
-                includeGroupAndSubgroups("androidx")
-                includeGroupAndSubgroups("com.android")
-                includeGroupAndSubgroups("com.google")
-            }
-        }
-        mavenCentral()
-        gradlePluginPortal()
+        google()
     }
 }
 
@@ -22,14 +14,7 @@ dependencyResolutionManagement {
     repositories {
         maven("https://maven.aliyun.com/repository/public")
         mavenCentral()
-        google {
-            mavenContent {
-                includeGroupAndSubgroups("androidx")
-                includeGroupAndSubgroups("com.android")
-                includeGroupAndSubgroups("com.google")
-            }
-        }
-        mavenCentral()
+        google()
     }
 }
 
