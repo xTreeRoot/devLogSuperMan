@@ -1,5 +1,4 @@
 package org.treeroot.devlog.page.components
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,18 +22,36 @@ fun MySqlConfigDropdown(
 ) {
 
     var expanded by remember { mutableStateOf(false) }
-    val allConfigs by remember { mutableStateOf(JsonStoreService.getAllMySqlConfigs()) }
-    val activeConfig = allConfigs.find { it.id == viewModel.getActiveConfigId() }
-    val displayText =  activeConfig?.let { "${it.name}/${it.database} (${it.remarks})" }
-        ?: "请选择数据库配置"
+
+    // 使 allConfigs 能够响应外部变化
+    val allConfigs by produceState(initialValue = emptyList()) {
+        value = JsonStoreService.getAllMySqlConfigs()
+    }
+
+    // 使用 ViewModel 中的响应式状态
+    val activeConfigId by viewModel.activeConfigId
+
+    // 使用 LaunchedEffect 来监听 ViewModel 的状态变化并更新显示文本
+    var displayText by remember { mutableStateOf("请选择数据库配置") }
+
+    LaunchedEffect(allConfigs, activeConfigId) {
+        val activeConfig = allConfigs.find { it.id == activeConfigId }
+        displayText = activeConfig?.let { "${it.name}/${it.database} (${it.remarks})" }
+            ?: "请选择数据库配置"
+    }
+
     // 搜索功能
     var searchQuery by remember { mutableStateOf("") }
-    val filteredConfigs = allConfigs.filter { config ->
-        searchQuery.isEmpty() ||
-                config.name.contains(searchQuery, ignoreCase = true) ||
-                config.host.contains(searchQuery, ignoreCase = true) ||
-                config.database.contains(searchQuery, ignoreCase = true) ||
-                config.remarks.contains(searchQuery, ignoreCase = true)
+    val filteredConfigs by remember(allConfigs, searchQuery) {
+        derivedStateOf {
+            allConfigs.filter { config ->
+                searchQuery.isEmpty() ||
+                        config.name.contains(searchQuery, ignoreCase = true) ||
+                        config.host.contains(searchQuery, ignoreCase = true) ||
+                        config.database.contains(searchQuery, ignoreCase = true) ||
+                        config.remarks.contains(searchQuery, ignoreCase = true)
+            }
+        }
     }
 
     Column {

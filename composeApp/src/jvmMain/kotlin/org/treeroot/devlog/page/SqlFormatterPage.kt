@@ -2,6 +2,7 @@ package org.treeroot.devlog.page
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,11 +33,12 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
             color = dynamicColors.primaryColor
         )
 
-        // sql 操作按钮
-        SqlOperationButtons(viewModel = viewModel)
-
-        // 数据库连接信息
-        DatabaseConnectionInfo(viewModel = viewModel, config = config)
+        Row {
+            // sql 操作按钮
+            SqlOperationButtons(viewModel = viewModel)
+            // 数据库连接信息
+            DatabaseConnectionInfo(viewModel = viewModel, config = config)
+        }
 
         // 格式化后的SQL显示区域
         FormattedSqlDisplay(

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,6 @@ fun FormattedSqlDisplay(
     onExecuteSelectedSql: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Text("格式化后SQL:")
     Card(
         modifier = modifier
             .fillMaxWidth(),
@@ -41,7 +39,7 @@ fun FormattedSqlDisplay(
         Box(modifier = Modifier.fillMaxSize().padding(12.dp)) {
             SqlEditor(
                 value = formattedSql,
-                onValueChange = {}, // 只读模式，不允许直接编辑
+                onValueChange = {},
                 config = config,
                 modifier = Modifier.fillMaxSize(),
                 onExecuteSql = { onExecuteSql(formattedSql) },

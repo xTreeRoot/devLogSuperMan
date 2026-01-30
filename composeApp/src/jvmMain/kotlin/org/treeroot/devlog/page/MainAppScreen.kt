@@ -64,6 +64,11 @@ fun MainApp() {
     // ES DSL ViewModel实例
     val esDslViewModel = remember { EsDslViewModel() }
 
+    // 在应用启动时自动激活默认的数据库配置
+    LaunchedEffect(Unit) {
+        sqlFormatterViewModel.autoActivateDefaultConfig()
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         // 背景内容 - 使用独立的可组合函数避免标签页切换时的重组
         BackgroundLayer(config = config)

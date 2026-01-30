@@ -28,7 +28,7 @@ fun DatabaseConnectionInfo(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = "数据库连接: ",
@@ -54,6 +54,9 @@ fun DatabaseConnectionInfo(
     }
 }
 
+/**
+ *  连接状态指示器组件
+ */
 @Composable
 private fun ConnectionIndicator(isConnected: Boolean) {
     Box(

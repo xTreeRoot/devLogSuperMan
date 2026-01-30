@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.treeroot.devlog.DevLog
 import org.treeroot.devlog.business.MySqlDatabaseService
 import org.treeroot.devlog.business.SqlFormatterService
 import org.treeroot.devlog.business.model.MySqlQueryResult
 import org.treeroot.devlog.business.model.SqlFormatResult
 import org.treeroot.devlog.mysql.MySqlConnectConfig
+import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.util.ClipboardHelper
 
 /**
@@ -54,6 +56,9 @@ class SqlFormatterViewModel : ViewModel() {
     private val _connectionStatus = mutableStateOf(false)
     val connectionStatus: State<Boolean> = _connectionStatus
 
+    private val _activeConfigId = mutableStateOf<String?>(null)
+    val activeConfigId: State<String?> = _activeConfigId
+
     private val _queryResult = mutableStateOf<MySqlQueryResult?>(null)
     val queryResult: State<MySqlQueryResult?> = _queryResult
 
@@ -92,7 +97,7 @@ class SqlFormatterViewModel : ViewModel() {
                 _result.value = SqlFormatResult(
                     success = false,
                     originalSql = _originalSql.value,
-                    errorMessage = "格式化过程中出现错误: ${'$'}{e.message}",
+                    errorMessage = "格式化过程中出现错误: ${e.message}",
                     isValid = false,
                     processingTime = System.currentTimeMillis()
                 )
@@ -173,6 +178,7 @@ class SqlFormatterViewModel : ViewModel() {
                 databaseService.initializeConnectionWithConfig(config)
                 val isConnected = databaseService.testConnection()
                 _connectionStatus.value = isConnected
+                updateActiveConfigId() // 更新活跃配置ID
             } catch (e: Exception) {
                 _connectionStatus.value = false
             }
@@ -188,6 +194,7 @@ class SqlFormatterViewModel : ViewModel() {
             viewModelScope.launch {
                 val isConnected = databaseService.testConnection()
                 _connectionStatus.value = isConnected
+                updateActiveConfigId() // 更新活跃配置ID
             }
         } else {
             _connectionStatus.value = false
@@ -199,6 +206,65 @@ class SqlFormatterViewModel : ViewModel() {
      */
     fun getActiveConfigId(): String? {
         return databaseService.getActiveConfigId()
+    }
+
+    private fun updateActiveConfigId() {
+        _activeConfigId.value = databaseService.getActiveConfigId()
+    }
+
+    /**
+     * 自动激活默认的数据库配置
+     */
+    fun autoActivateDefaultConfig() {
+        viewModelScope.launch {
+            try {
+                // 获取所有MySQL配置
+                val allConfigs = JsonStoreService.getAllMySqlConfigs()
+
+                // 查找默认配置
+                val defaultConfig = allConfigs.find { it.isDefault }
+
+                if (defaultConfig != null) {
+                    // 使用找到的默认配置连接数据库
+                    val connectConfig = MySqlConnectConfig(
+                        host = defaultConfig.host,
+                        port = defaultConfig.port,
+                        database = defaultConfig.database,
+                        username = defaultConfig.username,
+                        password = defaultConfig.password
+                    )
+
+                    databaseService.initializeConnectionWithConfig(connectConfig)
+                    val isConnected = databaseService.testConnection()
+                    _connectionStatus.value = isConnected
+                    updateActiveConfigId() // 更新活跃配置ID
+
+                    DevLog.info("自动激活默认数据库配置: ${defaultConfig.name}, 连接${if (isConnected) "成功" else "失败"}")
+                } else {
+                    // 如果没有默认配置，但有配置存在，可以激活第一个配置
+                    if (allConfigs.isNotEmpty()) {
+                        val firstConfig = allConfigs.first()
+                        val connectConfig = MySqlConnectConfig(
+                            host = firstConfig.host,
+                            port = firstConfig.port,
+                            database = firstConfig.database,
+                            username = firstConfig.username,
+                            password = firstConfig.password
+                        )
+
+                        databaseService.initializeConnectionWithConfig(connectConfig)
+                        val isConnected = databaseService.testConnection()
+                        _connectionStatus.value = isConnected
+                        updateActiveConfigId() // 更新活跃配置ID
+
+                        DevLog.info("激活首个数据库配置: ${firstConfig.name}, 连接${if (isConnected) "成功" else "失败"}")
+                    }
+                }
+            } catch (e: Exception) {
+                DevLog.error("自动激活默认数据库配置时发生错误: ${e.message}")
+                _connectionStatus.value = false
+            }
+        }
     }
 
     /**
