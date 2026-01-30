@@ -9,7 +9,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -21,7 +20,6 @@ import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.service.SystemTrayService
 import org.treeroot.devlog.state.AppStateManager
-import org.treeroot.devlog.util.ColorUtils
 import org.treeroot.devlog.util.ImageUtils
 
 @Composable
@@ -80,8 +78,8 @@ fun MainApp() {
             SecondaryTabRow(
                 selectedTabIndex = selectedTab,
                 modifier = Modifier.fillMaxWidth(),
-                containerColor = ColorUtils.getContainerBackgroundColor(config),
-                contentColor = ColorUtils.getContainerBackgroundColor(config),
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 divider = {}
             ) {
                 Tab(
@@ -160,7 +158,7 @@ private fun BackgroundLayer(config: UiConfig) {
     } else {
         Spacer(
             modifier = Modifier.fillMaxSize()
-                .background(Color(0xFFF5F5F5))
+                .background(MaterialTheme.colorScheme.background)
         )
     }
 }

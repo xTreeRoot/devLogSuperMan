@@ -43,7 +43,7 @@ fun MySqlConfigDropdown(
     OutlinedButton(
         onClick = { expanded = true },
         modifier = modifier.widthIn(min = 180.dp),
-        border = BorderStroke(1.dp, Color.White)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Text(displayText)
         DropdownMenu(
@@ -54,7 +54,7 @@ fun MySqlConfigDropdown(
                 .widthIn(min = 180.dp, max = 360.dp)
                 .heightIn(max = 300.dp),
             scrollState = rememberScrollState(),
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             properties = PopupProperties(focusable = true) // 允许 TextField 获取焦点
         ) {
             if (allConfigs.isEmpty()) {
@@ -123,14 +123,14 @@ fun MySqlConfigDropdown(
                                         contentColor = MaterialTheme.colorScheme.primary
                                     )
                                 ) {
-                                    Text("设为默认", fontSize = 12.sp)
+                                    Text("设为默认", style = MaterialTheme.typography.labelSmall)
                                 }
                             }
                         }
                     }
                     if (allConfigs.indexOf(config) < allConfigs.lastIndex) {
                         HorizontalDivider(
-                            color = Color.Blue,
+                            color = MaterialTheme.colorScheme.outline,
                             thickness = 1.dp,
                             modifier = Modifier.fillMaxWidth()
                         )

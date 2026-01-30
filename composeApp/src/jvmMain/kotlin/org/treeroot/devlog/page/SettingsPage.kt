@@ -2,21 +2,18 @@ package org.treeroot.devlog.page
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.treeroot.devlog.page.components.ImagePicker
 import org.treeroot.devlog.json.model.MySqlConfig
 import org.treeroot.devlog.json.model.UiConfig
+import org.treeroot.devlog.page.components.ImagePicker
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.state.AppStateManager
-import org.treeroot.devlog.util.ColorUtils
-import java.util.UUID
+import java.util.*
 
 @Composable
 fun SettingsPage(config: UiConfig? = null) {
@@ -31,7 +28,6 @@ fun SettingsPage(config: UiConfig? = null) {
     val currentConfig = config ?: initialConfig
 
     // 获取动态颜色
-    val dynamicColors = ColorUtils.getDynamicColors(currentConfig)
 
     // 更新数据库和状态管理器
     LaunchedEffect(enableSilentMode, backgroundOpacity, backgroundImagePath) {
@@ -63,15 +59,15 @@ fun SettingsPage(config: UiConfig? = null) {
         Text(
             text = "设置",
             style = MaterialTheme.typography.headlineMedium,
-            color = dynamicColors.primaryColor
+            color = MaterialTheme.colorScheme.primary
         )
 
         // 静默模式设置
         Card(
             modifier = Modifier.fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(MaterialTheme.shapes.large),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -81,7 +77,7 @@ fun SettingsPage(config: UiConfig? = null) {
                 Text(
                     text = "静默模式",
                     style = MaterialTheme.typography.titleLarge,
-                    color = dynamicColors.textColor
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Row(
@@ -92,7 +88,7 @@ fun SettingsPage(config: UiConfig? = null) {
                     Text(
                         "启用自动剪贴板监控",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = dynamicColors.textVariantColor
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Switch(
                         checked = enableSilentMode,
@@ -109,9 +105,9 @@ fun SettingsPage(config: UiConfig? = null) {
         // 透明度设置
         Card(
             modifier = Modifier.fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(MaterialTheme.shapes.large),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -121,13 +117,13 @@ fun SettingsPage(config: UiConfig? = null) {
                 Text(
                     text = "界面透明度",
                     style = MaterialTheme.typography.titleLarge,
-                    color = dynamicColors.textColor
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
                     "背景透明度: ${(backgroundOpacity * 100).toInt()}%",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = dynamicColors.textVariantColor
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Slider(
                     value = backgroundOpacity,
@@ -145,9 +141,9 @@ fun SettingsPage(config: UiConfig? = null) {
         // 背景图片设置
         Card(
             modifier = Modifier.fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(MaterialTheme.shapes.large),
             colors = CardDefaults.cardColors(
-                containerColor =  Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -157,7 +153,7 @@ fun SettingsPage(config: UiConfig? = null) {
                 Text(
                     text = "背景图片",
                     style = MaterialTheme.typography.titleLarge,
-                    color = dynamicColors.textColor
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 ImagePicker(
                     currentImagePath = backgroundImagePath,
@@ -181,9 +177,9 @@ fun SettingsPage(config: UiConfig? = null) {
         // MySQL配置管理
         Card(
             modifier = Modifier.fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(MaterialTheme.shapes.large),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -198,11 +194,11 @@ fun SettingsPage(config: UiConfig? = null) {
                     Text(
                         text = "MySQL数据库配置",
                         style = MaterialTheme.typography.titleLarge,
-                        color = dynamicColors.textColor
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Button(
                         onClick = { showAddMysqlDialog = true },
-                        shape = RoundedCornerShape(8.dp),
+                        shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
@@ -283,7 +279,7 @@ fun SettingsPage(config: UiConfig? = null) {
                                                     JsonStoreService.setDefaultMySqlConfig(mysqlConfig.id)
                                                     mysqlConfigs = JsonStoreService.getAllMySqlConfigs()
                                                 },
-                                                shape = RoundedCornerShape(6.dp),
+                                                shape = MaterialTheme.shapes.small,
                                                 colors = ButtonDefaults.buttonColors(
                                                     containerColor = MaterialTheme.colorScheme.tertiary,
                                                     contentColor = MaterialTheme.colorScheme.onTertiary
@@ -298,7 +294,7 @@ fun SettingsPage(config: UiConfig? = null) {
                                                 JsonStoreService.deleteMySqlConfig(mysqlConfig.id)
                                                 mysqlConfigs = JsonStoreService.getAllMySqlConfigs()
                                             },
-                                            shape = RoundedCornerShape(6.dp),
+                                            shape = MaterialTheme.shapes.small,
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = MaterialTheme.colorScheme.error,
                                                 contentColor = MaterialTheme.colorScheme.onError

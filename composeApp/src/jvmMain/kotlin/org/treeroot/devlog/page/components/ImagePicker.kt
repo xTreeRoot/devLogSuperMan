@@ -50,7 +50,7 @@ fun ImagePicker(
             },
             modifier = Modifier.weight(1f)
                 .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
+            shape = MaterialTheme.shapes.medium,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -66,7 +66,7 @@ fun ImagePicker(
             },
             modifier = Modifier.width(120.dp)
                 .height(48.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = MaterialTheme.shapes.medium
         ) {
             Text("恢复默认")
         }

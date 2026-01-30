@@ -1,12 +1,9 @@
 package org.treeroot.devlog.page
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -17,12 +14,11 @@ import org.treeroot.devlog.page.components.DatabaseConnectionInfo
 import org.treeroot.devlog.page.components.FormattedSqlDisplay
 import org.treeroot.devlog.page.components.QueryResultDisplay
 import org.treeroot.devlog.page.components.SqlOperationButtons
-import org.treeroot.devlog.util.ColorUtils
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null) {
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     // 观察查询结果状态
     val queryResult by viewModel.queryResult
@@ -36,7 +32,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
         Text(
             text = "MyBatis SQL Formatter",
             style = MaterialTheme.typography.headlineMedium,
-            color = dynamicColors.primaryColor
+            color = MaterialTheme.colorScheme.primary
         )
 
         Row()
@@ -50,9 +46,9 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
             DatabaseConnectionInfo(viewModel = viewModel, config = config)
         }
 
-        Column (modifier = Modifier.fillMaxHeight().weight(1f))
+        Column(modifier = Modifier.fillMaxHeight().weight(1f))
         // 格式化后的SQL显示区域和查询结果区域
-         {
+        {
             // FormattedSqlDisplay 占三分之二的空间
             Box(modifier = Modifier.weight(1.75f)) {
                 FormattedSqlDisplay(
@@ -62,16 +58,16 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
                     onExecuteSelectedSql = { selected -> viewModel.executeQuery(selected) }
                 )
             }
-           if (queryResult != null){
-               // QueryResultDisplay 占三分之一的空间
-               Box(modifier = Modifier.weight(1.25f)) {
-                   QueryResultDisplay(
-                       queryResult = queryResult,
-                       config = config,
-                       onExportClick = { /* 导出功能待实现 */ }
-                   )
-               }
-           }
+            if (queryResult != null) {
+                // QueryResultDisplay 占三分之一的空间
+                Box(modifier = Modifier.weight(1.25f)) {
+                    QueryResultDisplay(
+                        queryResult = queryResult,
+                        config = config,
+                        onExportClick = { /* 导出功能待实现 */ }
+                    )
+                }
+            }
         }
 
 // 即将删除

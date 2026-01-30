@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,9 +18,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.util.ColorUtils
+
 
 @Composable
 fun SqlEditor(
@@ -49,12 +49,10 @@ fun SqlEditor(
         state.value = TextFieldValue(value, selection = state.value.selection)
     }
 
-    // 获取动态颜色
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Box(
         modifier = modifier
-            .background(ColorUtils.getContainerBackgroundColor(config))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(8.dp)
             .pointerInput(Unit) {
                 awaitPointerEventScope {
@@ -88,13 +86,13 @@ fun SqlEditor(
                 onValueChange(newValue.text)
             },
             textStyle = TextStyle(
-                fontSize = 12.sp,
-                color = dynamicColors.textColor,
+                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily.Monospace
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .background(ColorUtils.getContainerBackgroundColor(config))
+                .background(MaterialTheme.colorScheme.surface)
                 .verticalScroll(rememberScrollState()),
             singleLine = false
         )

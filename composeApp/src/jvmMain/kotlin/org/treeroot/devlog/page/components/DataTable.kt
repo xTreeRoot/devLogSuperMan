@@ -6,106 +6,90 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.util.ColorUtils
+
 
 @Composable
 fun DataTable(
     columnNames: List<String>,
     rowData: List<Map<String, Any?>>,
-    columnWidths: List<Dp>? = null, // 新增：每列宽度（可选）
+    columnWidths: List<Dp>? = null,
     config: UiConfig? = null,
     modifier: Modifier = Modifier
 ) {
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
-    // 如果未提供列宽，则统一使用默认宽度（如 120.dp）
     val defaultWidth = 120.dp
     val widths = columnWidths?.take(columnNames.size)?.let { list ->
-        // 补齐长度不足的情况
         if (list.size < columnNames.size) {
             list + List(columnNames.size - list.size) { defaultWidth }
-        } else {
-            list
-        }
+        } else list
     } ?: List(columnNames.size) { defaultWidth }
 
-    // 共享的水平滚动状态（让表头和数据同步滚动）
     val horizontalScrollState = rememberScrollState()
 
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        // === 表头 ===
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(dynamicColors.primaryColor.copy(alpha = 0.1f))
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .horizontalScroll(horizontalScrollState, enabled = true),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+    Column(modifier = modifier.fillMaxSize()) {
+
+
+        //       表头
+        PrimaryScrollableTabRow(
+            selectedTabIndex = 0,
+            edgePadding = 0.dp,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            indicator = {},
+            divider = {}
         ) {
-            columnNames.forEachIndexed { index, columnName ->
-                Text(
-                    text = columnName,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    color = dynamicColors.primaryColor,
-                    fontFamily = FontFamily.Monospace,
-                    modifier = Modifier
-                        .width(widths[index])
-                        .wrapContentWidth(Alignment.Start)
-                )
+            columnNames.forEachIndexed { index, title ->
+                Tab(
+                    selected = false,
+                    onClick = {},
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier
+                            .width(widths[index])
+                            .padding(8.dp)
+                    )
+                }
             }
         }
 
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = DividerDefaults.color
-        )
+        HorizontalDivider()
 
-        // === 数据区域 ===
+        // === 数据 ===
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             itemsIndexed(rowData) { index, row ->
-                val isEvenRow = index % 2 == 0
-                val backgroundColor = if (isEvenRow) {
-                    dynamicColors.primaryColor.copy(alpha = 0.25f)
-                } else {
-                    dynamicColors.backgroundColor
-                }
-
+                val backgroundColor = if (index % 2 == 0)
+                    MaterialTheme.colorScheme.surface
+                else
+                    MaterialTheme.colorScheme.surfaceVariant
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(backgroundColor)
                         .padding(horizontal = 8.dp, vertical = 6.dp)
-                        .horizontalScroll(horizontalScrollState, enabled = true), // 同步滚动
+                        .horizontalScroll(horizontalScrollState),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    columnNames.forEachIndexed { colIndex, columnName ->
-                        val cellValue = row[columnName]?.toString() ?: "NULL"
+                    columnNames.forEachIndexed { colIndex, name ->
                         TooltipEllipsisText(
-                            fullText = cellValue,
+                            fullText = row[name]?.toString() ?: "NULL",
                             maxWidth = widths[colIndex],
-                            color = dynamicColors.textColor,
-                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontFamily = FontFamily.Monospace
                         )
                     }

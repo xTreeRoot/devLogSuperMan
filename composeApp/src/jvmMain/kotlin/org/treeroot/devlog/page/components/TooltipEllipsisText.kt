@@ -2,8 +2,9 @@ package org.treeroot.devlog.page.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -11,7 +12,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.font.FontFamily
@@ -20,7 +22,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -29,7 +30,7 @@ fun TooltipEllipsisText(
     fullText: String,
     maxWidth: Dp,
     color: Color,
-    fontSize: TextUnit = 12.sp,
+    fontSize: TextUnit = MaterialTheme.typography.bodyMedium.fontSize,
     fontFamily: FontFamily = FontFamily.Monospace,
     modifier: Modifier = Modifier
 ) {
@@ -69,8 +70,7 @@ fun TooltipEllipsisText(
         ) {
             Box(
                 modifier = Modifier
-                    .
-                    background(
+                    .background(
                         color = MaterialTheme.colorScheme.surface,
                         shape = MaterialTheme.shapes.small
                     )
@@ -85,7 +85,7 @@ fun TooltipEllipsisText(
                     text = fullText,
                     modifier = Modifier.padding(6.dp),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 12.sp
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }

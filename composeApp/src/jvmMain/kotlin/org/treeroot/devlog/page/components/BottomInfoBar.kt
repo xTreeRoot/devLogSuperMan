@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.treeroot.devlog.util.ColorUtils
 import org.treeroot.devlog.json.model.UiConfig
 
 /**
@@ -22,7 +21,6 @@ fun BottomInfoBar(
     config: UiConfig?,
     modifier: Modifier = Modifier
 ) {
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -32,13 +30,13 @@ fun BottomInfoBar(
         Text(text = "1111:")
         Text(
             text = if (isValid) "SQL语法正常" else " SQL可能存在语法问题",
-            color = if (isValid) dynamicColors.primaryColor else dynamicColors.errorColor,
+            color = if (isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
             text = "字符数: ${originalSql.length}",
             style = MaterialTheme.typography.bodyLarge,
-            color = dynamicColors.textVariantColor
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

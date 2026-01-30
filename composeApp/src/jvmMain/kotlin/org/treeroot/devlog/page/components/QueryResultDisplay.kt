@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.business.model.MySqlQueryResult
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.util.ColorUtils
+
 
 /**
  * 查询结果显示区域组件
@@ -68,7 +68,6 @@ private fun ResultHeader(
     onExportClick: () -> Unit,
     config: UiConfig?
 ) {
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -94,19 +93,18 @@ private fun SuccessResultContent(
     queryResult: MySqlQueryResult,
     config: UiConfig?
 ) {
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = ColorUtils.getContainerBackgroundColor(config)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = if (config?.backgroundImagePath?.isNotEmpty() == true) 0.dp else 4.dp
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = MaterialTheme.shapes.large
     ) {
         if (queryResult.data.isNotEmpty()) {
             DataTable(
@@ -126,7 +124,7 @@ private fun SuccessResultContent(
             ) {
                 Text(
                     text = "查询返回空结果",
-                    color = dynamicColors.textVariantColor
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -168,7 +166,7 @@ private fun ErrorResultContent(
             containerColor = MaterialTheme.colorScheme.errorContainer
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = MaterialTheme.shapes.large
     ) {
         Text(
             text = "错误: ${queryResult.errorMessage ?: "未知错误"}",

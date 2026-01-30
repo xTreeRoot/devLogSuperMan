@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -14,7 +15,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.util.ColorUtils
+
 
 @Composable
 fun EditableJSONTextView(
@@ -38,12 +39,10 @@ fun EditableJSONTextView(
         }
     }
 
-    // 获取动态颜色
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Box(
         modifier = modifier
-            .background(ColorUtils.getContainerBackgroundColor(config))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(8.dp)
     ) {
         BasicTextField(
@@ -54,11 +53,11 @@ fun EditableJSONTextView(
             },
             textStyle = TextStyle(
                 fontFamily = FontFamily.Monospace,
-                color = dynamicColors.textColor
+                color = MaterialTheme.colorScheme.onSurface
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .background(ColorUtils.getContainerBackgroundColor(config))
+                .background(MaterialTheme.colorScheme.surface)
                 .verticalScroll(scrollState),
             singleLine = false
         )

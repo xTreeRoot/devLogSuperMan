@@ -1,23 +1,21 @@
 package org.treeroot.devlog.page
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import org.treeroot.devlog.page.components.EditableJSONTextView
 import org.treeroot.devlog.business.view.EsDslViewModel
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.util.ColorUtils
+import org.treeroot.devlog.page.components.EditableJSONTextView
+
 
 @Composable
 fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
 
     // 获取动态颜色
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Column(
         modifier = Modifier
@@ -29,7 +27,7 @@ fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
         Text(
             text = "ES DSL 处理器",
             style = MaterialTheme.typography.headlineMedium,
-            color = dynamicColors.primaryColor
+            color = MaterialTheme.colorScheme.primary
         )
 
         // 按钮区域
@@ -41,7 +39,7 @@ fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
                 onClick = { esViewModel.pasteFromClipboard(); esViewModel.formatDsl() },
                 enabled = !esViewModel.isLoading.value,
                 modifier = Modifier.height(48.dp),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -64,7 +62,7 @@ fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
                 onClick = { esViewModel.copyFormattedDslToClipboard() },
                 enabled = esViewModel.formattedDsl.value.isNotEmpty(),
                 modifier = Modifier.height(48.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text("复制")
             }
@@ -86,16 +84,16 @@ fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
                 Text(
                     text = "DSL 查询:",
                     style = MaterialTheme.typography.titleLarge,
-                    color = dynamicColors.textColor
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .clip(RoundedCornerShape(16.dp)),
+                        .clip(MaterialTheme.shapes.large),
                     colors = CardDefaults.cardColors(
-                        containerColor = ColorUtils.getContainerBackgroundColor(config)
+                        containerColor = MaterialTheme.colorScheme.surface
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = if (config?.backgroundImagePath?.isNotEmpty() == true) 0.dp else 4.dp)
                 ) {
@@ -126,16 +124,16 @@ fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
                 Text(
                     text = "解析后结果:",
                     style = MaterialTheme.typography.titleLarge,
-                    color = dynamicColors.textColor
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .clip(RoundedCornerShape(16.dp)),
+                        .clip(MaterialTheme.shapes.large),
                     colors = CardDefaults.cardColors(
-                        containerColor = ColorUtils.getContainerBackgroundColor(config)
+                        containerColor = MaterialTheme.colorScheme.surface
                     ),
                     elevation = CardDefaults.cardElevation(defaultElevation = if (config?.backgroundImagePath?.isNotEmpty() == true) 0.dp else 4.dp)
                 ) {
@@ -166,7 +164,7 @@ fun EsDslPage(esViewModel: EsDslViewModel, config: UiConfig? = null) {
             Text(
                 text = "字符数: ${esViewModel.originalDsl.value.length}",
                 style = MaterialTheme.typography.bodyLarge,
-                color = dynamicColors.textVariantColor
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

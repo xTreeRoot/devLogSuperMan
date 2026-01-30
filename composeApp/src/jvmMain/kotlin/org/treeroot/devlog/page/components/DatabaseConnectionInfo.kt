@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.util.ColorUtils
+
 
 /**
  * 数据库连接状态信息组件
@@ -23,7 +23,6 @@ fun DatabaseConnectionInfo(
     config: UiConfig?,
     modifier: Modifier = Modifier
 ) {
-    val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Row(
         modifier = modifier,
@@ -33,7 +32,7 @@ fun DatabaseConnectionInfo(
         Text(
             text = "数据库连接: ",
             style = MaterialTheme.typography.bodyLarge,
-            color = dynamicColors.textVariantColor
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         ConnectionIndicator(isConnected = viewModel.connectionStatus.value)
