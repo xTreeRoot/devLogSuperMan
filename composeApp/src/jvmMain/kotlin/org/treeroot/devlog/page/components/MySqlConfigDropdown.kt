@@ -1,4 +1,5 @@
 package org.treeroot.devlog.page.components
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -24,20 +25,21 @@ fun MySqlConfigDropdown(
     var expanded by remember { mutableStateOf(false) }
 
     // 使 allConfigs 能够响应外部变化
-    val allConfigs by produceState(initialValue = emptyList()) {
-        value = JsonStoreService.getAllMySqlConfigs()
+    val allConfigs by remember {
+        derivedStateOf {
+            JsonStoreService.getAllMySqlConfigs()
+        }
     }
 
     // 使用 ViewModel 中的响应式状态
     val activeConfigId by viewModel.activeConfigId
 
-    // 使用 LaunchedEffect 来监听 ViewModel 的状态变化并更新显示文本
-    var displayText by remember { mutableStateOf("请选择数据库配置") }
-
-    LaunchedEffect(allConfigs, activeConfigId) {
-        val activeConfig = allConfigs.find { it.id == activeConfigId }
-        displayText = activeConfig?.let { "${it.name}/${it.database} (${it.remarks})" }
-            ?: "请选择数据库配置"
+    // 使用 derivedStateOf 来计算显示文本，这样会自动响应依赖项的变化
+    val displayText by remember {
+        derivedStateOf {
+            val activeConfig = allConfigs.find { it.id == activeConfigId }
+            activeConfig?.let { "${it.name}/${it.database} (${it.remarks})" } ?: "请选择数据库配置"
+        }
     }
 
     // 搜索功能
