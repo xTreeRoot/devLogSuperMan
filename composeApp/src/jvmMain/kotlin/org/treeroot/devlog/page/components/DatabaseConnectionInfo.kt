@@ -47,9 +47,10 @@ fun DatabaseConnectionInfo(
                 MaterialTheme.colorScheme.error
             }
         )
-
+        // 空白距离
         Spacer(modifier = Modifier.width(16.dp))
 
+        // MySQL配置下拉菜单
         MySqlConfigDropdown(viewModel)
     }
 }

@@ -26,8 +26,10 @@ fun SqlEditor(
     value: String,
     onValueChange: (String) -> Unit,
     config: UiConfig? = null,
-    onExecuteSql: (() -> Unit)? = null, // 新增执行SQL回调
-    onExecuteSelectedSql: ((String) -> Unit)? = null, // 新增执行选中SQL回调
+    // 新增执行SQL回调
+    onExecuteSql: (() -> Unit)? = null,
+    // 新增执行选中SQL回调
+    onExecuteSelectedSql: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val state = remember { mutableStateOf(TextFieldValue(value)) }

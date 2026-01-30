@@ -302,7 +302,8 @@ class SqlFormatterViewModel : ViewModel() {
                         databaseService.initializeConnectionWithConfig(connectConfig)
                         val isConnected = databaseService.testConnection()
                         _connectionStatus.value = isConnected
-                        updateActiveConfigId() // 更新活跃配置ID
+                        // 更新活跃配置ID
+                        updateActiveConfigId()
 
                         DevLog.info("激活首个数据库配置: ${firstConfig.name}, 连接${if (isConnected) "成功" else "失败"}")
                     }
@@ -336,4 +337,10 @@ class SqlFormatterViewModel : ViewModel() {
         }
     }
 
+    /**
+     * 更新默认配置后刷新配置列表
+     */
+    fun refreshConfigsAfterDefaultChange() {
+        refreshAllConfigs()
+    }
 }

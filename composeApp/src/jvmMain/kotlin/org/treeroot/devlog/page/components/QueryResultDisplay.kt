@@ -22,15 +22,30 @@ fun QueryResultDisplay(
     onExportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (queryResult != null) {
-        Column(modifier = modifier) {
-            ResultHeader(
-                queryResult = queryResult,
-                onExportClick = onExportClick,
-                config = config
-            )
+    Column(modifier = modifier) {
+        ResultHeader(
+            queryResult = queryResult,
+            onExportClick = onExportClick,
+            config = config
+        )
 
-            if (queryResult.success) {
+        when {
+            queryResult == null -> {
+                // 显示空状态提示
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "等待执行查询",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            queryResult.success -> {
                 SuccessResultContent(
                     queryResult = queryResult,
                     config = config
@@ -39,7 +54,8 @@ fun QueryResultDisplay(
                 ResultStatistics(
                     queryResult = queryResult
                 )
-            } else {
+            }
+            else -> {
                 ErrorResultContent(queryResult = queryResult)
             }
         }
@@ -48,7 +64,7 @@ fun QueryResultDisplay(
 
 @Composable
 private fun ResultHeader(
-    queryResult: MySqlQueryResult,
+    queryResult: MySqlQueryResult?,
     onExportClick: () -> Unit,
     config: UiConfig?
 ) {
@@ -59,24 +75,17 @@ private fun ResultHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "查询结果:",
-            style = MaterialTheme.typography.titleLarge,
-            color = dynamicColors.textColor
-        )
-
         // 导出结果按钮
-        Button(
-            onClick = onExportClick,
-            enabled = queryResult.success && queryResult.data.isNotEmpty(),
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.tertiary,
-                contentColor = MaterialTheme.colorScheme.onTertiary
-            )
-        ) {
-            Text("导出结果")
-        }
+//        Button(
+//            onClick = onExportClick,
+//            enabled = (queryResult?.success == true) && queryResult.data.isNotEmpty(),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = MaterialTheme.colorScheme.tertiary,
+//                contentColor = MaterialTheme.colorScheme.onTertiary
+//            )
+//        ) {
+//            Text("导出结果")
+//        }
     }
 }
 
@@ -140,7 +149,7 @@ private fun ResultStatistics(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = "耗时: ${'$'}{queryResult.queryTime} ms",
+            text = "耗时: ${queryResult.queryTime} ms",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

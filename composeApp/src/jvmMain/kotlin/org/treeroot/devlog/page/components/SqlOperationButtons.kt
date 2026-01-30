@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -41,11 +42,11 @@ fun SqlOperationButtons(
         )
 
         // 复制按钮
-        CopyButton(
-            onClick = { viewModel.copyFormattedSqlToClipboard() },
-            enabled = viewModel.formattedSql.value.isNotEmpty(),
-            modifier = Modifier.height(48.dp)
-        )
+//        CopyButton(
+//            onClick = { viewModel.copyFormattedSqlToClipboard() },
+//            enabled = viewModel.formattedSql.value.isNotEmpty(),
+//            modifier = Modifier.height(48.dp)
+//        )
     }
 }
 
@@ -117,7 +118,7 @@ private fun CopyButton(
     enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
-    androidx.compose.material3.OutlinedButton(
+    OutlinedButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier,

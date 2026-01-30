@@ -29,6 +29,7 @@ fun BottomInfoBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Text(text = "1111:")
         Text(
             text = if (isValid) "SQL语法正常" else " SQL可能存在语法问题",
             color = if (isValid) dynamicColors.primaryColor else dynamicColors.errorColor,
