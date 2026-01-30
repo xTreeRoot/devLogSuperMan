@@ -127,7 +127,7 @@ fun MainApp() {
                 when (selectedTab) {
                     0 -> SqlFormatterPage(viewModel = sqlFormatterViewModel, config = config)
                     1 -> EsDslPage(esViewModel = esDslViewModel, config = config)
-                    2 -> SettingsPage(config = config)
+                    2 -> SettingsPage()
                 }
             }
         }
