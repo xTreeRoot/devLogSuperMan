@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.treeroot.devlog.business.view.EnhancedSqlFormatterViewModel
+import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.service.JsonStoreService
 
 /**
@@ -19,7 +19,7 @@ import org.treeroot.devlog.service.JsonStoreService
  */
 @Composable
 fun MySqlConfigDropdown(
-    viewModel: EnhancedSqlFormatterViewModel
+    viewModel: SqlFormatterViewModel
 ) {
 
     var expanded by remember { mutableStateOf(false) }

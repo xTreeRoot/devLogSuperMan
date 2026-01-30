@@ -2,20 +2,26 @@ package org.treeroot.devlog.business.view
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.treeroot.devlog.business.MySqlDatabaseService
 import org.treeroot.devlog.business.SqlFormatterService
+import org.treeroot.devlog.business.model.MySqlQueryResult
 import org.treeroot.devlog.business.model.SqlFormatResult
+import org.treeroot.devlog.mysql.MySqlConnectConfig
 import org.treeroot.devlog.util.ClipboardHelper
 
 /**
- * SQL格式化器的ViewModel
- * 管理UI状态和业务逻辑
+ * 增强版SQL格式化器的ViewModel
+ * 包含格式化功能和MySQL查询功能
  */
-class SqlFormatterViewModel {
+class SqlFormatterViewModel : ViewModel() {
 
     private val formatterService = SqlFormatterService()
+    private val databaseService = MySqlDatabaseService()
 
     // UI状态
     private val _originalSql = mutableStateOf("")
@@ -44,6 +50,14 @@ class SqlFormatterViewModel {
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
 
+    // MySQL查询相关状态
+    private val _connectionStatus = mutableStateOf(false)
+    val connectionStatus: State<Boolean> = _connectionStatus
+
+    private val _queryResult = mutableStateOf<MySqlQueryResult?>(null)
+    val queryResult: State<MySqlQueryResult?> = _queryResult
+
+    private val _isExecuting = mutableStateOf(false)
 
     /**
      * 格式化SQL
@@ -121,7 +135,7 @@ class SqlFormatterViewModel {
                 _result.value = SqlFormatResult(
                     success = false,
                     originalSql = _originalSql.value,
-                    errorMessage = "格式化过程中出现错误: ${'$'}{e.message}",
+                    errorMessage = "格式化过程中出现错误: ${e.message}",
                     isValid = false,
                     processingTime = System.currentTimeMillis()
                 )
@@ -130,7 +144,6 @@ class SqlFormatterViewModel {
             }
         }
     }
-
 
     /**
      * 复制格式化后的SQL到剪贴板
@@ -150,4 +163,64 @@ class SqlFormatterViewModel {
             _originalSql.value = clipboardText
         }
     }
+
+    /**
+     * 连接到MySQL数据库
+     */
+    fun connectToDatabase(config: MySqlConnectConfig) {
+        viewModelScope.launch {
+            try {
+                databaseService.initializeConnectionWithConfig(config)
+                val isConnected = databaseService.testConnection()
+                _connectionStatus.value = isConnected
+            } catch (e: Exception) {
+                _connectionStatus.value = false
+            }
+        }
+    }
+
+    /**
+     * 根据配置ID激活数据库连接
+     */
+    fun activateConnectionWithConfigId(configId: String) {
+        val success = databaseService.activateConnectionWithConfigId(configId)
+        if (success) {
+            viewModelScope.launch {
+                val isConnected = databaseService.testConnection()
+                _connectionStatus.value = isConnected
+            }
+        } else {
+            _connectionStatus.value = false
+        }
+    }
+
+    /**
+     * 获取当前激活的配置ID
+     */
+    fun getActiveConfigId(): String? {
+        return databaseService.getActiveConfigId()
+    }
+
+    /**
+     * 执行SQL查询
+     */
+    fun executeQuery(sql: String) {
+        if (!_connectionStatus.value) return
+
+        _isExecuting.value = true
+        viewModelScope.launch {
+            try {
+                val result = databaseService.query(sql)
+                _queryResult.value = result
+            } catch (e: Exception) {
+                _queryResult.value = MySqlQueryResult(
+                    success = false,
+                    errorMessage = e.message
+                )
+            } finally {
+                _isExecuting.value = false
+            }
+        }
+    }
+
 }

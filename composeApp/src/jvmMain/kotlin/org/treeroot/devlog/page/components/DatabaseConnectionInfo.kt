@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.treeroot.devlog.business.view.EnhancedSqlFormatterViewModel
+import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.json.model.UiConfig
 import org.treeroot.devlog.util.ColorUtils
 
@@ -19,7 +19,7 @@ import org.treeroot.devlog.util.ColorUtils
  */
 @Composable
 fun DatabaseConnectionInfo(
-    viewModel: EnhancedSqlFormatterViewModel,
+    viewModel: SqlFormatterViewModel,
     config: UiConfig?,
     modifier: Modifier = Modifier
 ) {

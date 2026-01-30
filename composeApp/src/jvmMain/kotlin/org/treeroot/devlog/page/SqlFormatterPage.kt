@@ -10,14 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.treeroot.devlog.business.view.EnhancedSqlFormatterViewModel
+import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.json.model.UiConfig
 import org.treeroot.devlog.page.components.*
 import org.treeroot.devlog.util.ColorUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SqlFormatterPage(viewModel: EnhancedSqlFormatterViewModel, config: UiConfig? = null) {
+fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null) {
     val dynamicColors = ColorUtils.getDynamicColors(config)
 
     Column(
