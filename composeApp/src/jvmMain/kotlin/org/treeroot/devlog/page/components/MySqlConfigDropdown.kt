@@ -1,5 +1,7 @@
 package org.treeroot.devlog.page.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.DropdownMenuItem
@@ -7,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -39,7 +42,8 @@ fun MySqlConfigDropdown(
     // 主按钮
     OutlinedButton(
         onClick = { expanded = true },
-        modifier = modifier.widthIn(min = 180.dp)
+        modifier = modifier.widthIn(min = 180.dp),
+        border = BorderStroke(1.dp, Color.White)
     ) {
         Text(displayText)
         DropdownMenu(
@@ -50,6 +54,7 @@ fun MySqlConfigDropdown(
                 .widthIn(min = 180.dp, max = 360.dp)
                 .heightIn(max = 300.dp),
             scrollState = rememberScrollState(),
+            containerColor = Color.White,
             properties = PopupProperties(focusable = true) // 允许 TextField 获取焦点
         ) {
             if (allConfigs.isEmpty()) {
@@ -122,6 +127,13 @@ fun MySqlConfigDropdown(
                                 }
                             }
                         }
+                    }
+                    if (allConfigs.indexOf(config) < allConfigs.lastIndex) {
+                        HorizontalDivider(
+                            color = Color.Blue,
+                            thickness = 1.dp,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
             }

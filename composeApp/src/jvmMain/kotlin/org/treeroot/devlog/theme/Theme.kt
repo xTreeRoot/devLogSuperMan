@@ -11,33 +11,49 @@ import androidx.compose.ui.text.font.FontWeight
 
 // 治愈系色彩定义
 val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF4F6FFF), // 柔和蓝色
+    // 柔和蓝色
+    primary = Color(0xFF4F6FFF),
     onPrimary = Color.White,
-    secondary = Color(0xFFFF6B6B), // 温暖珊瑚红
+    // 温暖珊瑚红
+    secondary = Color(0xFFFF6B6B),
     onSecondary = Color.White,
-    tertiary = Color(0xFF4ECDC4), // 柔和青绿色
+    // 柔和青绿色
+    tertiary = Color(0xFF4ECDC4),
     onTertiary = Color.White,
-    background = Color(0xFFF8F9FA), // 雾白色背景
+    // 雾白色背景
+    background = Color(0xFFF8F9FA),
     onBackground = Color(0xFF1A1A1A),
-    surface = Color(0xFFFFFFFF), // 纯白表面
+    // 纯白表面
+    surface = Color(0xFFFFFFFF),
+    // 纯黑背景
     onSurface = Color(0xFF1A1A1A),
-    surfaceVariant = Color(0xFFE9ECEF), // 淡灰色变体
-    outline = Color(0xFFCED4DA) // 淡边框色
+    // 淡灰色变体
+    surfaceVariant = Color(0xFFE9ECEF),
+    // 淡边框色
 )
 
 val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF6C8BFF), // 柔和蓝色（深色模式）
+    // 柔和蓝色
+    primary = Color(0xFF6C8BFF),
     onPrimary = Color.White,
-    secondary = Color(0xFFFF7F7F), // 温暖珊瑚红（深色模式）
+    // 温暖珊瑚红
+    secondary = Color(0xFFFF7F7F),
     onSecondary = Color.White,
-    tertiary = Color(0xFF60DFD8), // 柔和青绿色（深色模式）
+    // 柔和青绿色
+    tertiary = Color(0xFF60DFD8),
     onTertiary = Color.White,
-    background = Color(0xFF121212), // 深色背景
+    // 深色背景
+    background = Color(0xFF121212),
+    // 深色表面
     onBackground = Color(0xFFE6E6E6),
-    surface = Color(0xFF1E1E1E), // 深色表面
+    // 深色表面
+    surface = Color(0xFF1E1E1E),
+    // 深色背景
     onSurface = Color(0xFFE6E6E6),
-    surfaceVariant = Color(0xFF2D2D2D), // 深灰色变体
-    outline = Color(0xFF4A4A4A) // 深边框色
+    // 深灰色变体
+    surfaceVariant = Color(0xFF2D2D2D),
+    // 深边框色
+    outline = Color(0xFF4A4A4A)
 )
 
 @Composable
