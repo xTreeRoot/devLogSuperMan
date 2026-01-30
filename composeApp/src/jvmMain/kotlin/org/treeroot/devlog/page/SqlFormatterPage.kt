@@ -227,12 +227,12 @@ fun SqlFormatterPage(viewModel: EnhancedSqlFormatterViewModel, config: UiConfig?
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "行数: ${'$'}{result.rowCount}",
+                            text = "行数: ${result.rowCount}",
                             style = MaterialTheme.typography.bodyMedium,
                             color = dynamicColors.textVariantColor
                         )
                         Text(
-                            text = "耗时: ${'$'}{System.currentTimeMillis() - result.queryTime} ms",
+                            text = "耗时: ${System.currentTimeMillis() - result.queryTime} ms",
                             style = MaterialTheme.typography.bodyMedium,
                             color = dynamicColors.textVariantColor
                         )
@@ -271,7 +271,7 @@ fun SqlFormatterPage(viewModel: EnhancedSqlFormatterViewModel, config: UiConfig?
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = "字符数: ${'$'}{viewModel.originalSql.value.length}",
+                text = "字符数: ${viewModel.originalSql.value.length}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = dynamicColors.textVariantColor
             )

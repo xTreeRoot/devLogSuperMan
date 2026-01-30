@@ -73,7 +73,7 @@ fun SqlEditor(
                                 showContextMenu.value = true
                                 rightClickPress.consume()
                                 // 可选：消费整个事件的其他 change，避免干扰
-                                event.changes.forEach { it.consume() }
+                              //  event.changes.forEach { it.consume() }
                             }
                         }
 

@@ -181,7 +181,13 @@ class MySqlDatabaseManager {
         // 获取列名
         val columnNames = mutableListOf<String>()
         for (i in 1..columnCount) {
-            columnNames.add(metaData.getColumnName(i))
+            // 尝试获取列标签，如果获取不到则使用列名
+            val columnName = try {
+                metaData.getColumnLabel(i)
+            } catch (e: Exception) {
+                metaData.getColumnName(i)
+            }
+            columnNames.add(columnName)
         }
 
         // 获取数据
@@ -189,8 +195,16 @@ class MySqlDatabaseManager {
         while (resultSet.next()) {
             val row = mutableMapOf<String, Any?>()
             for (i in 1..columnCount) {
-                val columnName = metaData.getColumnName(i)
-                val value = resultSet.getObject(i)
+                val columnName = try {
+                    metaData.getColumnLabel(i)
+                } catch (_: Exception) {
+                    metaData.getColumnName(i)
+                }
+                val value = try {
+                    resultSet.getObject(i)
+                } catch (e: Exception) {
+                    "ERROR: ${e.message}"
+                }
                 row[columnName] = value
             }
             rows.add(row)
