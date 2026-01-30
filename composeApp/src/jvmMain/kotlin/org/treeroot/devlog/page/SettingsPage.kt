@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.json.model.MySqlConfig
 import org.treeroot.devlog.json.model.UiConfig
+import org.treeroot.devlog.page.components.ImagePreviewDialog
 import org.treeroot.devlog.page.components.setting.*
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.state.AppStateManager
@@ -42,6 +43,7 @@ fun SettingsPage() {
     // MySQL配置管理相关状态
     var mysqlConfigs by remember { mutableStateOf(emptyList<MySqlConfig>()) }
     var showAddMysqlDialog by remember { mutableStateOf(false) }
+    var showImagePreview by remember { mutableStateOf<String?>(null) }
 
     // 加载MySQL配置
     LaunchedEffect(Unit) {
@@ -89,12 +91,7 @@ fun SettingsPage() {
                         },
                         isDarkTheme = isDarkTheme,
                         onDarkThemeChanged = { isDarkTheme = it },
-                        isSystemAdaptiveEnabled = isSystemAdaptive,
-                        backgroundImagePath = backgroundImagePath,
-                        onBackgroundImageClick = { imagePath ->
-                            // 这里可以处理图片点击事件，比如打开图片预览
-                            println("点击了背景图片: $imagePath")
-                        }
+                        isSystemAdaptiveEnabled = isSystemAdaptive
                     )
                 }
 
@@ -115,6 +112,9 @@ fun SettingsPage() {
                             )
                             JsonStoreService.saveConfigAsync(newConfig)
                             AppStateManager.updateConfig(newConfig)
+                        },
+                        onBackgroundImageClick = { imagePath ->
+                            showImagePreview = imagePath
                         }
                     )
                 }
@@ -143,6 +143,14 @@ fun SettingsPage() {
                 true // 关闭对话框
             },
             onCancel = { showAddMysqlDialog = false }
+        )
+    }
+    
+    // 图片预览对话框
+    showImagePreview?.let { imagePath ->
+        ImagePreviewDialog(
+            imagePath = imagePath,
+            onDismissRequest = { showImagePreview = null }
         )
     }
 }

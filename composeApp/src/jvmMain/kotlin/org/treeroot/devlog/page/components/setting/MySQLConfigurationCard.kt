@@ -19,6 +19,7 @@ import org.treeroot.devlog.service.JsonStoreService
 
     Card(
         modifier = Modifier.fillMaxWidth()
+            .height(500.dp)
             .clip(MaterialTheme.shapes.large),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -28,7 +29,6 @@ import org.treeroot.devlog.service.JsonStoreService
         Column(
             modifier = Modifier
                 .padding(20.dp)
-                .fillMaxHeight(0.8f) // 设置卡片内容占最大高度的80%
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

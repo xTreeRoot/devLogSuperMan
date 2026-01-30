@@ -14,6 +14,7 @@ fun ClipboardMonitoringCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth()
+            .height(180.dp)
             .clip(MaterialTheme.shapes.large),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface

@@ -1,34 +1,24 @@
 package org.treeroot.devlog.page.components.setting
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
-import org.jetbrains.skia.skottie.makeFromFile
-import java.io.File
-import org.jetbrains.skia.Image
-import androidx.compose.ui.graphics.asImageBitmap
 @Composable
  fun AppearanceSettingsCard(
     isSystemAdaptive: Boolean,
     onSystemAdaptiveChanged: (Boolean) -> Unit,
     isDarkTheme: Boolean,
     onDarkThemeChanged: (Boolean) -> Unit,
-    isSystemAdaptiveEnabled: Boolean,
-    backgroundImagePath: String = "",
-    onBackgroundImageClick: (String) -> Unit = {}
+    isSystemAdaptiveEnabled: Boolean
 ) {
     Card(
         modifier = Modifier.fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .fillMaxHeight(0.8f), // 与MySQL配置卡片保持相同高度
+            .height(180.dp)
+            .clip(MaterialTheme.shapes.large),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -93,48 +83,6 @@ import androidx.compose.ui.graphics.asImageBitmap
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
-            // 背景图片预览
-            // 背景图片预览
-            if (backgroundImagePath.isNotEmpty()) {
-                val file = File(backgroundImagePath)
-                if (file.exists()) {
-                    Text(
-                        text = "当前背景图片:",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    // 显示背景图片缩略图
-                    val imageBitmap = remember(backgroundImagePath) {
-                        try {
-                            Image.makeFromEncoded(File(backgroundImagePath).readBytes()).asImageBitmap()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            null
-                        }
-                    }
-                    imageBitmap?.let { bitmap ->
-                        Image(
-                            bitmap = bitmap,
-                            contentDescription = "当前背景图片预览",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(120.dp)
-                                .padding(vertical = 8.dp)              // 先 padding
-                                .clip(MaterialTheme.shapes.medium)    // 再裁切
-                                .clickable { onBackgroundImageClick(backgroundImagePath) }
-                        )
-                    }
-
-                    Text(
-                        text = file.name,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-            }
         }
     }
 }
