@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import org.treeroot.devlog.business.SqlFormatterService
 import org.treeroot.devlog.business.MySqlDatabaseService
 import org.treeroot.devlog.business.model.MySqlQueryResult
-import org.treeroot.devlog.logic.model.SqlFormatResult
+import org.treeroot.devlog.business.model.SqlFormatResult
 import org.treeroot.devlog.mysql.MySqlConnectConfig
 import org.treeroot.devlog.util.ClipboardHelper
 
@@ -136,7 +136,7 @@ class EnhancedSqlFormatterViewModel : ViewModel() {
                 _result.value = SqlFormatResult(
                     success = false,
                     originalSql = _originalSql.value,
-                    errorMessage = "格式化过程中出现错误: ${'$'}{e.message}",
+                    errorMessage = "格式化过程中出现错误: ${e.message}",
                     isValid = false,
                     processingTime = System.currentTimeMillis()
                 )
@@ -179,7 +179,7 @@ class EnhancedSqlFormatterViewModel : ViewModel() {
             }
         }
     }
-    
+
     /**
      * 根据配置ID激活数据库连接
      */
@@ -194,7 +194,7 @@ class EnhancedSqlFormatterViewModel : ViewModel() {
             _connectionStatus.value = false
         }
     }
-    
+
     /**
      * 获取当前激活的配置ID
      */

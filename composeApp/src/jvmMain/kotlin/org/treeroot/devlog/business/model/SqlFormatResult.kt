@@ -1,4 +1,4 @@
-package org.treeroot.devlog.logic.model
+package org.treeroot.devlog.business.model
 
 /**
  * SQL格式化结果数据类

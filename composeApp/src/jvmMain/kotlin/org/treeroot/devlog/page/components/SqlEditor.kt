@@ -88,7 +88,7 @@ fun SqlEditor(
                 onValueChange(newValue.text)
             },
             textStyle = TextStyle(
-                fontSize = 15.sp,
+                fontSize = 12.sp,
                 color = dynamicColors.textColor,
                 fontFamily = FontFamily.Monospace
             ),

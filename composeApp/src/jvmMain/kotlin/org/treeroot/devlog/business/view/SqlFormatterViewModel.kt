@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.treeroot.devlog.business.SqlFormatterService
-import org.treeroot.devlog.logic.model.SqlFormatResult
+import org.treeroot.devlog.business.model.SqlFormatResult
 import org.treeroot.devlog.util.ClipboardHelper
 
 /**
