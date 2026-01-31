@@ -205,15 +205,6 @@ class SqlFormatterViewModel : ViewModel(), ErrorCallbackHandler {
     }
 
     /**
-     * 复制格式化后的SQL到剪贴板
-     */
-    fun copyFormattedSqlToClipboard() {
-        if (result.value.formattedSql.isNotEmpty()) {
-            ClipboardHelper.copyToClipboard(result.value.formattedSql)
-        }
-    }
-
-    /**
      * 从剪贴板粘贴SQL到原始输入框
      */
     fun pasteFromClipboard() {
@@ -223,21 +214,6 @@ class SqlFormatterViewModel : ViewModel(), ErrorCallbackHandler {
         }
     }
 
-    /**
-     * 连接到MySQL数据库
-     */
-    fun connectToDatabase(config: MySqlConnectConfig) {
-        viewModelScope.launch {
-            try {
-                databaseService.initializeConnectionWithConfig(config)
-                val isConnected = databaseService.testConnection()
-                _connectionStatus.value = isConnected
-                updateActiveConfigId() // 更新活跃配置ID
-            } catch (e: Exception) {
-                _connectionStatus.value = false
-            }
-        }
-    }
 
     /**
      * 根据配置ID激活数据库连接
@@ -262,12 +238,6 @@ class SqlFormatterViewModel : ViewModel(), ErrorCallbackHandler {
         }
     }
 
-    /**
-     * 获取当前激活的配置ID
-     */
-    fun getActiveConfigId(): String? {
-        return databaseService.getActiveConfigId()
-    }
 
     private fun updateActiveConfigId() {
         _activeConfigId.value = databaseService.getActiveConfigId()
