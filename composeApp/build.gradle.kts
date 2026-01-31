@@ -25,6 +25,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             //ant-design-kmp
             //implementation("digital.guimauve.antdesign:ui:1.0.0")
+            //富文本
+            //implementation("com.halilibo.compose-richtext:richtext-ui-material3:${richtext_version}")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

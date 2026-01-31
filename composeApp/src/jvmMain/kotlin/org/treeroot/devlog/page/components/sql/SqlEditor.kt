@@ -38,7 +38,7 @@ fun SqlEditor(
     val showContextMenu = remember { mutableStateOf(false) }
     var contextMenuPosition by remember { mutableStateOf(Offset.Zero) }
 
-    // 选中的SQL文本
+    // 选中的SQL文本 - 动态获取选中文本
     var selectedSql by remember { mutableStateOf("") }
     // 当前Density获取屏幕密度
     val density = LocalDensity.current
@@ -47,6 +47,29 @@ fun SqlEditor(
     // 当外部 value 发生变化时，同步更新内部状态
     LaunchedEffect(value) {
         state.value = TextFieldValue(value, selection = state.value.selection)
+    }
+
+    // 监听文本和选择变化，更新选中的文本
+    LaunchedEffect(state.value) {
+        val textFieldValue = state.value
+        val selectionStart = textFieldValue.selection.start
+        val selectionEnd = textFieldValue.selection.end
+
+        // 如果有选中文本，则提取该部分
+        selectedSql = if (selectionStart != selectionEnd) {
+            val minIndex = minOf(selectionStart, selectionEnd)
+            val maxIndex = maxOf(selectionStart, selectionEnd)
+
+            // 确保索引在文本范围内
+            if (minIndex >= 0 && maxIndex <= textFieldValue.text.length) {
+                textFieldValue.text.substring(minIndex, maxIndex)
+            } else {
+                ""
+            }
+        } else {
+            // 没有选中文本时，清空选中内容
+            ""
+        }
     }
 
 
@@ -58,7 +81,6 @@ fun SqlEditor(
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
-
                         // 只处理“右键按下”的瞬间
                         if (event.buttons.isSecondaryPressed) {
                             // 查找是否有指针刚刚按下（previousPressed = false, pressed = true）
@@ -70,8 +92,6 @@ fun SqlEditor(
                                 contextMenuPosition = rightClickPress.position
                                 showContextMenu.value = true
                                 rightClickPress.consume()
-                                // 可选：消费整个事件的其他 change，避免干扰
-                              //  event.changes.forEach { it.consume() }
                             }
                         }
 
