@@ -7,18 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.treeroot.devlog.page.DevLogTheme
 import org.treeroot.devlog.page.MainApp
-import org.treeroot.devlog.util.GlobalErrorHandlingWrapper
 
 @Composable
 fun App() {
     DevLogTheme {
-        GlobalErrorHandlingWrapper {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background,
-            ) {
-                MainApp()
-            }
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background,
+        ) {
+            MainApp()
         }
     }
 }

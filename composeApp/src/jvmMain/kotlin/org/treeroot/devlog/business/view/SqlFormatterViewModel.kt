@@ -326,7 +326,7 @@ class SqlFormatterViewModel : ViewModel() {
     }
 
     /**
-     * 执行SQL查询
+     * 执行SQL查询，这个方法的错误会显示在屏幕上，无须设置错误回调函数
      */
     fun executeQuery(sql: String) {
         if (!_connectionStatus.value) {
@@ -340,7 +340,7 @@ class SqlFormatterViewModel : ViewModel() {
             try {
                 val result = databaseService.query(sql)
                 if (!result.success && result.errorMessage != null) {
-                    _onErrorCallback.value?.invoke(result.errorMessage)
+                    DevLog.error("执行SQL查询时发生错误: ${result.errorMessage}")
                 }
                 _queryResult.value = result
             } catch (e: Exception) {
@@ -348,7 +348,7 @@ class SqlFormatterViewModel : ViewModel() {
                     success = false,
                     errorMessage = e.message
                 )
-                _onErrorCallback.value?.invoke(e.message ?: "执行SQL查询时发生未知错误")
+                DevLog.error("执行SQL查询时发生错误: ${e.message}")
             } finally {
                 _isExecuting.value = false
             }
