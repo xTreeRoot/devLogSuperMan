@@ -1,25 +1,19 @@
 package org.treeroot.devlog.page.components.sql
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.isSecondaryPressed
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.json.model.UiConfig
-
 
 @Composable
 fun SqlEditor(
@@ -34,95 +28,81 @@ fun SqlEditor(
 ) {
     val state = remember { mutableStateOf(TextFieldValue(value)) }
 
-    // 右键菜单状态
-    val showContextMenu = remember { mutableStateOf(false) }
-    var contextMenuPosition by remember { mutableStateOf(Offset.Zero) }
+    // 获取选中的文本
+    val selectedSql = remember {
+        derivedStateOf {
+            val textFieldValue = state.value
+            val selectionStart = textFieldValue.selection.start
+            val selectionEnd = textFieldValue.selection.end
 
-    // 选中的SQL文本 - 动态获取选中文本
-    var selectedSql by remember { mutableStateOf("") }
-    // 当前Density获取屏幕密度
-    val density = LocalDensity.current
+            if (selectionStart != selectionEnd) {
+                val minIndex = minOf(selectionStart, selectionEnd)
+                val maxIndex = maxOf(selectionStart, selectionEnd)
 
+                if (minIndex >= 0 && maxIndex <= textFieldValue.text.length) {
+                    textFieldValue.text.substring(minIndex, maxIndex)
+                } else {
+                    ""
+                }
+            } else {
+                ""
+            }
+        }
+    }
 
     // 当外部 value 发生变化时，同步更新内部状态
     LaunchedEffect(value) {
         state.value = TextFieldValue(value, selection = state.value.selection)
     }
 
-    // 监听文本和选择变化，更新选中的文本
-    LaunchedEffect(state.value) {
-        val textFieldValue = state.value
-        val selectionStart = textFieldValue.selection.start
-        val selectionEnd = textFieldValue.selection.end
-
-        // 如果有选中文本，则提取该部分
-        selectedSql = if (selectionStart != selectionEnd) {
-            val minIndex = minOf(selectionStart, selectionEnd)
-            val maxIndex = maxOf(selectionStart, selectionEnd)
-
-            // 确保索引在文本范围内
-            if (minIndex >= 0 && maxIndex <= textFieldValue.text.length) {
-                textFieldValue.text.substring(minIndex, maxIndex)
-            } else {
-                ""
-            }
-        } else {
-            // 没有选中文本时，清空选中内容
-            ""
-        }
-    }
-
-
     Box(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface)
             .padding(8.dp)
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        // 只处理“右键按下”的瞬间
-                        if (event.buttons.isSecondaryPressed) {
-                            // 查找是否有指针刚刚按下（previousPressed = false, pressed = true）
-                            val rightClickPress = event.changes.firstOrNull { change ->
-                                !change.previousPressed && change.pressed
-                            }
-                            if (rightClickPress != null) {
-                                showContextMenu.value = false // 先关闭
-                                contextMenuPosition = rightClickPress.position
-                                showContextMenu.value = true
-                                rightClickPress.consume()
-                            }
-                        }
-
-                    }
-                }
-            }
     ) {
-        BasicTextField(
-            value = state.value,
-            onValueChange = { newValue ->
-                state.value = newValue
-                onValueChange(newValue.text)
-            },
-            textStyle = TextStyle(
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = FontFamily.Monospace
-            ),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
-                .verticalScroll(rememberScrollState()),
-            singleLine = false
-        )
-        SqlContextMenu(
-            showContextMenu = showContextMenu,
-            contextMenuPosition = contextMenuPosition,
-            selectedSql = selectedSql,
-            onExecuteSql = onExecuteSql,
-            onExecuteSelectedSql = onExecuteSelectedSql,
-            density = density
-        )
+        ContextMenuDataProvider(
+            items = {
+                val menuItems = mutableListOf<ContextMenuItem>()
+
+                // 添加执行完整SQL菜单项
+                if (onExecuteSql != null) {
+                    menuItems.add(
+                        ContextMenuItem("执行完整SQL") {
+                            onExecuteSql()
+                        }
+                    )
+                }
+
+                // 添加执行选中SQL菜单项
+                if (selectedSql.value.isNotBlank() && onExecuteSelectedSql != null) {
+                    menuItems.add(
+                        ContextMenuItem("执行选中SQL") {
+                            onExecuteSelectedSql(selectedSql.value)
+                        }
+                    )
+                }
+
+                menuItems
+            }
+        ) {
+            BasicTextField(
+                value = state.value,
+                onValueChange = { newValue ->
+                    state.value = newValue
+                    onValueChange(newValue.text)
+                },
+                textStyle = TextStyle(
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = FontFamily.Monospace
+                ),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .verticalScroll(rememberScrollState()),
+                singleLine = false,
+                interactionSource = remember { MutableInteractionSource() }
+            )
+        }
     }
 }
