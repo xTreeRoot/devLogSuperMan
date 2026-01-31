@@ -13,7 +13,7 @@ import org.treeroot.devlog.util.ClipboardHelper
  * ES DSL处理器的ViewModel
  * 管理ES DSL相关的UI状态和业务逻辑
  */
-class EsDslViewModel {
+class EsDslViewModel : ErrorCallbackHandler {
 
     private val esDslService = EsDslFormatterService()
 
@@ -26,6 +26,9 @@ class EsDslViewModel {
 
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
+
+    // 错误处理相关状态
+    private val _onErrorCallback = mutableStateOf<((String) -> Unit)?>(null)
 
 
     // 为了向后兼容，提供原有的属性访问
@@ -47,8 +50,14 @@ class EsDslViewModel {
 
         CoroutineScope(Dispatchers.Default).launch {
             _isLoading.value = true
-            _result.value = esDslService.separateDslAndResponse(_originalDsl.value)
-            _isLoading.value = false
+            try {
+                _result.value = esDslService.separateDslAndResponse(_originalDsl.value)
+            } catch (e: Exception) {
+                // 通过错误回调通知UI
+                _onErrorCallback.value?.invoke("格式化ES DSL时发生错误: ${e.message}")
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -88,4 +97,17 @@ class EsDslViewModel {
         }
     }
 
+    /**
+     * 设置错误回调函数
+     */
+    override fun setErrorCallback(errorCallback: (String) -> Unit) {
+        _onErrorCallback.value = errorCallback
+    }
+
+    /**
+     * 清除错误回调函数
+     */
+    override fun clearErrorCallback() {
+        _onErrorCallback.value = null
+    }
 }

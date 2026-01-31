@@ -17,8 +17,7 @@ import org.treeroot.devlog.DevLog
 import org.treeroot.devlog.business.view.EsDslViewModel
 import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.page.components.MessageDialog
-import org.treeroot.devlog.page.enums.MessageType
+import org.treeroot.devlog.page.components.GlobalErrorHandler
 import org.treeroot.devlog.service.ClipboardMonitorService
 import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.service.SystemTrayService
@@ -67,34 +66,11 @@ fun MainApp() {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
 
-    // 错误对话框状态
-    var showErrorDialog by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-
-    // 设置Sql页面错误回调
-    LaunchedEffect(Unit) {
-        sqlFormatterViewModel.setErrorCallback { msg ->
-            errorMessage = msg
-            showErrorDialog = true
-        }
-    }
-
-    // 清理Sql页面错误回调
-    DisposableEffect(Unit) {
-        onDispose {
-            sqlFormatterViewModel.clearErrorCallback()
-        }
-    }
-    // 错误对话框
-    if (showErrorDialog) {
-        MessageDialog(
-            messageType = MessageType.ERROR,
-            title = "错误",
-            message = errorMessage,
-            onDismiss = { showErrorDialog = false },
-            confirmText = "确定"
-        )
-    }
+    // 全局错误处理器
+    GlobalErrorHandler(
+        sqlFormatterViewModel,
+        esDslViewModel
+    )
 
     // 在应用启动时自动激活默认的数据库配置
     LaunchedEffect(Unit) {

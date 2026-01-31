@@ -18,10 +18,9 @@ import org.treeroot.devlog.service.JsonStoreService
 import org.treeroot.devlog.util.ClipboardHelper
 
 /**
- * 增强版SQL格式化器的ViewModel
- * 包含格式化功能和MySQL查询功能
+ * SQL格式化器的ViewModel
  */
-class SqlFormatterViewModel : ViewModel() {
+class SqlFormatterViewModel : ViewModel(), ErrorCallbackHandler {
 
     private val formatterService = SqlFormatterService()
     private val databaseService = MySqlDatabaseService()
@@ -365,14 +364,14 @@ class SqlFormatterViewModel : ViewModel() {
     /**
      * 设置错误回调函数
      */
-    fun setErrorCallback(errorCallback: (String) -> Unit) {
+    override fun setErrorCallback(errorCallback: (String) -> Unit) {
         _onErrorCallback.value = errorCallback
     }
 
     /**
      * 清除错误回调函数
      */
-    fun clearErrorCallback() {
+    override fun clearErrorCallback() {
         _onErrorCallback.value = null
     }
 
