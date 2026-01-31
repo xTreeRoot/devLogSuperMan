@@ -9,12 +9,13 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.json.model.UiConfig
-
+import androidx.compose.ui.graphics.Color
 @Composable
 fun SqlEditor(
     value: String,
@@ -85,6 +86,7 @@ fun SqlEditor(
                 menuItems
             }
         ) {
+
             BasicTextField(
                 value = state.value,
                 onValueChange = { newValue ->
@@ -101,7 +103,9 @@ fun SqlEditor(
                     .background(MaterialTheme.colorScheme.surface)
                     .verticalScroll(rememberScrollState()),
                 singleLine = false,
-                interactionSource = remember { MutableInteractionSource() }
+                // 设置光标颜色
+                cursorBrush = SolidColor(Color.Gray),
+                        interactionSource = remember { MutableInteractionSource() }
             )
         }
     }
