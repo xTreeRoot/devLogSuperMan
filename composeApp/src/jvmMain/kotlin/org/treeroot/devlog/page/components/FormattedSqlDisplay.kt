@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.json.model.UiConfig
+import org.treeroot.devlog.page.components.sql.SqlEditor
 
 
 /**
@@ -23,6 +24,7 @@ fun FormattedSqlDisplay(
     config: UiConfig?,
     onExecuteSql: (String) -> Unit,
     onExecuteSelectedSql: (String) -> Unit,
+    onError: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -43,7 +45,8 @@ fun FormattedSqlDisplay(
                 config = config,
                 modifier = Modifier.fillMaxSize(),
                 onExecuteSql = { onExecuteSql(formattedSql) },
-                onExecuteSelectedSql = onExecuteSelectedSql
+                onExecuteSelectedSql = onExecuteSelectedSql,
+                onError = onError
             )
         }
     }

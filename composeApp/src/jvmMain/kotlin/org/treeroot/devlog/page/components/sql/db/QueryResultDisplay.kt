@@ -1,7 +1,6 @@
-package org.treeroot.devlog.page.components
+package org.treeroot.devlog.page.components.sql.db
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment

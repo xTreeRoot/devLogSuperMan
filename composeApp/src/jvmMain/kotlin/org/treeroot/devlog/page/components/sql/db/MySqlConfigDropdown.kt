@@ -1,7 +1,6 @@
-package org.treeroot.devlog.page.components
+package org.treeroot.devlog.page.components.sql.db
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.DropdownMenuItem
@@ -9,11 +8,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.service.JsonStoreService
@@ -25,7 +22,9 @@ import org.treeroot.devlog.service.JsonStoreService
 @Composable
 fun MySqlConfigDropdown(
     viewModel: SqlFormatterViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    // 新增错误处理回调
+    onError: ((String) -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -67,8 +66,12 @@ fun MySqlConfigDropdown(
                 allConfigs.forEach { config ->
                     DropdownMenuItem(
                         onClick = {
-                            viewModel.activateConnectionWithConfigId(config.id)
-                            expanded = false
+                            try {
+                                viewModel.activateConnectionWithConfigId(config.id)
+                                expanded = false
+                            } catch (e: Exception) {
+                                onError?.invoke(e.message ?: "数据库连接错误")
+                            }
                         },
                         modifier = Modifier.widthIn(800.dp),
                     ) {

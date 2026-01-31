@@ -68,6 +68,9 @@ class SqlFormatterViewModel : ViewModel() {
 
     private val _isExecuting = mutableStateOf(false)
 
+    // 错误处理相关状态
+    private val _onErrorCallback = mutableStateOf<((String) -> Unit)?>(null)
+
     // 计算显示文本的状态
     private val _displayText = mutableStateOf("请选择数据库配置")
     val displayText: State<String> = _displayText
@@ -234,16 +237,16 @@ class SqlFormatterViewModel : ViewModel() {
      * 根据配置ID激活数据库连接
      */
     fun activateConnectionWithConfigId(configId: String) {
-        val success = databaseService.activateConnectionWithConfigId(configId)
-        if (success) {
-            viewModelScope.launch {
-                val isConnected = databaseService.testConnection()
-                _connectionStatus.value = isConnected
-                updateActiveConfigId() // 更新活跃配置ID
+            val success = databaseService.activateConnectionWithConfigId(configId)
+            if (success) {
+                viewModelScope.launch {
+                    val isConnected = databaseService.testConnection()
+                    _connectionStatus.value = isConnected
+                    updateActiveConfigId() // 更新活跃配置ID
+                }
+            } else {
+                _connectionStatus.value = false
             }
-        } else {
-            _connectionStatus.value = false
-        }
     }
 
     /**
@@ -319,22 +322,44 @@ class SqlFormatterViewModel : ViewModel() {
      * 执行SQL查询
      */
     fun executeQuery(sql: String) {
-        if (!_connectionStatus.value) return
+        if (!_connectionStatus.value) {
+            // 如果没有连接，显示错误信息
+            _onErrorCallback.value?.invoke("数据库未连接，请先连接数据库")
+            return
+        }
 
         _isExecuting.value = true
         viewModelScope.launch {
             try {
                 val result = databaseService.query(sql)
+                if (!result.success && result.errorMessage != null) {
+                    _onErrorCallback.value?.invoke(result.errorMessage)
+                }
                 _queryResult.value = result
             } catch (e: Exception) {
                 _queryResult.value = MySqlQueryResult(
                     success = false,
                     errorMessage = e.message
                 )
+                _onErrorCallback.value?.invoke(e.message ?: "执行SQL查询时发生未知错误")
             } finally {
                 _isExecuting.value = false
             }
         }
+    }
+
+    /**
+     * 设置错误回调函数
+     */
+    fun setErrorCallback(errorCallback: (String) -> Unit) {
+        _onErrorCallback.value = errorCallback
+    }
+
+    /**
+     * 清除错误回调函数
+     */
+    fun clearErrorCallback() {
+        _onErrorCallback.value = null
     }
 
     /**

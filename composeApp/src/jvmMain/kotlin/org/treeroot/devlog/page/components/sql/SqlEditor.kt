@@ -1,4 +1,4 @@
-package org.treeroot.devlog.page.components
+package org.treeroot.devlog.page.components.sql
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,6 +30,8 @@ fun SqlEditor(
     onExecuteSql: (() -> Unit)? = null,
     // 新增执行选中SQL回调
     onExecuteSelectedSql: ((String) -> Unit)? = null,
+    // 新增错误处理回调
+    onError: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val state = remember { mutableStateOf(TextFieldValue(value)) }
@@ -102,6 +104,7 @@ fun SqlEditor(
             selectedSql = selectedSql,
             onExecuteSql = onExecuteSql,
             onExecuteSelectedSql = onExecuteSelectedSql,
+            onError = onError,
             density = density
         )
     }

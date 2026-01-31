@@ -4,16 +4,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.business.view.SqlFormatterViewModel
 import org.treeroot.devlog.json.model.UiConfig
-import org.treeroot.devlog.page.components.DatabaseConnectionInfo
+import org.treeroot.devlog.page.components.sql.db.DatabaseConnectionInfo
 import org.treeroot.devlog.page.components.FormattedSqlDisplay
-import org.treeroot.devlog.page.components.QueryResultDisplay
-import org.treeroot.devlog.page.components.SqlOperationButtons
+import org.treeroot.devlog.page.components.MessageDialog
+import org.treeroot.devlog.page.components.sql.db.QueryResultDisplay
+import org.treeroot.devlog.page.components.sql.SqlOperationButtons
+import org.treeroot.devlog.page.enums.MessageType
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,12 +24,42 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
     // 观察查询结果状态
     val queryResult by viewModel.queryResult
 
+    // 错误对话框状态
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    // 设置错误回调
+    LaunchedEffect(Unit) {
+        viewModel.setErrorCallback { msg ->
+            errorMessage = msg
+            showErrorDialog = true
+        }
+    }
+
+    // 清理错误回调
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.clearErrorCallback()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+
+        // 错误对话框
+        if (showErrorDialog) {
+            MessageDialog(
+                messageType = MessageType.ERROR,
+                title = "错误",
+                message = errorMessage,
+                onDismiss = { showErrorDialog = false },
+                confirmText = "确定"
+            )
+        }
         Text(
             text = "MyBatis SQL Formatter",
             style = MaterialTheme.typography.headlineMedium,
@@ -43,7 +74,14 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
             Spacer(modifier = Modifier.width(16.dp))
             // 空白距离
             // 数据库连接信息
-            DatabaseConnectionInfo(viewModel = viewModel, config = config)
+            DatabaseConnectionInfo(
+                viewModel = viewModel,
+                config = config,
+                onError = { msg ->
+                    errorMessage = msg
+                    showErrorDialog = true
+                }
+            )
         }
 
         Column(modifier = Modifier.fillMaxHeight().weight(1f))
@@ -55,7 +93,11 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
                     formattedSql = viewModel.formattedSql.value,
                     config = config,
                     onExecuteSql = { viewModel.executeQuery(viewModel.formattedSql.value) },
-                    onExecuteSelectedSql = { selected -> viewModel.executeQuery(selected) }
+                    onExecuteSelectedSql = { selected -> viewModel.executeQuery(selected) },
+                    onError = { msg ->
+                        errorMessage = msg
+                        showErrorDialog = true
+                    }
                 )
             }
             if (queryResult != null) {

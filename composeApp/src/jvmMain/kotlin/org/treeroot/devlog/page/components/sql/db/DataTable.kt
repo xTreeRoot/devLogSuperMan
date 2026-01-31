@@ -1,4 +1,4 @@
-package org.treeroot.devlog.page.components
+package org.treeroot.devlog.page.components.sql.db
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.treeroot.devlog.json.model.UiConfig
+import org.treeroot.devlog.page.components.TooltipEllipsisText
 
 
 @Composable

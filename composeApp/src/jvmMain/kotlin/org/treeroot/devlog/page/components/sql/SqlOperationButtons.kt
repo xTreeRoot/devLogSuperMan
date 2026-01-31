@@ -1,4 +1,4 @@
-package org.treeroot.devlog.page.components
+package org.treeroot.devlog.page.components.sql
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

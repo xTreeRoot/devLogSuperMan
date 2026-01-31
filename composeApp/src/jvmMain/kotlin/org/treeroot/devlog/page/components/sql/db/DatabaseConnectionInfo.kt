@@ -1,4 +1,4 @@
-package org.treeroot.devlog.page.components
+package org.treeroot.devlog.page.components.sql.db
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,7 +21,8 @@ import org.treeroot.devlog.json.model.UiConfig
 fun DatabaseConnectionInfo(
     viewModel: SqlFormatterViewModel,
     config: UiConfig?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onError: ((String) -> Unit)? = null,
 ) {
 
     Row(
@@ -50,7 +51,7 @@ fun DatabaseConnectionInfo(
         Spacer(modifier = Modifier.width(16.dp))
 
         // MySQL配置下拉菜单
-        MySqlConfigDropdown(viewModel)
+        MySqlConfigDropdown(viewModel,  onError = onError)
     }
 }
 

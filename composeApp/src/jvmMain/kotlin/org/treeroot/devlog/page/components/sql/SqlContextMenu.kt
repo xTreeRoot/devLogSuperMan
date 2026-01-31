@@ -1,12 +1,10 @@
-package org.treeroot.devlog.page.components
+package org.treeroot.devlog.page.components.sql
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Density
 
 /**
@@ -17,6 +15,7 @@ import androidx.compose.ui.unit.Density
  * @param selectedSql 当前选中的 SQL 文本
  * @param onExecuteSql 执行完整 SQL 的回调
  * @param onExecuteSelectedSql 执行选中 SQL 的回调
+ * @param onError 显示错误信息的回调
  * @param density 当前 Density，用于 DpOffset 转换
  */
 @Composable
@@ -26,6 +25,7 @@ fun SqlContextMenu(
     selectedSql: String,
     onExecuteSql: (() -> Unit)? = null,
     onExecuteSelectedSql: ((String) -> Unit)? = null,
+    onError: ((String) -> Unit)? = null,
     density: Density
 ) {
     DropdownMenu(
@@ -44,7 +44,11 @@ fun SqlContextMenu(
                 text = { Text("执行完整SQL") },
                 onClick = {
                     showContextMenu.value = false
-                    onExecuteSql()
+                    try {
+                        onExecuteSql()
+                    } catch (e: Exception) {
+                        onError?.invoke(e.message ?: "执行SQL时发生未知错误")
+                    }
                 }
             )
         }
@@ -55,7 +59,11 @@ fun SqlContextMenu(
                 text = { Text("执行选中SQL") },
                 onClick = {
                     showContextMenu.value = false
-                    onExecuteSelectedSql(selectedSql)
+                    try {
+                        onExecuteSelectedSql(selectedSql)
+                    } catch (e: Exception) {
+                        onError?.invoke(e.message ?: "执行SQL时发生未知错误")
+                    }
                 }
             )
         }
