@@ -33,6 +33,13 @@ class SqlFormatterViewModel : ViewModel() {
     private val _result = mutableStateOf(SqlFormatResult(success = true, originalSql = ""))
     val result: State<SqlFormatResult> = _result
 
+    /**
+     * 更新格式化后的SQL
+     */
+    fun updateFormattedSql(newFormattedSql: String) {
+        _result.value = _result.value.copy(formattedSql = newFormattedSql)
+    }
+
     // 为了向后兼容，提供原有的属性访问
     val formattedSql: State<String> = object : State<String> {
         override val value: String

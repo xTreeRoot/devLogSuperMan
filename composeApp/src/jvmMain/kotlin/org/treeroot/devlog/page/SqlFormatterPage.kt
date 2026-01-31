@@ -90,6 +90,9 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
                     config = config,
                     onExecuteSql = { viewModel.executeQuery(viewModel.formattedSql.value) },
                     onExecuteSelectedSql = { selected -> viewModel.executeQuery(selected) },
+                    onValueChange = { newFormattedSql ->
+                        viewModel.updateFormattedSql(newFormattedSql)
+                    }
                 )
             }
             if (queryResult != null) {

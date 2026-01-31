@@ -8,6 +8,7 @@ import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -55,12 +56,13 @@ fun MainApp() {
         }
     }
 
-    // 选中的标签页
-    var selectedTab by remember { mutableStateOf(0) }
     // Sql ViewModel实例
     val sqlFormatterViewModel = remember { SqlFormatterViewModel() }
     // ES DSL ViewModel实例
     val esDslViewModel = remember { EsDslViewModel() }
+
+    // 选中的标签页 - 使用rememberSaveable确保在重组时保持状态
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
     // 在应用启动时自动激活默认的数据库配置
     LaunchedEffect(Unit) {
