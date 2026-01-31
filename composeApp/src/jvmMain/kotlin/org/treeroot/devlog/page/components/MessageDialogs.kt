@@ -7,13 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.window.DialogProperties
+import org.treeroot.devlog.page.enums.MessageType
 
-/**
- * 通用消息对话框类型枚举
- */
-enum class MessageType {
-    INFO, WARNING, ERROR
-}
 
 data class MessageStyle(
     val iconRes: ImageVector?,
@@ -72,6 +67,15 @@ fun MessageDialog(
             MaterialTheme.colorScheme.error,
             MaterialTheme.colorScheme.error
         )
+
+        else -> {
+            MessageStyle(
+                null,
+                AlertDialogDefaults.containerColor,
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 
     /**

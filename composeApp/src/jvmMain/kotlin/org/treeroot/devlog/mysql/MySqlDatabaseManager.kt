@@ -177,7 +177,7 @@ class MySqlDatabaseManager {
     private fun processResultSet(resultSet: ResultSet): Pair<List<Map<String, Any?>>, List<String>> {
         val metaData = resultSet.metaData
         val columnCount = metaData.columnCount
-    
+
         // 获取列名
         val columnNames = mutableListOf<String>()
         for (i in 1..columnCount) {
@@ -189,7 +189,7 @@ class MySqlDatabaseManager {
             }
             columnNames.add(columnName)
         }
-    
+
         // 获取数据
         val rows = mutableListOf<Map<String, Any?>>()
         while (resultSet.next()) {
@@ -200,13 +200,13 @@ class MySqlDatabaseManager {
                 val value = try {
                     resultSet.getObject(i)
                 } catch (e: Exception) {
-                    "ERROR: ${'$'}{e.message}"
+                    "ERROR: ${e.message}"
                 }
                 row[columnName] = value
             }
             rows.add(row)
         }
-    
+
         return Pair(rows.toList(), columnNames.toList())
     }
 
