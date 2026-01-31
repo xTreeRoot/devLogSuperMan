@@ -24,24 +24,6 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
     // 观察查询结果状态
     val queryResult by viewModel.queryResult
 
-    // 错误对话框状态
-    var showErrorDialog by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-
-    // 设置错误回调
-    LaunchedEffect(Unit) {
-        viewModel.setErrorCallback { msg ->
-            errorMessage = msg
-            showErrorDialog = true
-        }
-    }
-
-    // 清理错误回调
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.clearErrorCallback()
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -50,16 +32,7 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
-        // 错误对话框
-        if (showErrorDialog) {
-            MessageDialog(
-                messageType = MessageType.ERROR,
-                title = "错误",
-                message = errorMessage,
-                onDismiss = { showErrorDialog = false },
-                confirmText = "确定"
-            )
-        }
+
         Text(
             text = "MyBatis SQL Formatter",
             style = MaterialTheme.typography.headlineMedium,
