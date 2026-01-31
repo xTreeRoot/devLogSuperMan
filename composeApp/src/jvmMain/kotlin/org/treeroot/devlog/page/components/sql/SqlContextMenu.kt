@@ -59,11 +59,7 @@ fun SqlContextMenu(
                 text = { Text("执行选中SQL") },
                 onClick = {
                     showContextMenu.value = false
-                    try {
-                        onExecuteSelectedSql(selectedSql)
-                    } catch (e: Exception) {
-                        onError?.invoke(e.message ?: "执行SQL时发生未知错误")
-                    }
+                    onExecuteSelectedSql(selectedSql)
                 }
             )
         }

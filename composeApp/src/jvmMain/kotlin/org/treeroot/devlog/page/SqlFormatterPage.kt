@@ -77,10 +77,6 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
             DatabaseConnectionInfo(
                 viewModel = viewModel,
                 config = config,
-                onError = { msg ->
-                    errorMessage = msg
-                    showErrorDialog = true
-                }
             )
         }
 
@@ -94,10 +90,6 @@ fun SqlFormatterPage(viewModel: SqlFormatterViewModel, config: UiConfig? = null)
                     config = config,
                     onExecuteSql = { viewModel.executeQuery(viewModel.formattedSql.value) },
                     onExecuteSelectedSql = { selected -> viewModel.executeQuery(selected) },
-                    onError = { msg ->
-                        errorMessage = msg
-                        showErrorDialog = true
-                    }
                 )
             }
             if (queryResult != null) {

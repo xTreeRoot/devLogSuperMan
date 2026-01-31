@@ -22,7 +22,6 @@ fun DatabaseConnectionInfo(
     viewModel: SqlFormatterViewModel,
     config: UiConfig?,
     modifier: Modifier = Modifier,
-    onError: ((String) -> Unit)? = null,
 ) {
 
     Row(
@@ -51,7 +50,7 @@ fun DatabaseConnectionInfo(
         Spacer(modifier = Modifier.width(16.dp))
 
         // MySQL配置下拉菜单
-        MySqlConfigDropdown(viewModel,  onError = onError)
+        MySqlConfigDropdown(viewModel)
     }
 }
 

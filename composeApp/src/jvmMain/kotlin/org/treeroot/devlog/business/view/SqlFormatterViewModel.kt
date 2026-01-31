@@ -237,16 +237,23 @@ class SqlFormatterViewModel : ViewModel() {
      * 根据配置ID激活数据库连接
      */
     fun activateConnectionWithConfigId(configId: String) {
-            val success = databaseService.activateConnectionWithConfigId(configId)
-            if (success) {
-                viewModelScope.launch {
+        viewModelScope.launch {
+            try {
+                val success = databaseService.activateConnectionWithConfigId(configId)
+                if (success) {
                     val isConnected = databaseService.testConnection()
                     _connectionStatus.value = isConnected
-                    updateActiveConfigId() // 更新活跃配置ID
+                    // 更新活跃配置ID
+                    updateActiveConfigId()
+                } else {
+                    _connectionStatus.value = false
                 }
-            } else {
+            } catch (e: Exception) {
                 _connectionStatus.value = false
+                // 通过错误回调通知UI
+                _onErrorCallback.value?.invoke(e.message ?: "激活数据库配置时发生错误")
             }
+        }
     }
 
     /**

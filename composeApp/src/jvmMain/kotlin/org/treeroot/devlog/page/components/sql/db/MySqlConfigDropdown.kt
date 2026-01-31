@@ -23,8 +23,6 @@ import org.treeroot.devlog.service.JsonStoreService
 fun MySqlConfigDropdown(
     viewModel: SqlFormatterViewModel,
     modifier: Modifier = Modifier,
-    // 新增错误处理回调
-    onError: ((String) -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -66,12 +64,8 @@ fun MySqlConfigDropdown(
                 allConfigs.forEach { config ->
                     DropdownMenuItem(
                         onClick = {
-                            try {
-                                viewModel.activateConnectionWithConfigId(config.id)
-                                expanded = false
-                            } catch (e: Exception) {
-                                onError?.invoke(e.message ?: "数据库连接错误")
-                            }
+                            viewModel.activateConnectionWithConfigId(config.id)
+                            expanded = false
                         },
                         modifier = Modifier.widthIn(800.dp),
                     ) {

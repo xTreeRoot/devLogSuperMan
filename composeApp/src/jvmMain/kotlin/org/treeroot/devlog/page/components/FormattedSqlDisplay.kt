@@ -24,7 +24,6 @@ fun FormattedSqlDisplay(
     config: UiConfig?,
     onExecuteSql: (String) -> Unit,
     onExecuteSelectedSql: (String) -> Unit,
-    onError: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -46,7 +45,6 @@ fun FormattedSqlDisplay(
                 modifier = Modifier.fillMaxSize(),
                 onExecuteSql = { onExecuteSql(formattedSql) },
                 onExecuteSelectedSql = onExecuteSelectedSql,
-                onError = onError
             )
         }
     }
